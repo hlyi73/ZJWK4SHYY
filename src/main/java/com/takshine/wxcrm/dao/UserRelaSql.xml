@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!--  sql处理语句 -->
+<mapper namespace="userRelaSql">
+	<!-- 分页查询 -->
+	<select id="findUserRelaListByFilter"
+		parameterType="com.takshine.wxcrm.domain.UserRela"
+		resultType="com.takshine.wxcrm.domain.UserRela">
+		<!-- SELECT
+			   id,
+			  user_id,
+			  ( SELECT nickname FROM TB_WXUSER_INFO WHERE party_row_id = user_id ) as user_name,
+			  rela_user_id,
+			  ( SELECT nickname FROM TB_WXUSER_INFO WHERE party_row_id = rela_user_id ) as rela_user_name,
+			  type,
+			  create_date
+		  
+		  FROM TB_USER_RELA where 1=1
+		  <if test="user_id != null"> and user_id = #{user_id}</if>
+		  <if test="rela_user_id != null"> and rela_user_id = #{rela_user_id}</if>
+		  <if test="type != null"> and type = #{type}</if>
+		  limit #{currpages},#{pagecounts}
+		 -->
+		<!-- select distinct tur.id,tur.user_id,( SELECT nickname FROM TB_WXUSER_INFO WHERE party_row_id = user_id limit 0,1) as user_name, rela_user_id, 
+		(case when tcm.op_name is null or tcm.op_name = '' then ( SELECT nickname FROM TB_WXUSER_INFO WHERE party_row_id = rela_user_id limit 0,1) else tcm.op_name end) as rela_user_name,
+		tur.type,tur.create_date,(SELECT headimgurl FROM TB_WXUSER_INFO WHERE party_row_id = rela_user_id limit 0,1) as headimgurl,
+		tcm.op_mobile as mobile_no_1,tcm.op_company as company,tcm.op_duty as position
+		from TB_USER_RELA tur left join 
+		(select tdo.op_name,tdo.op_mobile,tdo.op_company,tdo.op_duty,twi.party_row_id 
+		from TB_DCCRM_OPERATOR tdo,TB_WXUSER_INFO twi,TR_OPERATOR_MOBILE tom
+		where tdo.op_id=tom.op_id and twi.open_id=tom.open_id and tom.org_id='Default Organization') tcm
+		on tur.rela_user_id = tcm.party_row_id where 1=1 -->
+		SELECT 
+			tur.id,
+			tur.user_id,
+			twi.open_id as openId,
+			'' AS user_name,
+			rela_user_id,
+			(CASE WHEN tbc.name IS NULL OR tbc.name ='' THEN twi.nickname ELSE tbc.name END) AS rela_user_name,
+			(CASE WHEN tbc.name IS NULL OR tbc.name ='' THEN F_GetPY(twi.nickname) ELSE F_GetPY(tbc.name) END) AS first_char,
+			 tur.type,
+			 tur.create_date,
+			(CASE WHEN tbc.head_img_url IS NOT NULL AND tbc.head_img_url != '' THEN tbc.head_img_url ELSE twi.headimgurl END) AS headimgurl,
+			(CASE WHEN tbc.head_img_url IS NOT NULL AND tbc.head_img_url != '' THEN 'card' ELSE 'wx' END) AS TYPE,
+			tbc.phone AS mobile_no_1,
+			tbc.company AS company,
+			tbc.position AS POSITION
+			FROM
+			TB_USER_RELA tur
+			LEFT JOIN TB_BUSINESS_CARD tbc ON tbc.party_row_id = tur.rela_user_id AND tbc.status='0'
+			LEFT JOIN TB_WXUSER_INFO twi ON tur.rela_user_id = twi.party_row_id WHERE 1=1
+		<if test="user_id != null"> and tur.user_id = #{user_id}</if>
+		<if test="rela_user_id != null"> and tur.rela_user_id = #{rela_user_id}</if>
+		<if test="type != null"> and tur.type = #{type}</if>
+		order by first_char
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询好友 -->
+	<select id="isFriendsByPartyId"
+		parameterType="com.takshine.wxcrm.domain.UserRela"
+		resultType="com.takshine.wxcrm.domain.UserRela">
+		select id,user_id,rela_user_id from TB_USER_RELA 
+		where (user_id=#{user_id} and rela_user_id=#{rela_user_id}) or (user_id=#{rela_user_id} and rela_user_id=#{user_id})
+	</select>
+	
+		<!-- 查询好友首字母 -->
+	<select id="queryFirstCharById"
+		parameterType="java.lang.String"
+		resultType="java.lang.String">
+		SELECT distinct 
+			F_GetPY((CASE WHEN tbc.name IS NULL OR tbc.name ='' THEN twi.nickname ELSE tbc.name END)) AS rela_user_name
+			FROM
+			TB_USER_RELA tur
+			LEFT JOIN TB_BUSINESS_CARD tbc ON tbc.party_row_id = tur.rela_user_id AND tbc.status='0'
+			LEFT JOIN TB_WXUSER_INFO twi ON tur.rela_user_id = twi.party_row_id WHERE 1=1 
+			AND tur.user_id = #{value}
+			ORDER BY rela_user_name
+	</select>
+	
+	<!-- 统计总数 -->
+	<select id="countUserRelaByFilter"
+		parameterType="com.takshine.wxcrm.domain.UserRela"
+		resultType="Integer">
+		select count(1)
+			from TB_USER_RELA
+		where 1=1
+		  <if test="user_id != null"> and user_id = #{user_id}</if>
+		  <if test="type != null"> and type = #{type}</if>
+	</select>
+	
+	<!-- 查询指尖好友关系列表 -->
+	<select id="findUserListByFilter"
+		parameterType="java.lang.String"
+		resultType="com.takshine.wxcrm.domain.WxuserInfo">
+		SELECT
+			   OPEN_ID AS openId,              
+			   PUBLIC_ID AS publicId,              
+			   ORG_ID   AS orgId,        
+			   SUBSCRIBE AS subscribe,        
+			   NICKNAME AS nickname,         
+			   SEX AS sex,              
+			   CITY AS city,      
+			   COUNTRY AS country,    
+			   PROVINCE AS province,
+			   LANGUAGE AS LANGUAGE,
+			   HEADIMGURL AS headimgurl,
+			   SUBSCRIBE_TIME AS subscribeTime,
+			   LOGIN_TIME AS loginTime,
+			   party_row_id,
+			   unionid
+			   
+		FROM TB_WXUSER_INFO info ,TB_USER_RELA rela 
+			WHERE info.party_row_id = rela.rela_user_id
+		AND rela.user_id = #{user_id}
+		
+	</select>
+	
+	<!-- 插入一条  -->
+	<insert id="insertUserRela"
+		parameterType="com.takshine.wxcrm.domain.UserRela">
+		insert into TB_USER_RELA
+		(
+		      id,
+			  user_id,
+			  rela_user_id,
+			  type,
+			  create_date
+			  
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="user_id != null">#{user_id},</if>
+		    <if  test="user_id == null">NULL,</if>
+		    <if  test="rela_user_id != null">#{rela_user_id},</if>
+		    <if  test="rela_user_id == null">NULL,</if>
+		    <if  test="type != null">#{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    now()
+		 )
+	</insert>
+	
+	<!-- 更新一条 -->
+	<update id="updateUserRelaById"
+		parameterType="com.takshine.wxcrm.domain.UserRela">
+		UPDATE TB_USER_RELA SET
+		    <if  test="user_id != null">user_id = #{user_id},</if>
+		    <if  test="user_id == null">user_id = NULL,</if>
+		    <if  test="rela_user_id != null">rela_user_id = #{rela_user_id},</if>
+		    <if  test="rela_user_id == null">rela_user_id = NULL,</if>
+		    <if  test="type != null">type = #{type},</if>
+		    <if  test="type == null">type = NULL,</if>
+		    <if  test="create_date != null">create_date = #{create_date}</if>
+		    <if  test="create_date == null">create_date = NULL</if>
+		   
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteUserRelaById"
+		parameterType="java.lang.String">
+		delete from TB_USER_RELA where ID = #{value}
+	</delete>
+	
+	<!-- 根据user_id 和 rela_user_id 删除访问记录 -->
+	<delete id="removeFriendByPartyId"
+		parameterType="com.takshine.wxcrm.domain.UserRela">
+		delete from TB_USER_RELA where user_id = #{user_id} and rela_user_id=#{rela_user_id}
+	</delete>
+	
+</mapper>
+

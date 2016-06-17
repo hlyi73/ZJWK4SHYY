@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 参与用户  sql处理语句 -->
+<mapper namespace="ParticipantSql">
+	
+	<!-- 根据单个用户  -->
+	<select id="findParticipantById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.marketing.domain.Participant">
+		<![CDATA[
+		select id,
+			op_name as opName,
+			op_duty as opDuty,
+			op_depart as opDepart,
+			op_mobile as opMobile,
+			op_phone as opPhone,
+			op_email as opEmail,
+			op_fax as opFax,
+			op_country as opCountry,
+			op_province as opProvince,
+			op_city as opCity,
+			op_address as opAddress,
+			op_status as opStatus,
+			op_signature as opSignature,
+			op_gender as opGender,
+			op_company as opCompany,
+			op_image as opImage,
+			sync_status	as syncStatus,
+			create_date as createTime,
+			create_date as currentDateDistance
+			from TB_MK_PARTICIPANT
+			where ID=#{id} ]]>
+	</select>
+	
+	<!-- 查询用户列表 -->
+	<select id="findParticipantList"
+		parameterType="com.takshine.marketing.domain.Participant"
+		resultType="com.takshine.marketing.domain.Participant">
+		select
+			 op_name as opName,
+			op_duty as opDuty,
+			op_depart as opDepart,
+			op_mobile as opMobile,
+			op_phone as opPhone,
+			op_email as opEmail,
+			op_fax as opFax,
+			op_country as opCountry,
+			op_province as opProvince,
+			op_city as opCity,
+			op_address as opAddress,
+			op_status as opStatus,
+			op_signature as opSignature,
+			op_gender as opGender,
+			op_company as opCompany,
+			op_image as opImage,
+			sync_status	as syncStatus,
+			create_date as createTime,
+			create_date as currentDateDistance
+			from TB_MK_PARTICIPANT
+		where 1=1
+	    <if test="orderByString != null">
+	       #{orderByString}
+	    </if>
+	</select>
+	
+	
+	<!-- 插入一条用户记录 -->
+	<insert id="saveParticipant"
+		parameterType="com.takshine.marketing.domain.Participant">
+		insert into TB_MK_PARTICIPANT
+		(create_date,
+		  	id,
+			op_name,
+			op_duty,
+			op_depart,
+			op_company,
+			op_mobile,
+			op_phone,
+			op_email,
+			op_fax,
+			op_country,
+			op_province,
+			op_city,
+			op_address,
+			op_image,
+			op_status,
+			op_signature,
+			op_gender
+		    
+		) values (now(),
+		    <if test="id != null"> #{id}, </if>
+		    <if test="id == null"> NULL,  </if>
+		    <if test="opName != null"> #{opName}, </if>
+		    <if test="opName == null"> NULL,  </if>
+		    <if test="opDuty != null"> #{opDuty}, </if>
+		    <if test="opDuty == null"> NULL,  </if>
+		    <if test="opDepart != null"> #{opDepart}, </if>
+		    <if test="opDepart == null"> NULL,  </if>
+		    <if test="opCompany != null"> #{opCompany}, </if>
+		    <if test="opCompany == null"> NULL,  </if>
+		    <if test="opMobile != null"> #{opMobile}, </if>
+		    <if test="opMobile == null"> NULL,  </if>
+		    <if test="opPhone != null"> #{opPhone}, </if>
+		    <if test="opPhone == null"> NULL,  </if>
+		    <if test="opEmail != null"> #{opEmail}, </if>
+		    <if test="opEmail == null"> NULL,  </if>
+		    <if test="opFax != null"> #{opFax}, </if>
+		    <if test="opFax == null"> NULL,  </if>
+		    <if test="opCountry != null"> #{opCountry}, </if>
+		    <if test="opCountry == null"> NULL,  </if>
+		    <if test="opProvince != null"> #{opProvince}, </if>
+		    <if test="opProvince == null"> NULL,  </if>
+		    <if test="opCity != null"> #{opCity}, </if>
+		    <if test="opCity == null"> NULL,  </if>
+		    <if test="opAddress != null"> #{opAddress}, </if>
+		    <if test="opAddress == null"> NULL,  </if>
+		    <if test="opImage != null"> #{opImage}, </if>
+		    <if test="opImage == null"> NULL,  </if>
+		    <if test="opStatus != null"> #{opStatus}, </if>
+		    <if test="opStatus == null"> NULL, </if>
+		     <if test="opSignature != null"> #{opSignature}, </if>
+		    <if test="opSignature == null"> NULL, </if>
+		     <if test="opGender != null"> #{opGender} </if>
+		    <if test="opGender == null"> NULL </if>
+		 )
+	</insert>
+	
+	
+	
+	<!-- 根据id删除一条用户记录 -->
+	<delete id="deleteParticipantById"
+		parameterType="com.takshine.marketing.domain.Participant">
+		delete from TB_MK_PARTICIPANT where ID = #{id}
+	</delete>
+	
+	<!-- 根据id更新为已同步 -->
+	<update id="updateParticipantSyncStatusById"
+		parameterType="java.lang.String">
+		update TB_MK_PARTICIPANT set sync_status='1' where ID = #{id}
+	</update>
+	
+	<!-- 根据id更新为用户状态 -->
+	<update id="updateParticipantStatusById"
+		parameterType="com.takshine.marketing.domain.Participant">
+		update TB_MK_PARTICIPANT set status=#{status} where ID = #{id}
+	</update>
+	
+	<!-- 批量更新用户状态 -->
+	<update id="updateBatchParticipantStatusById"
+		parameterType="com.takshine.marketing.domain.Participant">
+		<![CDATA[
+		    update TB_MK_PARTICIPANT set status = #{status} where 1=2 
+		]]>
+    	<foreach collection ="id_in" item ="item" index ="index" separator =" "> 
+	       or ID = #{item} 
+    	</foreach > 
+	</update>
+</mapper>
+

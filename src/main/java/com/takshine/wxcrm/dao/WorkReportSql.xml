@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 消息 sql处理语句 -->
+<mapper namespace="workReportSql">
+	<!-- 分页查询消息 -->
+	<select id="findWorkReportListByFilter"
+		parameterType="com.takshine.wxcrm.domain.WorkReport"
+		resultType="com.takshine.wxcrm.domain.WorkReport">
+		SELECT distinct 
+		  id,
+		  type,
+		  date_format(start_date,'%Y-%m-%d') as start_date,
+		  date_format(end_date,'%Y-%m-%d') as end_date,
+		  title,
+		  assigner_id,
+		  status,
+		  remark,
+		  date_format(create_time,'%Y-%m-%d') as create_time,
+		  creator,
+		  rela_workid,
+		  crm_id as crmId,
+		  org_id as orgId,
+		  (select HEADIMGURL from TB_WXUSER_INFO where party_row_id = twr.assigner_id) as headImgurl
+		  FROM TB_WORK_REPORT twr where 1=1
+		  <if test="type != null and type != ''"> and type = #{type}</if>
+		  <if test="assigner_id !=null and assigner_id != ''"> and assigner_id = #{assigner_id}</if>
+		  <if test="status != null and status != ''"> and status = #{status}</if>
+		  <if test="start_date != null and start_date != ''"> and  date_format(start_date,'%Y-%m-%d') &gt;= #{start_date}</if>
+		  <if test="end_date != null and end_date!=''">and  date_format(start_date,'%Y-%m-%d') &lt;= #{end_date}</if>
+		  <if test="create_time != null and create_time != ''">and date_format(create_time,'%Y-%m-%d')=#{create_time}</if>
+		  <if test="remark != null and remark != ''">and remark=#{remark}</if>
+		  <if test="orgId != null and orgId != ''">and org_id=#{orgId}</if>
+		  <if test="crm_id_in != null and crm_id_in.size >0 ">
+		  	and crm_id in 
+		  	<foreach collection="crm_id_in" index="index" item="crmid" open="("
+			    separator="," close=")">
+			   #{crmid}
+			</foreach>
+		  </if>
+		  
+		  <if test="rowid_in != null and rowid_in.size >0 ">
+		  	and id in 
+		  	<foreach collection="rowid_in" index="index" item="rowid" open="("
+			    separator="," close=")">
+			   #{rowid}
+			</foreach>
+		  </if>
+		  
+		  <if test="assignid_in != null and assignid_in.size >0 ">
+		  	and crm_id in 
+		  	<foreach collection="assignid_in" index="index" item="assignid" open="("
+			    separator="," close=")">
+			   #{assignid}
+			</foreach>
+
+		  </if>
+		  
+		  <if test="orderByString != '' and orderByString != null">
+		     ORDER BY ${orderByString}
+		  </if>
+		  <if test="orderByString == '' or orderByString == null">
+		  	  ORDER BY end_date desc
+		  </if>
+		  
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	
+	<!-- 查询是否有工作计划 -->
+	<select id="findWorkReportByPartyIdAndDate"
+		parameterType="com.takshine.wxcrm.domain.WorkReport"
+		resultType="com.takshine.wxcrm.domain.WorkReport">
+		SELECT distinct 
+		  id,
+		  type,
+		  date_format(start_date,'%Y-%m-%d') as start_date,
+		  date_format(end_date,'%Y-%m-%d') as end_date,
+		  title,
+		  assigner_id,
+		  status,
+		  remark,
+		  date_format(create_time,'%Y-%m-%d') as create_time,
+		  creator,
+		  org_id as orgId 
+		  FROM TB_WORK_REPORT where assigner_id = #{assigner_id} and date_format(create_time,'%Y-%m-%d') = #{create_time} and date_format(start_date,'%Y-%m-%d') = #{start_date} and type = #{type} and org_id= #{orgId}
+		  limit 0,1
+	</select>
+	
+	<!-- 查询单个工作计划 -->
+	<select id="findWorkReportById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.wxcrm.domain.WorkReport">
+		<![CDATA[
+			select
+			   id,
+			  type,
+			  date_format(start_date,'%Y-%m-%d') as start_date,
+			  date_format(end_date,'%Y-%m-%d') as end_date,
+			  title,
+			  assigner_id,
+			  status,
+			  remark,
+			  date_format(create_time,'%Y-%m-%d') as create_time,
+			  creator,
+			  rela_workid,
+			  crm_id as crmId,
+			  org_id as orgId
+			from TB_WORK_REPORT
+			  where id=#{value}   
+		]]>
+	</select>
+	
+	<!-- 统计查询 -->
+	<select id="analyticsWorkReport"
+		parameterType="com.takshine.wxcrm.domain.WorkReport"
+		resultType="com.takshine.wxcrm.domain.WorkReport">
+			select comments_grade,create_time,assignerid,creator from(
+			select avg(comments_grade) as comments_grade,date_format(tc.create_time,'%Y-%m-%d') as create_time,'' as assignerid,
+			'平均值' as creator
+			from TB_COMMENTS tc,TB_WORK_REPORT twr
+			where tc.rela_type='WorkReport' and twr.id = tc.rela_id 
+			<if test="assigner_id !=null and assigner_id != ''"> and assigner_id = #{assigner_id}</if>
+			<if test="eval_type != null">and tc.eval_type = #{eval_type}</if>
+			<if test="start_date != null">
+				and date_format(tc.create_time,'%Y-%m-%d') &gt;= #{start_date}
+			</if>
+			<if test="end_date != null">
+				and date_format(tc.create_time,'%Y-%m-%d') &lt;= #{end_date}
+			</if>
+			<if test="assignid_in != null and assignid_in.size >0 ">
+			  	and twr.crm_id in 
+			  	<foreach collection="assignid_in" index="index" item="assignid" open="(" separator="," close=")">
+				   #{assignid}
+			</foreach>
+
+		  </if>
+			group by date_format(tc.create_time,'%Y-%m-%d')
+			
+			union 
+			
+			select avg(comments_grade) as comments_grade,date_format(tc.create_time,'%Y-%m-%d') as create_time,'' as assignerid,'整体平均' as creator
+			from TB_COMMENTS tc,TB_WORK_REPORT twr
+			where tc.rela_type='WorkReport' 
+			and twr.id = tc.rela_id 
+			<if test="start_date != null">
+				and date_format(tc.create_time,'%Y-%m-%d') &gt;= #{start_date}
+			</if>
+			<if test="end_date != null">
+				and date_format(tc.create_time,'%Y-%m-%d') &lt;= #{end_date}
+			</if>
+			group by date_format(tc.create_time,'%Y-%m-%d')
+			) t order by create_time
+	</select>
+	
+	<!-- 统计消息总数 -->
+	<select id="countWorkReportByFilter"
+		parameterType="com.takshine.wxcrm.domain.WorkReport"
+		resultType="Integer">
+		select count(1)
+			from TB_WORK_REPORT
+		where 1=1
+		  <if test="type != null"> and type = #{type}</if>
+		  <if test="assigner_id !=null"> and assigner_id = #{assigner_id}</if>
+		  <if test="status != null"> and status = #{status}</if>
+		  <if test="createTime != null"> and create_time >= #{createTime}</if>
+	</select>
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertWorkReport"
+		parameterType="com.takshine.wxcrm.domain.WorkReport">
+		insert into TB_WORK_REPORT
+		(
+		  id,
+		  type,
+		  start_date,
+		  end_date,
+		  title,
+		  assigner_id,
+		  status,
+		  remark,
+		  create_time,
+		  crm_id,
+		  org_id,
+		  creator
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="type != null">#{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    <if  test="start_date != null">#{start_date},</if>
+		    <if  test="start_date == null">NULL,</if>
+		    <if  test="end_date != null">#{end_date},</if>
+		    <if  test="end_date == null">NULL,</if>
+		    <if  test="title != null">#{title},</if>
+		    <if  test="title == null">NULL,</if>
+		    <if  test="assigner_id != null">#{assigner_id},</if>
+		    <if  test="assigner_id == null">NULL,</if>
+		    <if  test="status != null">#{status},</if>
+		    <if  test="status == null">NULL,</if>
+		    <if  test="remark != null">#{remark},</if>
+		    <if  test="remark ==null">NULL,</if>
+		    <if  test="create_time != null">now(),</if>
+		    <if  test="create_time ==null">now(),</if>
+		    <if  test="crmId != null">#{crmId},</if>
+		    <if  test="crmId ==null">NULL,</if>
+		    <if  test="orgId != null">#{orgId},</if>
+		    <if  test="orgId ==null">NULL,</if>
+		    <if  test="creator != null">#{creator}</if>
+		    <if test="creator ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条消息 -->
+	<update id="updateWorkReportById"
+		parameterType="com.takshine.wxcrm.domain.WorkReport">
+		UPDATE TB_WORK_REPORT SET
+		    <if  test="start_date != null">start_date = #{start_date},</if>
+		    <if  test="start_date == null">start_date = NULL,</if>
+		    <if  test="end_date != null">end_date = #{end_date},</if>
+		    <if  test="end_date == null">end_date = NULL,</if>
+		    <if  test="remark != null">remark = #{remark},</if>
+		    <if  test="remark == null">remark = NULL,</if>
+		    <if  test="title != null">title = #{title}</if>
+		    <if  test="title == null">title = NULL</if>
+		 WHERE id=#{id}
+	</update>
+	
+	
+	<!-- 更新工作计划状态 -->
+	<update id="updateWorkReportStatusById"
+		parameterType="com.takshine.wxcrm.domain.WorkReport">
+		UPDATE TB_WORK_REPORT SET
+		    status = #{status}
+		 WHERE id=#{id}
+	</update>
+	
+	<!-- 删除工作计划 -->
+	<delete id="deleteWorkReportById"
+		parameterType="java.lang.String">
+		delete from TB_WORK_REPORT where id=#{value}
+	</delete>
+	
+	<!-- 用于微信文字菜单回复 -->
+	<select id="findWorkReportComments"
+		parameterType="com.takshine.wxcrm.domain.WorkReport"
+		resultType="com.takshine.wxcrm.domain.WorkReport">
+		SELECT distinct 
+		  twr.id,
+		  twr.type,
+		  date_format(twr.start_date,'%Y-%m-%d') as start_date,
+		  date_format(twr.end_date,'%Y-%m-%d') as end_date,
+		  twr.title,
+		  tc.assignerid,
+		  twr.status,
+		  twr.remark,
+		  date_format(tc.create_time,'%Y-%m-%d') as create_time,
+		  tc.creator,
+		  twr.rela_workid,
+		  twr.crm_id as crmId,
+		  twr.org_id as orgId,
+		  tc.comments_grade as comments_grade,
+		  tc.eval_type as eval_type
+		  FROM TB_WORK_REPORT twr,TB_COMMENTS tc where twr.id = tc.rela_id
+			and date_format(tc.create_time,'%Y-%m-%d') = date_format(date_sub(now(),interval 1 day),'%Y-%m-%d')
+		  <if test="type != null and type != ''"> and type = #{type}</if>
+		  <if test="assigner_id !=null and assigner_id != ''"> and assigner_id = #{assigner_id}</if>
+		  <if test="status != null and status != ''"> and status = #{status}</if>
+		  <if test="start_date != null and start_date != ''"> and  date_format(start_date,'%Y-%m-%d') &gt;= #{start_date}</if>
+		  <if test="end_date != null and end_date!=''">and  date_format(start_date,'%Y-%m-%d') &lt;= #{end_date}</if>
+		  <if test="crm_id_in != null and crm_id_in.size >0 ">
+		  	and twr.crm_id in 
+		  	<foreach collection="crm_id_in" index="index" item="crmid" open="("
+			    separator="," close=")">
+			   #{crmid}
+			</foreach>
+		  </if>
+		  <if test="rowid_in != null and rowid_in.size >0 ">
+		  	and twr.id in 
+		  	<foreach collection="rowid_in" index="index" item="rowid" open="("
+			    separator="," close=")">
+			   #{rowid}
+			</foreach>
+		  </if>
+		  
+		  <if test="assignid_in != null and assignid_in.size >0 ">
+		  	and twr.crm_id in 
+		  	<foreach collection="assignid_in" index="index" item="assignid" open="("
+			    separator="," close=")">
+			   #{assignid}
+			</foreach>
+
+		  </if>
+		  
+		  <if test="orderByString != '' and orderByString != null">
+		     ORDER BY ${orderByString}
+		  </if>
+		  <if test="orderByString == '' or orderByString == null">
+		  	  ORDER BY tc.create_time desc
+		  </if>
+		  
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+</mapper>
+

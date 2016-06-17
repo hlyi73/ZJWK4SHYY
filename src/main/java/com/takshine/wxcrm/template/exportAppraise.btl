@@ -1,0 +1,228 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>评价报告</title>
+<style type="text/css">
+</style>
+</head>
+<body>
+	${userinfo.name},您好！
+	<br /> &nbsp;&nbsp;小薇现在提醒您：
+	<br /> 工作计划及评价报表（时间段：${start}~${end}）：
+	<br />
+	<div>
+		<%
+			if (myreport.~size > 0) {
+		%>
+		<table border="1">
+			<tr>
+				<th align="center" colspan="8">我的工作计划及评价（工作计划总计${myreport.~size}条）<br /></th>
+			</tr>
+			<tr>
+				<th>标题</th>
+				<th>开始时间</th>
+				<th>结束时间</th>
+				<th>创建时间</th>
+				<th>评价人</th>
+				<th>评价时间</th>
+				<th>评价</th>
+				<th>评价分</th>
+			</tr>
+			<%
+				for(report in myreport){
+			var isFirst = true;
+			%>
+			<tr>
+				<td>${report.title}</td>
+				<td>${report.start_date}</td>
+				<td>${report.end_date}</td>
+				<td>${report.create_time}</td>
+				<%
+					for(comment in report.commnets){
+				if (isFirst){
+				%>
+				<%
+					}else{
+				%>
+			
+			<tr>
+				<td colspan="4"></td>
+				<%
+					}
+				%>
+				<td>${comment.creator}</td>
+				<td>${comment.create_time}</td>
+				<td>${comment.comments}</td>
+				<td>${comment.comments_grade}</td>
+			</tr>
+			<%
+				isFirst = false;
+			}
+			%>
+
+			<%
+				if (isFirst){
+			%>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<%
+				}
+			%>
+
+			<tr>
+				<th colspan="7" align="right">平均分</th>
+				<td>${report.appraisedGrade}</td>
+			</tr>
+			<%
+				}
+			%>
+		</table>
+		<%
+			}
+		%>
+
+		</br>
+
+		<%
+			if (teamreport.~size > 0) {
+		%>
+		<table border="1">
+			<tr>
+				<th align="center" colspan="9">下属的工作计划及评价（工作计划总计${teamreport.~size}条）<br /></th>
+			</tr>
+			<tr>
+				<th>标题</th>
+				<th>开始时间</th>
+				<th>结束时间</th>
+				<th>创建时间</th>
+				<th>责任人</th>
+				<th>评价人</th>
+				<th>评价时间</th>
+				<th>评价</th>
+				<th>评价分</th>
+			</tr>
+			<%
+				for(report in teamreport){
+					var isFirst = true;
+			%>
+			<tr>
+				<td>${report.title}</td>
+				<td>${report.start_date}</td>
+				<td>${report.end_date}</td>
+				<td>${report.create_time}</td>
+				<td>${report.creator}</td>
+				<%
+					for(comment in report.commnets){
+				if (isFirst){
+				%>
+				<%
+					}else{
+				%>
+			
+			<tr>
+				<td colspan="5"></td>
+				<%
+					}
+				%>
+				<td>${comment.creator}</td>
+				<td>${comment.create_time}</td>
+				<td>${comment.comments}</td>
+				<td>${comment.comments_grade}</td>
+			</tr>
+			<%
+					isFirst = false;
+			}
+			%>
+
+			<%
+				if (isFirst){
+			%>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<%
+				}
+			%>
+
+			<tr>
+				<th colspan="8" align="right">平均分</th>
+				<td>${report.appraisedGrade}</td>
+			</tr>
+			<%
+				}
+			%>
+		</table>
+		<%
+			}
+		%>
+		</br>
+
+		<%
+			if (allreport.~size > 0) {
+		%>
+
+		<table border="1">
+			<tr>
+				<th align="center" colspan="9">全部工作计划及评价（工作计划总计${allreport.~size}条）<br /></th>
+			</tr>
+			<tr>
+				<th>标题</th>
+				<th>开始时间</th>
+				<th>结束时间</th>
+				<th>创建时间</th>
+				<th>责任人</th>
+				<th>评价人</th>
+				<th>评价时间</th>
+				<th>评价</th>
+				<th>评价分</th>
+			</tr>
+			<%
+				for(report in allreport){
+			var isFirst = true;
+			%>
+			<tr>
+				<td>${report.title}</td>
+				<td>${report.start_date}</td>
+				<td>${report.end_date}</td>
+				<td>${report.create_time}</td>
+				<td>${report.creator}</td>
+				<%
+for(comment in report.commnets){
+if (isFirst){%>
+				<%}else{%>
+			
+			<tr>
+				<td colspan="5"></td>
+				<%}%>
+				<td>${comment.creator}</td>
+				<td>${comment.create_time}</td>
+				<td>${comment.comments}</td>
+				<td>${comment.comments_grade}</td>
+			</tr>
+			<%
+isFirst = false;
+}%>
+
+			<%if (isFirst){%>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<%}%>
+
+			<tr>
+				<th colspan="8" align="right">平均分</th>
+				<td>${report.appraisedGrade}</td>
+			</tr>
+			<%
+}
+%>
+		</table>
+		<%}%>
+	</div>
+	<a>&nbsp;&nbsp;指尖微客</a>
+	<a>&nbsp;&nbsp;${now}</a>
+</body>
+</html>

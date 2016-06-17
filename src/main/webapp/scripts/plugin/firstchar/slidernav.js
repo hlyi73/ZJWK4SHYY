@@ -1,0 +1,62 @@
+/*
+ *  SliderNav - A Simple Content Slider with a Navigation Bar
+ *  Copyright 2010 Monjurul Dolon, http://mdolon.com/
+ *  Released under the MIT, BSD, and GPL Licenses.
+ *  More information: http://devgrow.com/slidernav
+ */
+$.fn.sliderNav = function(options) {
+	var defaults = {
+		items : [ "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+				"m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
+				"y", "z" ],
+		debug : false, 
+		height : null,
+		arrows : true 
+	};
+	var opts = $.extend(defaults, options);
+	var o = $.meta ? $.extend({}, opts, $$.data()) : opts;
+	var slider = $(this);
+	$(slider).addClass('slider');
+	$('.slider-content li:first', slider).addClass('selected');
+	$(slider).append('<div class="slider-nav"><ul></ul></div>');
+	for ( var i in o.items)
+		$('.slider-nav ul', slider).append(
+				"<li><a class='charitem' alt='#" + o.items[i] + "'>" + o.items[i] + "</a></li>"); 
+	//var height = $('.slider-nav', slider).height();
+	//if (o.height)
+	//	height = o.height;
+	var height = $(window).height()-54-60-25; 
+	
+	$(".charitem").css("height",(height-10)/26); 
+	if(height > 400){
+		$(".charitem").css("font-size","14px");
+	}else{
+		$(".charitem").css("font-size","12px");
+	}
+	
+	$(".charitem").css("padding","0px 8px 0px 5px"); 
+	
+	$('.slider-content, .slider-nav', slider).css('height', height);  
+	if (o.debug) 
+		$(slider).append('<div id="debug">Scroll Offset: <span>0</span></div>');
+	$('.slider-nav a', slider).mouseover(function(event) {
+		var target = $(this).attr('alt');
+		var cOffset = $('.slider-content', slider).offset().top;
+		var tmp = $('.slider-content ' + target, slider).offset();
+		var tOffset = 0;
+		if(tmp && tmp.top != 'undefined'){
+			tOffset = $('.slider-content ' + target, slider).offset().top;
+		}
+		var height = $('.slider-nav', slider).height();
+		if (o.height)
+			height = o.height;
+		var pScroll = (tOffset - cOffset) - height / 8;
+		$('.slider-content li', slider).removeClass('selected');
+		$(target).addClass('selected');
+		$('.slider-content', slider).stop().animate({
+			scrollTop : '+=' + pScroll + 'px'
+		});
+		if (o.debug)
+			$('#debug span', slider).html(tOffset);
+	});
+};

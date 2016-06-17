@@ -1,0 +1,690 @@
+<html lang="zh-cn">
+<head>
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+<script src="../jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<!--框架样式-->
+<link rel="stylesheet" href="css/wb.css">
+<script src="js/wb.js" type="text/javascript"></script>
+<title>- 微信CRM</title>
+</head>
+<body>
+	<div id="site-nav" class="navbar">
+		<a href="#" onclick="history.back();return false;" class="act-primary"><i
+			class="icon-back"></i></a>
+		<div class="act-secondary" data-toggle="navbar"
+			data-target="nav-collapse">
+			<i class="icon-menu"><b></b></i>
+		</div>
+		微信CRM
+	</div>
+	<div id="nav-collapse" class="navbar-menu">
+		<ul>
+			<li><a href="/index/my">我的通讯录</a></li>
+			<li><a href="/activity/my">我的聚会</a></li>
+			<li><a href="/card/setting">我的名片</a></li>
+			<li><a href="/recommend/index" data-ajax="false">群推荐中心</a></li>
+			<li><a href="/download/index">下载手机APP</a></li>
+		</ul>
+	</div>
+	<div class="view site-recommend">
+		<div id="page-header" class="page-header container">
+			<h1>跨界职场新人名片交换群</h1>
+		</div>
+		<div class="recommend-box">
+			<h4>群主及审核委员会个人资料</h4>
+			<div class="ui-body-d ui-corner-all info" style="padding: 1em;">
+				<p>【自由名片交换中心】</p>
+			</div>
+			<h4>群介绍</h4>
+			<div class="ui-body-d ui-corner-all info" style="padding: 1em;">
+				<p>本群只针对职场的新朋友的跨界的聚合。审核通过后，企业家可以跨界交换名片，相互学习。</p>
+				<p>诚信守法，团结协作；资源共享，共谋发展；扬善积德，奉献社会。</p>
+			</div>
+			<h4>成员要求：</h4>
+			<div class="ui-body-d ui-corner-all info" style="padding: 1em;">
+				<p>思想要求: 奉献、诚信、合作</p>
+				<p>学历要求: 本科</p>
+				<p>行业要求: 不限制</p>
+				<p>经验要求:刚入职场的新朋友们</p>
+				<p>性别要求: 不限</p>
+				<p>其他要求:</p>
+			</div>
+			<h4>群工作与愿景：</h4>
+			<div class="ui-body-d ui-corner-all info" style="padding: 1em;">
+				<p>1、 打造合作平台，促进职场朋友的发展</p>
+				<p>2、 打造跨界品牌，增强凝聚力和影响力</p>
+				<p>3、 团结一切可以团结的人，调动一切可以调动的积极因素，让群体更有力量</p>
+			</div>
+			<h4>禁止说明:</h4>
+			<div class="ui-body-d ui-corner-all info" style="padding: 1em;">
+				<p>本群禁止一切广告</p>
+			</div>
+			<h4>审核时间层次：</h4>
+			<div class="ui-body-d ui-corner-all info" style="padding: 1em;">非常严格（时间1~2天）</div>
+			<h4>群主审核问题:</h4>
+			<div class="ui-body-d ui-corner-all info" style="padding: 1em;">
+				<p>请做个自我介绍</p>
+			</div>
+			<div class="well" style="margin: 20px 0">
+				<div style="text-align: left; padding: 10px 0 20px;">
+					<b>审核流程</b>
+					<p>1.回答群主问题，提交加入申请</p>
+					<p>
+						2.获批后得到<b>群主微信号</b>，添加群主为微信好友
+					</p>
+					<p>3.待群主拉入总群</p>
+				</div>
+				<a href="/recommend/join/id/18" class="btn btn-block"> 点击申请加入 </a>
+				<div class="wrapper text-center text-info">
+					<p>满足条件者，提交申请后即可加入群</p>
+				</div>
+			</div>
+			<h4>最新申请成员(1635)：</h4>
+			<div id="view-list" class="list list-group listview accordion">
+				<a href="#recommendNoRight" class="list-group-item" data-rel="popup"><div
+						class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/6fead68b0a14cfe4f32654b051bc114e!46">
+						</div>
+						<div class="content">
+							<h2 class="title">王先明(王先明/整合天下赢15904503049)</h2>
+							<p>黑龙江省人脉资源共享圈创始人</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class="" data-src="http://qun.hk/index/avatar?url=">
+						</div>
+						<div class="content">
+							<h2 class="title">李福华(李福华)</h2>
+							<p>网讯安卓技术有限公司运营总监兼市场总监</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/c7aa5032573f248c3c70eeae5a1b025d!46">
+						</div>
+						<div class="content">
+							<h2 class="title">何光会(何光会)</h2>
+							<p>中华室内设计网全国分站运营中心总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/w9RpGQmNNfNbmD7ciaULTNmvM0jibl70UR0fIib91228ZyveboVsWGtApbUGmwEc1wKpzkXtib9VkZlU5iaQY6IsUGqBWAeQye6TP/46">
+						</div>
+						<div class="content">
+							<h2 class="title">张世恒(变成糖三角)</h2>
+							<p>日本HNG集团公司执行董事</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/1bb1653410b63325170c5dc2701c51f7!46">
+						</div>
+						<div class="content">
+							<h2 class="title">钟笑谦(钟笑谦)</h2>
+							<p>英杰传媒有限公司执行合伙人</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/7cc53d3fa4ecfd446bfe9074a5e2c64e!46">
+						</div>
+						<div class="content">
+							<h2 class="title">刘强(刘强)</h2>
+							<p>浙江宝业建设集团有限公司施工员</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class="" data-src="http://qun.hk/index/avatar?url=">
+						</div>
+						<div class="content">
+							<h2 class="title">白展堂奢侈品(白展堂奢侈品)</h2>
+							<p>白展堂名品法人</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/CoVhIIEG1UpBibR5Ta3gcOs6WwXg7p5g30O4uzshZIAicaLdCYayn7b67IPTF758usg2r2UNBRwM6whrgvmbF3lZ4uERs5afA4/46">
+						</div>
+						<div class="content">
+							<h2 class="title">少林宗杰(少林宗杰)</h2>
+							<p>夷仙正岩茶品牌运营有限公司，交广(福建)机动车服务有限公司，泉州联誉投资咨询有限公司，总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/8RTtTVNa2SdQTOfXpuxnWskv2GXnIMrP7Usf8xEibjlcRlwkTwUHyY7epTw8iccjT9iaKXSekV6mRm2QUPOcfXt9VnqPaYhPPJP/46">
+						</div>
+						<div class="content">
+							<h2 class="title">王娜(Kate Wang)</h2>
+							<p>深圳市嘉誉投资顾问有限公司总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class="" data-src="http://qun.hk/index/avatar?url=">
+						</div>
+						<div class="content">
+							<h2 class="title">黄海翔(手机用户1393872145)</h2>
+							<p>香港元易堂总裁</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/w9RpGQmNNfPhkX8A53qXm5vibnViaiaVfz0EXxd19IAdr17Zu5SicptVE3tF6grfej0wpJUj1DLAXUZMxJqErjvBzczQgMpC4UUP/46">
+						</div>
+						<div class="content">
+							<h2 class="title">姜周(众智顾问)</h2>
+							<p>华川联盟执行会长</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/9poO7UYSBiaLXOicHp2WY6l9CX35vZwPiaER9khJ99tUx7ibujZvic6vqiaZ72xpX3UtaOarVicZzyzWeQubfKFTDqe7Tj16pHCQzl1/46">
+						</div>
+						<div class="content">
+							<h2 class="title">乔启宝(乔枫)</h2>
+							<p>北京颐鼎居工长俱乐部总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/CoVhIIEG1UpBibR5Ta3gcOoRIrgibDLmh7JnicJGb34zENyfrAlGmKrxNCZ7fBO8pSwkYzyAtQJaFakRYjg2aaCV9ZPNAk3lvEH/46">
+						</div>
+						<div class="content">
+							<h2 class="title">王杰波(阿波)</h2>
+							<p>姿尚雅美容养生会所机构负责人</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/38620095e14ab1f0737c95d52358dade!46">
+						</div>
+						<div class="content">
+							<h2 class="title">王戈(兵馬俑)</h2>
+							<p>深港澳国际顶级私人物品嘉年华创始人、资深策划人、制片人</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/Q3auHgzwzM5UB0Eyw5T4uiakzXiaQM3KlCrgldoZ6HkA16RW0I2gqp4KL3DDiaGEMus7OezvQx4sFbbFjBRpZkf36a1oyKCAm9ZhVTNkibzd2icc/46">
+						</div>
+						<div class="content">
+							<h2 class="title">李煜超(yoyo)</h2>
+							<p>北京宝岛妇产医院市场部渠道经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/7f28f8c2980960ad997e0c8bb61fc963!46">
+						</div>
+						<div class="content">
+							<h2 class="title">曾维果(曾维果)</h2>
+							<p>安利营销代表</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/w9RpGQmNNfPM4lDCUUbOWzoyJUu54n5oDGRrEiaRfVPsh06wBHmF6eHVD7LYAoejiaoiapXhYmnpoM3VTsDQY8azg/46">
+						</div>
+						<div class="content">
+							<h2 class="title">巴学影(巴学影)</h2>
+							<p>中国平安保险高级主任</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class="" data-src="http://qun.hk/index/avatar?url=">
+						</div>
+						<div class="content">
+							<h2 class="title">颜培欢(颜培欢)</h2>
+							<p>云天旅游企划部总监</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/9poO7UYSBiaLXOicHp2WY6lyIwdicPldtNm1fBdMtJ6zb7QCumaU1pBjSfMicvDkA1MBByJQnbvicHm2VMqXXibTmf8hiaq52cnEvhH/46">
+						</div>
+						<div class="content">
+							<h2 class="title">吴晓东(吴晓东)</h2>
+							<p>东北特产厦门销售公司总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class="" data-src="http://qun.hk/index/avatar?url=">
+						</div>
+						<div class="content">
+							<h2 class="title">徐蔓(手机用户1393810694)</h2>
+							<p>北京思伯乐投资有限公司总经理</p>
+						</div>
+					</div></a>
+				<div class="listview-tips listview-tips-add">
+					<a href="/recommend/join/id/18">点击申请加入</a>
+				</div>
+				<a href="#recommendNoRight" class="list-group-item" data-rel="popup"><div
+						class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/wB0rYkNeQIjpeZDxwbbf5Ed8RrHtSXBxWugefNTzFAkVBOOHwibyEMRJz0uoVpHic7HOxbV4zO7CoEphLoKTxiak5NHVS5ReC27/46">
+						</div>
+						<div class="content">
+							<h2 class="title">何苗(袅袅柔柔、)</h2>
+							<p>武汉摩根盛通投资顾问有限公司学习顾问</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/PiajxSqBRaEJNm99Dics8YWdgeZHsmiagqyoC3r1cce4MPHS3n855vFwibVicHtctxbIicicoTCmWrOQ01QuguHPiahhYg/46">
+						</div>
+						<div class="content">
+							<h2 class="title">才禹翔(TA36才禹翔狮兄ibobo爱宝宝国际)</h2>
+							<p>爱宝宝国际玩教具总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/w9RpGQmNNfPhkX8A53qXm7JAg9ibOgaO8IGoZdRxrr1mbrWD4h5vXT1J1EGK3t4HLpliabKueZekdhFwzebtRLlBEXJQeHzDpo/46">
+						</div>
+						<div class="content">
+							<h2 class="title">薛亚龙(薛【互助联盟】)</h2>
+							<p>西安咏春功夫道馆执行董事中国企成商学院代理商</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/PiajxSqBRaEJP5TUfianQmXPOosg5fxViaKHJiaXdRlghkDpe6pzg0njPynUCKV29VphNN5ldaceA5kdOQbt47cFzw/46">
+						</div>
+						<div class="content">
+							<h2 class="title">佟峰(能量慧)</h2>
+							<p>华恩堂健康管理全球品牌东北运营中心总经理（首席健康管理官）</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/7a3e9115eceefc41d4def845edac6f39!46">
+						</div>
+						<div class="content">
+							<h2 class="title">邓力焱(力焱(LI yan))</h2>
+							<p>中国式领袖私人董事俱乐部组委会创始人</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/5aaafe3e9165be779d9c971e3f726cc5!46">
+						</div>
+						<div class="content">
+							<h2 class="title">冯利强(陈安之机构—冯利强)</h2>
+							<p>陈安之国际训练机构课程推广代表</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/9poO7UYSBiaL7EnibNouVia8q8ehZBJ0QMKD5vKZ1krd4HAJBApXsIy9CQ4INXCDxXuM7eVJa7KSMxlwD3tEC3geIibpt7JKj78T/46">
+						</div>
+						<div class="content">
+							<h2 class="title">赵见丽(赵建丽)</h2>
+							<p>洪顺珠宝腾冲公司副总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/PiajxSqBRaEJKmqCeibds8079bPZrKgV7kfxatKupWS3icF7ATWUeXtDL01SZ81FqHdJ68zlvJCPz7SnkGM5q5tgA/46">
+						</div>
+						<div class="content">
+							<h2 class="title">程亮(程亮)</h2>
+							<p>福州自由职业者</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/CoVhIIEG1UpBibR5Ta3gcOtFhooQ6sBwgicbmicBGn3Wd6un8W9XyuWnmJnQVROLmNn1jKH2mUwibFp6wTNaFrFnRict6Jbw3ibbtG/46">
+						</div>
+						<div class="content">
+							<h2 class="title">范建东(范建东)</h2>
+							<p>洪顺珠宝北京天雅公司经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/CoVhIIEG1UpGcLexXxfBzoAEPMo2vFicESfFVatVVf6o5ic0yFjHjPmy41Vuoc4gSnia5fiaJqiazyfhtydqaptibSic4EWQTceLFRt/46">
+						</div>
+						<div class="content">
+							<h2 class="title">王刚 (王刚)</h2>
+							<p>思八达企业管理培训有限公司运营经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/Q3auHgzwzM5cw8ibah45fNYo6Ak86VgR1lP1FOcEwsk8lyXUqQBCJT56ZDRuqZJbicdiaH4E2hQ3eLR0iaw6BXIj3Q/46">
+						</div>
+						<div class="content">
+							<h2 class="title">迟国亮(迟国亮)</h2>
+							<p>上海领航者产业集团销售总监</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/w9RpGQmNNfPhkX8A53qXm9Du3XFsibV2GGfj5XNqKS9VyqlBIosJyJhaYibs9jpTJKGOy0sITK9kgl6VVzPVUXmEV7QvbxjafS/46">
+						</div>
+						<div class="content">
+							<h2 class="title">李旭(李旭品牌营销策划咨询机构)</h2>
+							<p>李旭品牌营销策划咨询机构总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/j8cooK2zCqoknXo1X0MGjs5BzuyMAeaml9RvsibgjOxk7bBia768XakrHIsG2Mia2mX8slubW3nJwibP91UeOATBNGQA0EmTicJ9Q/46">
+						</div>
+						<div class="content">
+							<h2 class="title">唐良伍(重来客)</h2>
+							<p>永州星安残疾人托养中心总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/60dff42bb5ccf18ab13352f6c7bc591f!46">
+						</div>
+						<div class="content">
+							<h2 class="title">冼一丹(阿夏-夏说)</h2>
+							<p>阿夏新媒体商学院院长</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/o6peIzVK5kqicIiakyJibvoAQlibMEuLxo1cJydFLLgh5m3yiaffloicl1mGe8W9OyaqVNB7P1CSI3In4FcVX5FyFyfIPzgyF84hzb/46">
+						</div>
+						<div class="content">
+							<h2 class="title">卢颖君(伊星宝贝)</h2>
+							<p>广州伊星母婴之家经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/CoVhIIEG1UryW17ukMQZjHRtWtkrCTibQ4TzmYfNWNAEXCMrGQ33dFZDW0SoXibae30iaJMSrib4WhOn6J3mmqZ93DMxZpTWBJ7z/46">
+						</div>
+						<div class="content">
+							<h2 class="title">黄介人(在温州易学界我是帅哥算命做卦看风)</h2>
+							<p>温州市风水事务所主任：温州著名名家大师：</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/j8cooK2zCqoknXo1X0MGjnR6W2sBVvI7ETGYfLgW9icHRPlTEXYKrBhC7oz70GE8iaU4LGZVPWQkknqicWWan8iblKWPrF58jW9H/46">
+						</div>
+						<div class="content">
+							<h2 class="title">周水浒(安溪茶人)</h2>
+							<p>南音茗茶经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/55f3cd9c3c499604a9ebe0b88bf8e3ee!46">
+						</div>
+						<div class="content">
+							<h2 class="title">刘昕(刘昕)</h2>
+							<p>深圳市显创光电有限公司销售总监</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/9fa9e863c0cb2ebb47eaa8a1cfceb68c!46">
+						</div>
+						<div class="content">
+							<h2 class="title">王诩( 王诩-自强不息)</h2>
+							<p>中铭智文化发展有限公司副总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/CoVhIIEG1Upic1REOcNR9Be8UPkicOWVIiaxe5FtacxgLbd4IXgDMfyvgrpnAm2PUj53WPoaSnWpmlMl9csrkftA0TUSHJLnoj6/46">
+						</div>
+						<div class="content">
+							<h2 class="title">梁伶俐(Lisa 梁伶俐)</h2>
+							<p>深圳市希彼德企业咨询管理有限公司副总经理</p>
+						</div>
+					</div></a>
+				<div class="listview-tips listview-tips-add">
+					<a href="/recommend/join/id/18">点击申请加入</a>
+				</div>
+				<a href="#recommendNoRight" class="list-group-item" data-rel="popup"><div
+						class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/8ea5b005fb03eeeedd8aa8f40b5d41da!46">
+						</div>
+						<div class="content">
+							<h2 class="title">李娟丽(李娟丽)</h2>
+							<p>北京北大医学部外科美容大夫</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class="" data-src="http://qun.hk/index/avatar?url=">
+						</div>
+						<div class="content">
+							<h2 class="title">罗斯(罗斯)</h2>
+							<p>共赢国际训练中心股东</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/o6peIzVK5kqicIiakyJibvoAaJHl93XrskrEJibnfiaMmIo6FTwk0ibIvofMnfcfhcjDeqZ4EliclJbVHr34lUVtmFepRD7p2DGN4eW/46">
+						</div>
+						<div class="content">
+							<h2 class="title">毕菲(毕菲)</h2>
+							<p>监理公司总监代表</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/8RTtTVNa2SdQTOfXpuxnWrue0Jz3Z7OLGdS1CSyecYWf5RpVbn4T753xzYZDBIaufOUKgPEian0v2PFTyxRsSg4WhS9KWnSQ2/46">
+						</div>
+						<div class="content">
+							<h2 class="title">张敬(若水)</h2>
+							<p>商学院助理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/9poO7UYSBiaIFf7rk8RrPmFXARTKWlzzmC7uz8TCDR3xwGLB61xOyRp9c8mngJiaMfTC2Ja9vfnyeIVFoETbTTCw/46">
+						</div>
+						<div class="content">
+							<h2 class="title">魏丽萍(魏丽萍)</h2>
+							<p>卢圣道经络调理全国连锁机构执行总裁</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/9poO7UYSBiaLXOicHp2WY6l4k2fnq1Y3m0bEKqeA9MId4fcCfjpiblZT4yu2oJFU1a0GaM2X8zqIEE3LcG7Mjxibvt6N8DLrxVyy/46">
+						</div>
+						<div class="content">
+							<h2 class="title">方誉森(方誉森)</h2>
+							<p>金迈思食品包装设计设计经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/CoVhIIEG1UpBibR5Ta3gcOjYHOQpoGtfScBLt35t2vtULFiaKm24EUJ5kFuAqBSezvXPNIHs3eSTRevzs7awq41ao2KxWP5icaK/46">
+						</div>
+						<div class="content">
+							<h2 class="title">段春安(老段)</h2>
+							<p>上海励诚投资发展有限公司董事</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class="" data-src="http://qun.hk/index/avatar?url=">
+						</div>
+						<div class="content">
+							<h2 class="title">宁籽(手机用户1393760231)</h2>
+							<p>新华网健康频道副总经理、 北京市润地文化艺术传播有限公司总经理、中国国际医疗促进委员会副秘书长、北京总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/bfcefeb33fccdebba5bf5df543166069!46">
+						</div>
+						<div class="content">
+							<h2 class="title">曾炳隆(曾炳隆)</h2>
+							<p>洪顺珠宝昆明傲城公司经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwca.qiniudn.com/mmopen/9poO7UYSBiaLXOicHp2WY6lxd4fnQVoFU04nJpMAqfQFdB61vZdSQmPNyyvaDJDWQ8kQISTUSYMZ9oib0mQ6P0CtwPu5WT1EWjV/46">
+						</div>
+						<div class="content">
+							<h2 class="title">张国卫(大卫)</h2>
+							<p>杭州其丽科技有限公司副总经理</p>
+						</div>
+					</div></a><a href="#recommendNoRight" class="list-group-item"
+					data-rel="popup"><div class="list-group-item-bd">
+						<div class="thumb">
+							<img class=""
+								data-src="http://pbwc.qiniudn.com/avatar/00982d54b1fb89e9a0c26fcac5ebe76f!46">
+						</div>
+						<div class="content">
+							<h2 class="title">幸福人生(刘洪银)</h2>
+							<p>成都魅缘坊美容美体咨询有限公司技师</p>
+						</div>
+					</div></a>
+			</div>
+			<a id="more" href="#" data-status="wait"
+				class="view-more listview-tips-more"><span class="tips-wait"><b
+					class="icon icon-arrow-down"></b>点击显示更多申请成员</span><span
+				class="tips-loading">加载中</span><span class="tips-error">网络繁忙，请点击重新加载</span></a>
+			<script type="text/javascript">
+				$(function() {
+					new Pager({
+						monitor : $('#more'),
+						nextUrl : "/recommend/view/id/18/count/50/page/2",
+						container : $('#view-list'),
+						pauseInterval : 3
+					});
+				});
+			</script>
+			<div class="well" style="margin: 20px 0">
+				<div style="text-align: left; padding: 10px 0 20px;">
+					<b>审核流程</b>
+					<p>1.回答群主问题，提交加入申请</p>
+					<p>
+						2.获批后得到<b>群主微信号</b>，添加群主为微信好友
+					</p>
+					<p>3.待群主拉入总群</p>
+				</div>
+				<a href="/recommend/join/id/18" class="btn btn-block"> 点击申请加入 </a>
+				<div class="wrapper text-center text-info">
+					<p>满足条件者，提交申请后即可加入群</p>
+				</div>
+			</div>
+		</div>
+		<div id="recommendNoRight" data-modal="alert" class="modal">
+			<div class="modal-container">
+				<div class="popup-container">需要先申请加入后，才能查看其他群友信息</div>
+				<a href="/recommend/join/id/18" class="btn btn-block btn-success">
+					点击申请加入 </a>
+				<div class="actions">
+					<div class="btn btn-block btn-default" data-dismiss="modal">关闭窗口</div>
+				</div>
+			</div>
+		</div>
+		<div
+			style="padding: 1em 0; margin-top: 50px; border-top: 1px solid #DDD;">
+			<div class="well wrapper text-center">
+				<p>您是群主，想您的群得到免费推广机会吗？</p>
+				<p>想您的群有严格的审核制度吗？</p>
+				<p>想您的群找到更合适的群友吗？</p>
+				<a href="http://weixin.qq.com/g/hT2lG134NBRP1UWVv4Yr"
+					class="btn btn-block">点击 马上与我们联系</a>
+			</div>
+		</div>
+	</div>
+	<div class="gotop" style="display: none;">
+		<i class="icon icon-arrow-up"></i>
+	</div>
+	<div id="complaintForm" data-modal="alert" class="modal">
+		<form method="post" action="/complaint/index" class="modal-container"
+			novalidate="true">
+			<div class="modal-title">举报</div>
+			<div class="form-group">
+				<div class="control-label"></div>
+				<textarea class="form-control" required="" name="message"
+					placeholder="举报此页面的理由（色情，反动，广告，侵权等）" rows="3"></textarea>
+				<div class="help-block empty">请填写具体举报理由</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-block btn-default" type="submit">确认举报</button>
+			</div>
+			<div class="actions">
+				<div class="btn btn-block" data-dismiss="modal">关闭窗口</div>
+			</div>
+		</form>
+	</div>
+	<footer class="site-ft wrapper" data-position="">
+		<p>
+			<i class="icon icon-lock"></i> 数据已进行隐私加密，请放心使用
+		</p>
+		<div class="menu">
+			<a href="/index/follow" style="font-weight: bold;">关注我们</a>| <a
+				href="weixin://contacts/profile/bibi100"
+				onclick="alert('请查找微信号【bibi100】欢迎咨询！')">联系客服</a>| <a
+				href="/index/help">帮助</a>| <a href="#" data-toggle="modal"
+				data-target="complaintForm">举报</a>
+		</div>
+		<div style="color: #AAA; font-size: 12px; margin-top: .3em">
+			<p>Power By 微信CRM 交流 共享 互利 共赢</p>
+			<p class="footer-userinfo">
+				当前帐号：刘淋<a href="/oauth/logout"
+					onclick="return confirm('是否确认需要重新登录？'); return false;">重新登录</a><a
+					href="#" onclick="window.location.reload(); return false;">刷新</a>
+			</p>
+		</div>
+	</footer>
+</body>
+</html>

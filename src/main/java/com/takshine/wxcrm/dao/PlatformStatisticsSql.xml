@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 菜单 sql处理语句 -->
+<mapper namespace="platformStatisticsSql">
+	<!-- 分页查询菜单 -->
+	<select id="findPlatformStatisticsListByFilter"
+		parameterType="com.takshine.wxcrm.domain.PlatformStatistics"
+		resultType="com.takshine.wxcrm.domain.PlatformStatistics">
+		SELECT
+		      id,
+			  party_row_id,
+			  user_name,
+			  open_id,
+			  public_id,
+			  org_id,
+			  s_type as type,
+			  create_time,
+			  model,
+			  rela_id,
+			  r_type,
+			  url
+		  FROM TB_PLATFORM_STATISTICS where 1=1
+		  <if  test="party_row_id != null">and party_row_id=#{party_row_id}</if>
+		  <if  test="openId != null">and open_id=#{openId}</if>
+		  <if  test="orgId != null">and org_id=#{orgId}</if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+		<select id="countPlatformStatisticsByFilter"
+		parameterType="com.takshine.wxcrm.domain.PlatformStatistics"
+		resultType="Integer">
+		SELECT
+		    count(1) 
+		  FROM TB_PLATFORM_STATISTICS where 1=1
+		  <if  test="party_row_id != null">and party_row_id=#{party_row_id}</if>
+		<if  test="rela_id != null">and rela_id=#{rela_id}</if>
+		<if  test="model != null">and model=#{model}</if>
+		<if  test="r_type != null">and r_type=#{r_type}</if>
+	</select>
+	<!-- 插入一条  -->
+	<insert id="insertPlatformStatistics"
+		parameterType="com.takshine.wxcrm.domain.PlatformStatistics">
+		insert into TB_PLATFORM_STATISTICS
+		(
+		      id,
+			  party_row_id,
+			  user_name,
+			  open_id,
+			  public_id,
+			  org_id,
+			  opty_type,
+			  create_time,
+			  model,
+			  rela_id,
+			  r_type,
+			  url
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="party_row_id != null">#{party_row_id},</if>
+		    <if  test="party_row_id == null">NULL,</if>
+		    <if  test="user_name != null">#{user_name},</if>
+		    <if  test="user_name == null">NULL,</if>
+		    <if  test="openId != null">#{openId},</if>
+		    <if  test="openId == null">NULL,</if>
+		    <if  test="publicId != null">#{publicId},</if>
+		    <if  test="publicId == null">NULL,</if>
+		    <if  test="orgId != null">#{orgId},</if>
+		    <if  test="orgId == null">NULL,</if>
+		    <if  test="type != null">#{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    now(),
+		    <if  test="model != null">#{model},</if>
+		    <if  test="model == null">NULL,</if>
+		    <if  test="rela_id != null">#{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="r_type != null">#{r_type},</if>
+		    <if  test="r_type == null">NULL,</if>
+		    <if  test="url != null">#{url}</if>
+		    <if  test="url == null">NULL</if>
+		 )
+	</insert>
+	
+	
+</mapper>
+

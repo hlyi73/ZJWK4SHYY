@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 访问日志 历史 sql处理语句 -->
+<mapper namespace="accessLogsHisSql">
+	<!-- 分页查询访问日志 -->
+	<select id="findAccessLogsHisListByFilter"
+		parameterType="com.takshine.wxcrm.domain.AccessLogsHis"
+		resultType="com.takshine.wxcrm.domain.AccessLogsHis">
+		SELECT
+			  id as id,
+			  ip as ip,
+			  url as url,
+			  params as params,
+			  createTime as createTime
+		  
+		  FROM TB_ACCESS_LOGS_HIS where 1=1
+		  <if test="url != null"> and url like #{url}</if>
+		  <if test="startDate != null"> and createTime &gt;= #{startDate}</if>
+		  <if test="endDate != null"> and createTime &lt;= #{endDate}</if>
+		  <if test="createTime != null"> and createTime = #{createTime}</if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计访问日志总数 -->
+	<select id="countAccessLogsHisByFilter"
+		parameterType="com.takshine.wxcrm.domain.AccessLogsHis"
+		resultType="Integer">
+		select count(1)
+			from TB_ACCESS_LOGS_HIS
+		where 1=1
+		 <if test="url != null"> and url like #{url}</if>
+		 <if test="params != null"> and params like #{params}</if>
+		 <if test="startDate != null"> and createTime &gt;= #{startDate} </if>
+		 <if test="endDate != null"> and createTime &lt;= #{endDate} </if>
+		 <if test="createTime != null"> and createTime = #{createTime}</if>
+	</select>
+	
+	<!-- 插入一条 访问日志 -->
+	<insert id="insertAccessLogsHis"
+		parameterType="com.takshine.wxcrm.domain.AccessLogsHis">
+		insert into TB_ACCESS_LOGS_HIS
+		(
+		      ID,
+		      IP,
+			  URL,
+			  PARAMS,
+			  CREATETIME
+			  
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="ip != null">#{ip},</if>
+		    <if  test="ip == null">NULL,</if>
+		    <if  test="url != null">#{url},</if>
+		    <if  test="url == null">NULL,</if>
+		    <if  test="params != null">#{params},</if>
+		    <if  test="params == null">NULL,</if>
+		    <if  test="createTime != null">#{createTime}</if>
+		    <if  test="createTime == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 批量新增访问历史数据记录 -->
+	<insert id="batchInsertAccessLogsHis"
+		parameterType="java.util.List">
+		insert into TB_ACCESS_LOGS_HIS (ID, IP, URL, PARAMS, CREATETIME) values 
+		<foreach collection="list" item="item" index="" separator=",">
+		 (#{item.id}, #{item.ip}, #{item.url}, #{item.params}, #{item.createTime})
+		</foreach>
+	</insert>
+	
+	<!-- 更新一条访问日志 -->
+	<update id="updateAccessLogsHisById"
+		parameterType="com.takshine.wxcrm.domain.AccessLogsHis">
+		UPDATE TB_ACCESS_LOGS_HIS SET
+		    <if  test="ip != null">IP = #{ip},</if>
+		    <if  test="url != null">URL = #{url},</if>
+		    <if  test="params != null">PARAMS = #{params},</if>
+		    <if  test="createtime != null">CREATETIME = #{createtime}</if>
+		   
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteAccessLogsHisById"
+		parameterType="java.lang.String">
+		delete from TB_ACCESS_LOGS_HIS where ID = #{value}
+	</delete>
+	
+	<!-- 清空 访问记录 -->
+	<delete id="deleteAccessLogsHis"
+		parameterType="java.lang.String">
+		delete from TB_ACCESS_LOGS_HIS
+	</delete>
+	
+</mapper>
+

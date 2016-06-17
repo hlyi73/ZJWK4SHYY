@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 活动 sql处理语句 -->
+<mapper namespace="inviteSql">
+	<!-- 获取所有的邀请列表 -->
+	<select id="findInviteListByFilter"
+		parameterType="com.takshine.marketing.domain.Invite"
+		resultType="com.takshine.marketing.domain.Invite">
+			select 
+			 id,
+			 batch_number,
+			 rela_id,
+			 rela_type,
+			 rela_name,
+			 send_type,
+			 send_status,
+			 received_userid,
+			 received_openid,
+			 received_phone,
+			 received_email,
+			 received_username,
+			 create_by,
+			 date_format(create_time,'%Y-%m-%d') as create_time,
+			 org_id,
+			 crm_id,
+			 received_parentid,
+			 received_parentname
+			 from TB_INVITE t where 1=1 
+			 <if test="rela_id != null">
+			  	and rela_id=#{rela_id}  
+			 </if>
+			 <if test="send_type != null">
+			  	and send_type=#{send_type}  
+			 </if>
+			 <if test="rela_type != null">
+			  	and rela_type=#{rela_type}  
+			 </if>
+			 <if test="create_by != null">
+			  	and create_by=#{create_by}  
+			 </if>
+			 <if test="received_parentid != null">
+			  	and received_parentid=#{received_parentid}  
+			 </if>
+			 order by create_time desc
+	</select>
+	
+	
+	<!-- 获取所有短信的邀请情况 -->
+	<select id="findAllSmsInviteList"
+		parameterType="com.takshine.marketing.domain.Invite"
+		resultType="com.takshine.marketing.domain.Invite">
+			SELECT 
+			DATE_FORMAT(create_time,'%Y-%m-%d') as create_time,COUNT(*) as num_msg
+			FROM
+			  TB_INVITE t 
+			WHERE 1 = 1  
+			  <if test="rela_id != null">
+			  	and rela_id=#{rela_id}  
+			 </if>
+			 <if test="send_type != null">
+			  	and send_type=#{send_type}  
+			 </if>
+			 <if test="rela_type != null">
+			  	and rela_type=#{rela_type}  
+			 </if>
+			 <if test="create_by != null">
+			  	and create_by=#{create_by}  
+			 </if>
+			 GROUP BY create_time
+			 ORDER BY create_time DESC 
+	</select>
+	
+	
+	<!-- 获取所有讨论组的邀请情况 -->
+	<select id="findAllDiscuGroupInviteList"
+		parameterType="com.takshine.marketing.domain.Invite"
+		resultType="com.takshine.marketing.domain.Invite">
+			SELECT 
+			DATE_FORMAT(create_time,'%Y-%m-%d') as create_time ,batch_number,received_parentid,received_parentname , COUNT(id) as num_msg
+			FROM
+			  TB_INVITE t 
+			WHERE 1 = 1  
+			  <if test="rela_id != null">
+			  	and rela_id=#{rela_id}  
+			 </if>
+			 <if test="send_type != null">
+			  	and send_type=#{send_type}  
+			 </if>
+			 <if test="rela_type != null">
+			  	and rela_type=#{rela_type}  
+			 </if>
+			 <if test="create_by != null">
+			  	and create_by=#{create_by}  
+			 </if>
+			 GROUP BY create_time
+			 ORDER BY create_time DESC 
+	</select>
+	
+	<!-- 根据接受人的ID得到记录 -->
+	<select id="findInviteById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.marketing.domain.Invite">
+		select 
+			 id,
+			 batch_number,
+			 rela_id,
+			 rela_type,
+			 rela_name,
+			 send_type,
+			 send_status,
+			 received_userid,
+			 received_openid,
+			 received_phone,
+			 received_email,
+			 received_username,
+			 create_by,
+			 create_time,
+			 org_id,
+			 crm_id,
+			 received_parentid,
+			 received_parentname
+			 from TB_INVITE t where 1=1 and t.id=#{id} 
+	</select>
+	
+	<!-- 添加邀请 -->
+	<insert id="insertInvite"
+		parameterType="com.takshine.marketing.domain.Invite">
+		insert into TB_INVITE(id,batch_number,rela_id,rela_type,rela_name,send_type,send_status,received_userid,received_openid,received_phone,received_email,received_username,create_by,create_time,org_id,crm_id,received_parentid, received_parentname)
+		values(
+			#{id},#{batch_number},#{rela_id},#{rela_type},#{rela_name},
+		<if test="send_type != null"> #{send_type}, </if>
+		<if test="send_type == null"> null, </if>	
+		<if test="send_status != null"> #{send_status}, </if>
+		<if test="send_status == null"> null, </if>
+		<if test="received_userid != null"> #{received_userid}, </if>
+		<if test="received_userid == null"> null, </if>
+		<if test="received_openid != null"> #{received_openid}, </if>
+		<if test="received_openid == null"> null, </if>
+		<if test="received_phone != null"> #{received_phone}, </if>
+		<if test="received_phone == null"> null, </if>
+		<if test="received_email != null"> #{received_email}, </if>
+		<if test="received_email == null"> null, </if>
+		<if test="received_username != null"> #{received_username}, </if>
+		<if test="received_username == null"> null, </if>
+		<if test="create_by != null"> #{create_by}, </if>
+		<if test="create_by == null"> null, </if>
+		now(),
+		<if test="org_id != null"> #{org_id}, </if>
+		<if test="org_id == null">null, </if>
+		<if test="crm_id != null"> #{crm_id}, </if>
+		<if test="crm_id == null">null,</if>
+		<if test="received_parentid != null"> #{received_parentid}, </if>
+		<if test="received_parentid == null">null,</if>
+		<if test="received_parentname != null"> #{received_parentname} </if>
+		<if test="received_parentname == null">null</if>
+		)
+	</insert>
+	
+</mapper>
+

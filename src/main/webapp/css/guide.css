@@ -1,0 +1,41 @@
+body{
+	
+	width:100%;
+	overflow:hidden;
+	font-family: 'Microsoft YaHei';
+}
+
+.hide{ display:none;}
+
+.page{
+	width:100%;
+	height:100%;
+	position:absolute;
+	font-size:18px;
+	text-align:center;
+}
+
+.page .wrap{
+	height:100%;
+}
+
+.page-1-1{ background-color:#F7FDFF}
+.page-1-2{ background-color:#F7FDFF;}
+.page-1-3{ background-color:#F7FDFF;}
+.page-1-4{ background-color:#F7FDFF;}
+.page-1-5{ background-color:#F7FDFF;}
+.page-1-6{ background-color:#F7FDFF;}
+.page-1-7{ background-color:#F7FDFF;}
+.page-1-8{ background-color:#F7FDFF;}
+
+
+.page-current{
+	z-index:1;
+}
+
+.page-1-1 .img_1 {
+	
+}
+.page-1-2 .img_1 {
+	
+}

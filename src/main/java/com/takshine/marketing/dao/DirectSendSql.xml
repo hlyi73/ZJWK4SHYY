@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!--图文直播sql处理语句 -->
+<mapper namespace="directSendModelSql">
+	<!-- 分页查询消息 -->
+	<select id="findDirectSendModelListByFilter"
+		parameterType="com.takshine.marketing.model.DirectSendModel"
+		resultType="com.takshine.marketing.model.DirectSendModel">
+		SELECT
+		  id,
+		  date_format(created_time,'%m-%d %H:%i') as created_time,
+		  created_by,
+		  activity_id,
+		  content,
+		  msg_type,
+		  create_name,
+		  headimgurl,
+		  compere
+		  FROM TB_MK_DIRECT_SEED where 1=1
+		  <if test="activity_id != null"> and activity_id = #{activity_id}</if>
+		  ORDER BY created_time desc
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计消息总数 -->
+	<select id="countDirectSendModelByFilter"
+		parameterType="com.takshine.marketing.model.DirectSendModel"
+		resultType="Integer">
+		select count(1)
+			from TB_MK_DIRECT_SEED
+		where 1=1
+		<if test="activity_id != null"> and activity_id = #{activity_id}</if>
+	</select>
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertDirectSendModel"
+		parameterType="com.takshine.marketing.model.DirectSendModel">
+		insert into TB_MK_DIRECT_SEED
+		(
+		  id,
+		  created_time,
+		  created_by,
+		  activity_id,
+		  content,
+		  msg_type,
+		  create_name,
+		  headimgurl,
+		  compere
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="created_time != null">now(),</if>
+		    <if  test="created_time == null">now(),</if>
+		    <if  test="created_by != null">#{created_by},</if>
+		    <if  test="created_by == null">NULL,</if>
+		    <if  test="activity_id != null">#{activity_id},</if>
+		    <if  test="activity_id == null">NULL,</if>
+		    <if  test="content != null">#{content},</if>
+		    <if  test="content == null">NULL,</if>
+		    <if  test="msg_type != null">#{msg_type},</if>
+		    <if  test="msg_type == null">NULL,</if>
+		    <if  test="create_name != null">#{create_name},</if>
+		    <if  test="create_name ==null">NULL,</if>
+		    <if  test="headimgurl != null">#{headimgurl},</if>
+		    <if  test="headimgurl ==null">NULL,</if>
+		    <if  test="compere != null">#{compere}</if>
+		    <if  test="compere ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 根据ID删除评论 -->
+	<delete id="deleteDirectSendModelById"
+		parameterType="java.lang.String">
+		delete from TB_MK_DIRECT_SEED where id = #{value} 
+	</delete>
+	
+</mapper>
+

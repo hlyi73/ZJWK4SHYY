@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 活动 sql处理语句 -->
+<mapper namespace="activityPrintSql">
+	<!-- 统计印迹总数 -->
+	<select id="countActivityPrintByFilter"
+		parameterType="com.takshine.marketing.domain.ActivityPrint"
+		resultType="Integer">
+			select distinct count(1)
+			 from TB_MK_ACTIVITY_PRINT where 1=1  
+		  <if test="activityid != null"> and activity_id = #{activityid} </if>
+		  <if test="type != null"> and type = #{type}</if>
+		  <if test="type == null or type == '' "> and type != 'forward' </if>
+		  <if test="openid != null"> and open_id = #{openid} </if>
+		  <if test="sourceid != null"> and source_id=#{sourceid} </if>
+		  <if test="source != null"> and source=#{source} </if>
+
+	</select>
+	
+	<select id="findActivityPrintByFilter"
+		parameterType="com.takshine.marketing.domain.ActivityPrint"
+		resultType="com.takshine.marketing.domain.ActivityPrint">
+			select id,activity_id as activityid,source_id as sourceid,source_name as sourcename,forwardid,open_id as openid,create_date as createTime 
+			 from TB_MK_ACTIVITY_PRINT where 1=1  
+		  <if test="activityid != null"> and activity_id = #{activityid} </if>
+		  <if test="type != null"> and type = #{type}</if> GROUP BY source_id 
+		  order by forwardid
+	</select>
+	
+	<select id="findActivityPrintById"
+		parameterType="com.takshine.marketing.domain.ActivityPrint"
+		resultType="com.takshine.marketing.domain.ActivityPrint">
+			select distinct activity_id as activityid,source_id as sourceid,source_name as sourcename,forwardid,open_id as openid 
+			 from TB_MK_ACTIVITY_PRINT where 1=1  
+		  <if test="activityid != null"> and activity_id = #{activityid} </if>
+		  <if test="type != null"> and type = #{type}</if>
+		  order by forwardid
+	</select>
+	
+	<!-- 添加活动项 -->
+	<insert id="insertActivityPrint"
+		parameterType="com.takshine.marketing.domain.ActivityPrint">
+		insert into TB_MK_ACTIVITY_PRINT(id,activity_id,open_id,type,create_date,source_id,source,source_name,forwardid)
+		values(#{id},#{activityid},#{openid},
+		<if test="type != null"> #{type}, </if>
+		<if test="type == null"> null, </if>
+		now(),
+		<if test="sourceid != null"> #{sourceid},</if>
+		<if test="sourceid == null"> null, </if>
+		<if test="source != null"> #{source},</if>
+		<if test="source == null"> null, </if>
+			<if test="sourcename != null"> #{sourcename},</if>
+		<if test="sourcename == null"> null, </if>
+		<if test="forwardid != null"> #{forwardid}</if>
+		<if test="forwardid == null"> null </if>
+		)
+	</insert>
+	
+</mapper>
+

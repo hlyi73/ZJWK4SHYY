@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 组织 sql处理语句 -->
+<mapper namespace="organizationSql">
+	<!-- 分页查询组织 -->
+	<select id="findOrganizationListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Organization"
+		resultType="com.takshine.wxcrm.domain.Organization">
+		SELECT
+			  id as id ,
+			  name as name ,
+			  industry as industry,
+			  website as website,
+			  address as address,
+			  crmurl as crmurl,
+			  parentid as parentid,
+			  enabled_flag,
+			  full_name as fullname,
+  			  org_num as orgnum
+		  FROM TB_ORGANIZATION where 1=1
+		  <if test="id != null"> and id = #{id}</if>
+		  <if test="name != null"> and name = #{name}</if>
+		  <if test="enabled_flag != null"> and enabled_flag = #{enabled_flag}</if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计组织总数 -->
+	<select id="countOrganizationByFilter"
+		parameterType="com.takshine.wxcrm.domain.Organization"
+		resultType="Integer">
+		select count(1)
+			from TB_ORGANIZATION
+		where 1=1
+		  <if test="id != null"> and id = #{id}</if>
+		  <if test="name != null"> and name = #{name}</if>
+	</select>
+	
+	<!-- 插入一条 组织 -->
+	<insert id="insertOrganization"
+		parameterType="com.takshine.wxcrm.domain.Organization">
+		insert into TB_ORGANIZATION
+		(
+		      ID ,
+			  NAME ,
+			  INDUSTRY ,
+			  WEBSITE ,
+			  ADDRESS ,
+			  CRMURL ,
+			  PARENTID,
+			  enabled_flag,
+			  full_name,
+  			  org_num
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="industry != null">#{industry},</if>
+		    <if  test="industry == null">NULL,</if>
+		    <if  test="website != null">#{website},</if>
+		    <if  test="website == null">NULL,</if>
+		    <if  test="address != null">#{address},</if>
+		    <if  test="address == null">NULL,</if>
+		    <if  test="crmurl != null">#{crmurl},</if>
+		    <if  test="crmurl == null">NULL,</if>
+		    <if  test="parentid != null">#{parentid},</if>
+		    <if  test="parentid == null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag},</if>
+		    <if  test="enabled_flag == null">NULL,</if>
+		    <if  test="fullname != null">#{fullname},</if>
+		    <if  test="fullname == null">NULL,</if>
+		    <if  test="orgnum != null">#{orgnum}</if>
+		    <if  test="orgnum == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条组织 -->
+	<update id="updateOrganizationById"
+		parameterType="com.takshine.wxcrm.domain.Organization">
+		UPDATE TB_ORGANIZATION SET
+		    <if  test="name != null">NAME = #{name},</if>
+		    <if  test="name == null">NAME = NULL,</if>
+		    <if  test="industry != null">INDUSTRY = #{industry},</if>
+		    <if  test="industry == null">INDUSTRY = NULL,</if>
+		    <if  test="website != null">WEBSITE = #{website},</if>
+		    <if  test="website == null">WEBSITE = NULL,</if>
+		    <if  test="address != null">ADDRESS = #{address},</if>
+		    <if  test="address == null">ADDRESS = NULL,</if>
+		    <!-- <if  test="crmurl != null">CRMURL = #{crmurl},</if>
+		    <if  test="crmurl == null">CRMURL = NULL,</if> 
+		    <if  test="parentid != null">PARENTID = #{parentid},</if>
+		    <if  test="parentid == null">NULL,</if> -->
+		    <if  test="fullname != null">full_name = #{fullname},</if>
+		    <if  test="fullname == null">full_name = NULL,</if>
+		    <if  test="orgnum != null">org_num = #{orgnum},</if>
+		    <if  test="orgnum == null">org_num = NULL,</if>
+		    <if  test="enabled_flag != null">enabled_flag = #{enabled_flag}</if>
+		    <if  test="enabled_flag == null">enabled_flag = NULL</if>
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 删除一条组织 -->
+	<delete id="deleteOrganizationById"
+		parameterType="java.lang.String">
+		delete from TB_ORGANIZATION where ID = #{value}
+	</delete>
+</mapper>
+

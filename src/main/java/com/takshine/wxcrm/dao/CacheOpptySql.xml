@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!--  sql处理语句 -->
+<mapper namespace="cacheOpptySql">
+	<!-- 分页查询 -->
+	<select id="findCacheOpptyListByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheOppty"
+		resultType="com.takshine.wxcrm.domain.cache.CacheOppty">
+		SELECT
+			 cc.crm_id,
+			 (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cc.crm_id) AS assigner_name,
+			 cc.open_id,
+			 rowid,
+			 org_id,
+			 create_date,
+			 create_by,
+			 modify_date,
+			 modify_by,
+			 name,
+			 amount,
+			 stage,
+			 date_format(close_date,'%Y-%m-%d') as close_date,
+			 probability,
+			 assigner_id,
+			 assigner_name,
+			 customer_id,
+			 customer_name,
+			 enabled_flag
+		  
+		  FROM CACHE_OPPTY cc LEFT JOIN TB_MODEL_STAR tmt ON cc.rowid = tmt.parent_id AND tmt.parent_type='Opportunities' where 1=1 and enabled_flag = 'enabled'
+		  <if test="org_id != null"> and org_id = #{org_id}</if>
+		  <if test="crm_id != null"> and crm_id = #{crm_id}</if>
+		  <if test="starflag  == 'yes'">
+	        AND EXISTS ( SELECT parent_id FROM TB_MODEL_STAR star WHERE star.parent_id = cc.rowid)
+	      </if>
+		  <if test="tagName != null and tagName != ''">
+	         AND EXISTS (  SELECT model_id FROM TB_MODEL_TAG tag WHERE tag.tag_name LIKE CONCAT('%',#{tagName},'%') AND tag.model_id = cc.rowid)
+	      </if>
+		  <if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and cc.crm_id in
+		   <foreach collection="crm_id_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid_in != null and rowid_in.size > 0">
+		   and cc.rowid in
+		   <foreach collection="rowid_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid != null"> and rowid = #{rowid}</if>
+		  order by tmt.id desc, create_date desc
+		  limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="findCacheOpptyListByCrmId"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheOppty"
+		resultType="com.takshine.wxcrm.domain.cache.CacheOppty">
+		SELECT 
+		  cc.crm_id,
+		   (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cc.crm_id) AS assigner_name,
+		  cc.open_id,
+		  rowid,
+		  org_id,
+		  create_date,
+		  create_by,
+		  modify_date,
+		  modify_by,
+		  name,
+		  amount,
+		  stage,
+		  date_format(close_date,'%Y-%m-%d') as close_date,
+		  probability,
+		  assigner_id,
+		  assigner_name,
+		  customer_id,
+		  customer_name,
+		  enabled_flag
+		  
+		FROM
+		  CACHE_OPPTY cc inner join
+		  (SELECT 
+		    crm_id 
+		  FROM
+		    TR_OPERATOR_MOBILE 
+		  WHERE open_id = 
+		    (SELECT 
+		      open_id 
+		    FROM
+		      TR_OPERATOR_MOBILE 
+		    WHERE crm_id = #{crm_id})) op 
+		   LEFT JOIN TB_MODEL_STAR tmt ON cc.rowid = tmt.parent_id AND tmt.parent_type='Opportunities' 
+		WHERE 1 = 1 and cc.enabled_flag = 'enabled' 
+		  AND cc.crm_id = op.crm_id 
+		  <if test="name != null and name != ''"> and cc.name like CONCAT('%',#{name},'%') </if>
+		  <if test="stage != null and stage != ''"> and cc.stage = #{stage} </if>
+		  <if test="start_date != null and start_date != ''"> and date_format(cc.close_date,'%Y-%m-%d') > #{start_date} </if>
+		  <if test="end_date != null and end_date != ''"> and date_format(cc.close_date,'%Y-%m-%d') &lt;= #{end_date} </if>
+		  <if test="org_id != null and org_id != ''"> and cc.org_id= #{org_id} </if>
+		  <if test="starflag  == 'yes'">
+	        AND EXISTS ( SELECT parent_id FROM TB_MODEL_STAR star WHERE star.parent_id = cc.rowid)
+	      </if>
+		  <if test="tagName != null and tagName != ''">
+	         AND EXISTS (  SELECT model_id FROM TB_MODEL_TAG tag WHERE tag.tag_name LIKE CONCAT('%',#{tagName},'%') AND tag.model_id = cc.rowid)
+	      </if>
+		  <if test="orderByString != null">
+	         ${orderByString}
+	      </if>
+	      <if test="orderByStringSec  == 'dcdate'">
+	       order by tmt.id desc,create_date desc
+	      </if>
+	      <if test="orderByStringSec  == 'acdate'">
+	       order by tmt.id desc,create_date 
+	      </if>
+	      <if test="orderByStringSec  == 'dclosedate'">
+	       order by tmt.id desc,close_date desc
+	      </if>
+	      <if test="orderByStringSec  == 'aname'">
+	       order by tmt.id desc,name
+	      </if>
+	      <if test="orderByStringSec  == '' || orderByStringSec == null ">
+	       order by tmt.id desc,create_date desc
+	      </if>
+	      limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 统计总数 -->
+	<select id="countCacheOpptyByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheOppty"
+		resultType="Integer">
+		select count(1)
+			from CACHE_OPPTY
+		where 1=1
+		 <if test="org_id != null"> and org_id = #{org_id}</if>
+	</select>
+	
+	<!-- 插入一条  -->
+	<insert id="insertCacheOppty"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheOppty">
+		insert into CACHE_OPPTY
+		(
+			 rowid,
+			 crm_id,
+			 open_id,
+			 org_id,
+			 create_date,
+			 create_by,
+			 modify_date,
+			 modify_by,
+			 name,
+			 amount,
+			 stage,
+			 close_date,
+			 probability,
+			 assigner_id,
+			 assigner_name,
+			 customer_id,
+			 customer_name,
+			 account_id,
+			 enabled_flag
+		) values (
+		    <if  test="rowid != null">#{rowid},</if>
+		    <if  test="rowid == null">NULL,</if>
+		    <if  test="crm_id != null">#{crm_id},</if>
+		    <if  test="crm_id == null">NULL,</if>
+		    <if  test="open_id != null">#{open_id},</if>
+		    <if  test="open_id == null">NULL,</if>
+		    <if  test="org_id != null">#{org_id},</if>
+		    <if  test="org_id == null">NULL,</if>
+		    <if  test="create_date != null">#{create_date},</if>
+		    <if  test="create_date == null">NULL,</if>
+		    <if  test="create_by != null">#{create_by},</if>
+		    <if  test="create_by == null">NULL,</if>
+		    <if  test="modify_date != null">#{modify_date},</if>
+		    <if  test="modify_date == null">NULL,</if>
+		    <if  test="modify_by != null">#{modify_by},</if>
+		    <if  test="modify_by == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="amount != null">#{amount},</if>
+		    <if  test="amount == null">NULL,</if>
+		    <if  test="stage != null">#{stage},</if>
+		    <if  test="stage == null">NULL,</if>
+		    <if  test="close_date != null">#{close_date},</if>
+		    <if  test="close_date == null">NULL,</if>
+		    <if  test="probability != null">#{probability},</if>
+		    <if  test="probability == null">NULL,</if>
+		    <if  test="assigner_id != null">#{assigner_id},</if>
+		    <if  test="assigner_id == null">NULL,</if>
+		    <if  test="assigner_name != null">#{assigner_name},</if>
+		    <if  test="assigner_name == null">NULL,</if>
+		    <if  test="customer_id != null">#{customer_id},</if>
+		    <if  test="customer_id == null">NULL,</if>
+		    <if  test="customer_name != null">#{customer_name},</if>
+		    <if  test="customer_name == null">NULL,</if>
+		    <if  test="account_id != null">#{account_id},</if>
+		    <if  test="account_id == null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag}</if>
+		    <if  test="enabled_flag == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条 -->
+	<update id="updateCacheOpptyById"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheOppty">
+		UPDATE CACHE_OPPTY SET
+		    <if  test="modify_date != null">modify_date = #{modify_date},</if>
+		    <if  test="modify_date == null">modify_date = NULL,</if>
+		    <if  test="modify_by != null">modify_by = #{modify_by},</if>
+		    <if  test="modify_by == null">modify_by = NULL,</if>
+		    <if  test="name != null">name = #{name},</if>
+		    <if  test="name == null">name = NULL,</if>
+		    <if  test="amount != null">amount = #{amount},</if>
+		    <if  test="amount == null">amount = NULL,</if>
+		    <if  test="stage != null">stage = #{stage},</if>
+		    <if  test="stage == null">stage = NULL,</if>
+		    <if  test="close_date != null">close_date = #{close_date},</if>
+		    <if  test="close_date == null">close_date = NULL,</if>
+		    <if  test="probability != null">probability = #{probability},</if>
+		    <if  test="probability == null">probability = NULL,</if>
+		    <if  test="assigner_id != null">assigner_id = #{assigner_id},</if>
+		    <if  test="assigner_id == null">assigner_id = NULL,</if>
+		    <if  test="assigner_name != null">assigner_name = #{assigner_name},</if>
+		    <if  test="assigner_name == null">assigner_name = NULL,</if>
+		    <if  test="customer_id != null">customer_id = #{customer_id},</if>
+		    <if  test="customer_id == null">customer_id = NULL,</if>
+		    <if  test="customer_name != null">customer_name = #{customer_name},</if>
+		    <if  test="customer_name == null">customer_name = NULL,</if>
+		    <if  test="enabled_flag != null">enabled_flag=#{enabled_flag}</if>
+		    <if  test="enabled_flag == null">enabled_flag=NULL</if>
+		   
+		 WHERE rowid=#{rowid}
+	</update>
+	
+	<!-- 更新一条 -->
+	<update id="updateEnabledFlag"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheOppty">
+		UPDATE CACHE_OPPTY SET enabled_flag = #{enabled_flag} WHERE rowid=#{rowid}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteCacheOpptyById"
+		parameterType="java.lang.String">
+		delete from CACHE_OPPTY where rowid = #{value}
+	</delete>
+	
+</mapper>
+

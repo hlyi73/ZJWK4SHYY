@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!--  sql处理语句 -->
+<mapper namespace="cacheContactSql">
+	<!-- 分页查询 -->
+	<select id="findCacheContactListByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContact"
+		resultType="com.takshine.wxcrm.domain.cache.CacheContact">
+		SELECT
+			  crm_id,
+			  open_id,
+			  rowid,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  name,
+			  F_GetPY(name) as firstname,
+			  sex,
+			  position,
+			  mobile,
+			  type,
+			  source,
+			  address,
+			  requency,
+			  enabled_flag,
+			  salutation,
+			  filename,
+			  email
+		  
+		  FROM CACHE_CONTACT where 1=1 and enabled_flag = 'enabled'
+		  <if test="org_id != null"> and org_id = #{org_id}</if>
+		  <if test="crm_id != null"> and crm_id = #{crm_id}</if>
+		  <if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and crm_id in
+		   <foreach collection="crm_id_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid_in != null and rowid_in.size > 0">
+		   and rowid in
+		   <foreach collection="rowid_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid != null"> and rowid = #{rowid}</if>
+		  order by F_GetPY(name) limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 手动分组查询 -->
+	<select id="findHandGroupCacheContactListByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContact"
+		resultType="com.takshine.wxcrm.domain.Tag">
+		SELECT tag_name as tagName, COUNT(*) AS total
+		  FROM CACHE_CONTACT t, TB_MODEL_TAG tag
+		  WHERE t.rowid = tag.model_id and t.enabled_flag = 'enabled'
+		  <if test="org_id != null"> and org_id = #{org_id}</if>
+		  <if test="crm_id != null"> and crm_id = #{crm_id}</if>
+		  <if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and crm_id in
+		   <foreach collection="crm_id_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid_in != null and rowid_in.size > 0">
+		   and rowid in
+		   <foreach collection="rowid_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid != null"> and rowid = #{rowid}</if>
+		   GROUP BY tag_name 
+	</select>
+	
+	<!-- 手动分组查询 -->
+	<select id="findTagCacheContactListByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContact"
+		resultType="com.takshine.wxcrm.domain.cache.CacheContact">
+		SELECT t.*
+		  FROM CACHE_CONTACT t, TB_MODEL_TAG tag
+		  WHERE t.rowid = tag.model_id and t.enabled_flag = 'enabled'
+		  <if test="org_id != null"> and org_id = #{org_id}</if>
+		  <if test="crm_id != null"> and crm_id = #{crm_id}</if>
+		  <if test="tag_name != null"> and tag.tag_name = #{tag_name}</if>
+		  <if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and crm_id in
+		   <foreach collection="crm_id_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid_in != null and rowid_in.size > 0">
+		   and rowid in
+		   <foreach collection="rowid_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid != null"> and rowid = #{rowid}</if>
+		   GROUP BY tag_name 
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="findCacheContactListByCrmId"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContact"
+		resultType="com.takshine.wxcrm.domain.cache.CacheContact">
+		SELECT 
+		  cc.crm_id,
+		  open_id,
+		  rowid,
+		  org_id,
+		  create_date,
+		  create_by,
+		  modify_date,
+		  modify_by,
+		  name,
+		  F_GetPY(name) as firstname,
+		  sex,
+		  position,
+		  mobile,
+		  type,
+		  source,
+		  address,
+		  requency,
+		  enabled_flag,
+		  salutation,
+		  filename,
+		  email
+		  
+		FROM
+		  CACHE_CONTACT cc,
+		  (SELECT 
+		    crm_id 
+		  FROM
+		    TR_OPERATOR_MOBILE 
+		  WHERE open_id = 
+		    (SELECT 
+		      open_id 
+		    FROM
+		      TR_OPERATOR_MOBILE 
+		    WHERE crm_id = #{crm_id})) op 
+		WHERE 1 = 1 and cc.enabled_flag = 'enabled'
+		  AND cc.crm_id = op.crm_id 
+		   <if test="name != null and name != ''"> and cc.name like CONCAT('%',#{name},'%') </if>
+		   <if test="mobile != null and mobile != ''"> and cc.mobile = #{mobile} </if>
+		   <if test="org_id != null"> and org_id = #{org_id}</if>
+		   <if test="tagtype != null and tagtype != ''"> and cc.rowid in ( select model_id from TB_MODEL_TAG where model_type='Contacts' and tag_name=#{tagtype} ) </if>
+		   <if test="orderByString  == 'dcdate'">
+	       order by create_date desc
+	      </if>
+	      <if test="orderByString  == 'acdate'">
+	       order by create_date 
+	      </if>
+	      <if test="orderByString  == 'aname'">
+	       order by name
+	      </if>
+	      <if test="orderByString  == null">
+		  order by F_GetPY(name) 
+		  </if>
+	</select>
+	
+	<!-- 统计总数 -->
+	<select id="countCacheContactByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContact"
+		resultType="Integer">
+		select count(1)
+			from CACHE_CONTACT
+		where 1=1
+		 <if test="org_id != null"> and org_id = #{org_id}</if>
+	</select>
+	
+	<!-- 插入一条  -->
+	<insert id="insertCacheContact"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContact">
+		insert into CACHE_CONTACT
+		(
+		      rowid,
+			  crm_id,
+			  open_id,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  name,
+			  sex,
+			  position,
+			  mobile,
+			  type,
+			  source,
+			  address,
+			  requency,
+			  enabled_flag,
+			  salutation,
+			  filename,
+			  email
+			  
+		) values (
+		    <if  test="rowid != null">#{rowid},</if>
+		    <if  test="rowid == null">NULL,</if>
+		    <if  test="crm_id != null">#{crm_id},</if>
+		    <if  test="crm_id == null">NULL,</if>
+		    <if  test="open_id != null">#{open_id},</if>
+		    <if  test="open_id == null">NULL,</if>
+		    <if  test="org_id != null">#{org_id},</if>
+		    <if  test="org_id == null">NULL,</if>
+		    <if  test="create_date != null">#{create_date},</if>
+		    <if  test="create_date == null">NULL,</if>
+		    <if  test="create_by != null">#{create_by},</if>
+		    <if  test="create_by == null">NULL,</if>
+		    <if  test="modify_date != null">#{modify_date},</if>
+		    <if  test="modify_date == null">NULL,</if>
+		    <if  test="modify_by != null">#{modify_by},</if>
+		    <if  test="modify_by == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="sex != null">#{sex},</if>
+		    <if  test="sex == null">NULL,</if>
+		    <if  test="position != null">#{position},</if>
+		    <if  test="position == null">NULL,</if>
+		    <if  test="mobile != null">#{mobile},</if>
+		    <if  test="mobile == null">NULL,</if>
+		    <if  test="type != null">#{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    <if  test="source != null">#{source},</if>
+		    <if  test="source == null">NULL,</if>
+		    <if  test="address != null">#{address},</if>
+		    <if  test="address == null">NULL,</if>
+		    <if  test="requency != null">#{requency},</if>
+		    <if  test="requency == null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag},</if>
+		    <if  test="enabled_flag == null">NULL,</if>
+		    <if  test="salutation != null">#{salutation},</if>
+		    <if  test="salutation == null">NULL,</if>
+		    <if  test="filename != null">#{filename},</if>
+		    <if  test="filename == null">NULL,</if>
+		    <if  test="email != null">#{email}</if>
+		    <if  test="email == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条 -->
+	<update id="updateCacheContactById"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContact">
+		UPDATE CACHE_CONTACT SET
+		    <if  test="modify_date != null">modify_date = #{modify_date},</if>
+		    <if  test="modify_date == null">modify_date = NULL,</if>
+		    <if  test="modify_by != null">modify_by = #{modify_by},</if>
+		    <if  test="modify_by == null">modify_by = NULL,</if>
+		    <if  test="name != null">name = #{name},</if>
+		    <if  test="name == null">name = NULL,</if>
+		    <if  test="sex != null">sex = #{sex},</if>
+		    <if  test="sex == null">sex = NULL,</if>
+		    <if  test="position != null">position = #{position},</if>
+		    <if  test="position == null">position = NULL,</if>
+		    <if  test="mobile != null">mobile = #{mobile},</if>
+		    <if  test="mobile == null">mobile = NULL,</if>
+		    <if  test="type != null">type = #{type},</if>
+		    <if  test="type == null">type = NULL,</if>
+		    <if  test="source != null">source = #{source},</if>
+		    <if  test="source == null">source = NULL,</if>
+		    <if  test="address != null">address = #{address},</if>
+		    <if  test="address == null">address = NULL,</if>
+		    <if  test="requency != null">requency = #{requency},</if>
+		    <if  test="requency == null">requency = NULL,</if>
+		    <if  test="salutation != null">salutation= #{salutation},</if>
+		    <if  test="salutation == null">salutation = NULL,</if>
+		    <if  test="email != null">email= #{email}</if>
+		    <if  test="email == null">email = NULL</if>
+		   
+		  WHERE rowid=#{rowid}
+	</update>
+	
+	<!-- 更新一条 -->
+	<update id="updateEnabledFlag"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContact">
+		UPDATE CACHE_CONTACT SET enabled_flag = #{enabled_flag} WHERE rowid = #{rowid}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteCacheContactById"
+		parameterType="java.lang.String">
+		delete from CACHE_CONTACT where rowid = #{value}
+	</delete>
+
+</mapper>
+

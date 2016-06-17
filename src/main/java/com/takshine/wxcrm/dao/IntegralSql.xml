@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 积分 sql处理语句 -->
+<mapper namespace="integralSql">
+	<!-- 分页查询积分 -->
+	<select id="findIntegralListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Integral"
+		resultType="com.takshine.wxcrm.domain.Integral">
+		SELECT
+		      id as id,
+			  crm_id as crmId,
+			  total as total,
+			  total_pre as totalPre,
+			  create_time as createTime,
+			  update_time as updateTime
+			  
+		  FROM TB_INTEGRAL where 1=1
+		  <if test="crmId != null"> and crm_id = #{crmId}</if>
+		  <if test="startDate != null"> and create_time >= #{startDate}</if>
+		  <if test="endDate != null"> and create_time &lt;= #{endDate}</if>
+		  ORDER BY create_time desc
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计积分总数 -->
+	<select id="countIntegralByFilter"
+		parameterType="com.takshine.wxcrm.domain.Integral"
+		resultType="Integer">
+		select count(1)
+			from TB_INTEGRAL
+		where 1=1
+		 <if test="relaId != null"> and rela_id = #{relaId}</if>
+		 <if test="relaModule != null"> and rela_module = #{relaModule}</if>
+	</select>
+	
+	<!-- 插入一条 积分 -->
+	<insert id="insertIntegral"
+		parameterType="com.takshine.wxcrm.domain.Integral">
+		insert into TB_INTEGRAL
+		(
+		      ID,
+			  CRM_ID,
+			  TOTAL,
+			  TOTAL_PRE,
+			  CREATE_TIME,
+			  UPDATE_TIME
+			  
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="crmId != null">#{crmId},</if>
+		    <if  test="crmId == null">NULL,</if>
+		    <if  test="total != null">#{total},</if>
+		    <if  test="total == null">NULL,</if>
+		    <if  test="totalPre != null">#{totalPre},</if>
+		    <if  test="totalPre == null">NULL,</if>
+		    <if  test="createTime != null">#{createTime},</if>
+		    <if  test="createTime == null">NULL,</if>
+		    <if  test="updateTime != null">#{updateTime}</if>
+		    <if  test="updateTime == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条积分 -->
+	<update id="updateIntegralById"
+		parameterType="com.takshine.wxcrm.domain.Integral">
+		UPDATE TB_INTEGRAL SET
+		    <if  test="crmId != null">CRM_ID = #{crmId},</if>
+		    <if  test="total != null">TOTAL = #{total},</if>
+		    <if  test="totalPre != null">TOTAL_PRE = #{totalPre},</if>
+		    <if  test="updateTime != null">UPDATE_TIME = #{updateTime}</if>
+		 WHERE ID=#{id}
+	</update>
+	
+</mapper>
+

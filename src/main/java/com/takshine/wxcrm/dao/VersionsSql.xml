@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 版本处理语句 -->
+<mapper namespace="versionsSql">
+	<!-- 获取当前最新版本 -->
+	<select id="findCurrentVersions"
+		parameterType="com.takshine.wxcrm.domain.Versions"
+		resultType="com.takshine.wxcrm.domain.Versions">
+		SELECT 
+			id,
+			ver_number,
+			ver_name,
+			DESCRIPTION as `desc`,
+			CREATE_DATE as createTime 
+		FROM TB_VERSIONS WHERE STATUS = 1 ORDER BY VER_NUMBER DESC LIMIT 0,1
+	</select>
+	
+</mapper>
+

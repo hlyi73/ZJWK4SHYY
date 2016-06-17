@@ -1,0 +1,158 @@
+<html lang="zh-cn">
+<head>
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+<script src="../jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<!--框架样式-->
+<link rel="stylesheet" href="css/wb.css">
+<script src="js/wb.js" type="text/javascript"></script>
+<title>刘淋的名片 - 微信CRM</title>
+</head>
+<body>
+	<div id="site-nav" class="navbar">
+		<a href="#" onclick="history.back();return false;" class="act-primary"><i
+			class="icon-back"></i></a>
+		<div class="act-secondary" data-toggle="navbar"
+			data-target="nav-collapse">
+			<i class="icon-menu"><b></b></i>
+		</div>
+		刘淋的名片
+	</div>
+	<div id="nav-collapse" class="navbar-menu">
+		<ul>
+			<li><a href="/index/my">我的通讯录</a></li>
+			<li><a href="/activity/my">我的聚会</a></li>
+			<li><a href="/card/setting">我的名片</a></li>
+			<li><a href="/recommend/index" data-ajax="false">群推荐中心</a></li>
+			<li><a href="/download/index">下载手机APP</a></li>
+		</ul>
+	</div>
+	<div class="site-card-view">
+		<div id="page-header" class="page-header container">
+			<div class="card-avatar">
+				<a
+					href="http://qun.hk/card/setavatar/token/eb6aGj26Pnaut-5tMfQY7m5rwpUu84qoSVM8Le2OFmSd%2Cz4ZTMSRkDSzIryvkdkA9FNL-Rc/code/gffm4f"
+					onclick="return confirm('是否修改头像?')"><img class="avatarimg"
+					src="http://qun.hk/index/avatar?url="></a>
+			</div>
+			<h3>
+				<img
+					src="http://font.app100726855.twsapp.com/makefont?fontsize=50&amp;fontfamily=gbxs&amp;align=1&amp;color=FFFFFF&amp;zoom=2&amp;text=%E5%88%98%E6%B7%8B&amp;lineheight=40&amp;w=105&amp;h=17"
+					alt="刘淋">
+			</h3>
+			<p>takshineIT攻城师</p>
+		</div>
+		<p style="font-size: 14px; background-color: #D1E0E5; padding: 1em"
+			class="text-center">人脉：0 | 热度：812 | 信用：A级</p>
+		<div class="card-info">
+			<h3>基本信息</h3>
+			<table>
+				<tbody>
+					<tr>
+						<th>公司：</th>
+						<td>takshine</td>
+					</tr>
+					<tr>
+						<th>职位：</th>
+						<td>IT攻城师</td>
+					</tr>
+					<tr>
+						<th>邮箱：</th>
+						<td><a href="mailto:zhenoo124@126.com">zhenoo124@126.com</a></td>
+					</tr>
+					<tr>
+						<th>电话：</th>
+						<td><a target="_blank" href="tel:13716460437">13716460437</a>(交换名片可见)</td>
+					</tr>
+					<tr>
+						<th>地址：</th>
+						<td>北京市北京市</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="wrapper">
+			<div class="button-ctrl">
+				<fieldset class="ui-grid-a">
+					<div class="ui-block-a">
+						<a href="#" data-action="share" class="btn btn-block">推荐给好友</a>
+					</div>
+					<div class="ui-block-b">
+						<a href="#" data-action="share" class="btn btn-block">发到朋友圈</a>
+					</div>
+				</fieldset>
+			</div>
+			<div class="button-ctrl">
+				<a href="/card/setting/id/gffm4f?return=/card/gffm4f"
+					class="btn btn-block" onclick="return confirm('确认修改您的名片吗？')">
+					修改我的名片 </a><a href="/card/certify/code/gffm4f" class="btn btn-block">
+					名片认证 </a>
+			</div>
+			<div class="text-center other-ctrl">
+				<a
+					href="http://qun.hk/card/setavatar/token/7240kGwKrWVeiSsyanZ8SEv3z4txljQb6Ihlm2XlwKzCKh88r19cf9GFWnT0KagKFlyKjGc/code/gffm4f">
+					修改我的头像 </a> | <a href="/card/remove/code/gffm4f"
+					onclick="return confirm('永久删除此名片，已参与的通讯录，将由您第一张名片替代显示，是否确认删除？')">
+					删除名片 </a>
+			</div>
+			<div class="button-ctrl" style="margin-top: 50px;"></div>
+		</div>
+	</div>
+	<div class="wrapper text-center text-info" style="padding: 2em 0;">
+		最强大的互动微名片 让你人脉倍增</div>
+	<div class="gotop" style="display: block;">
+		<i class="icon icon-arrow-up"></i>
+	</div>
+	<script type="text/javascript">
+		window.$CONFIG = {};
+	</script>
+	<script type="text/javascript">
+		window.openid = "phone-13716460437";
+		window.$CONFIG = {
+			openid : 'phone-13716460437',
+			nickname : '刘淋',
+			avatar : 'http://qun.hk/index/avatar?url='
+		};
+	</script>
+	<div id="complaintForm" data-modal="alert" class="modal">
+		<form method="post" action="/complaint/index" class="modal-container"
+			novalidate="true">
+			<div class="modal-title">举报</div>
+			<div class="form-group">
+				<div class="control-label"></div>
+				<textarea class="form-control" required="" name="message"
+					placeholder="举报此页面的理由（色情，反动，广告，侵权等）" rows="3"></textarea>
+				<div class="help-block empty">请填写具体举报理由</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-block btn-default" type="submit">确认举报</button>
+			</div>
+			<div class="actions">
+				<div class="btn btn-block" data-dismiss="modal">关闭窗口</div>
+			</div>
+		</form>
+	</div>
+
+	<footer class="site-ft wrapper" data-position="">
+		<p>
+			<i class="icon icon-lock"></i> 数据已进行隐私加密，请放心使用
+		</p>
+		<div class="menu">
+			<a href="/index/follow" style="font-weight: bold;">关注我们</a>| <a
+				href="weixin://contacts/profile/bibi100"
+				onclick="alert('请查找微信号【bibi100】欢迎咨询！')">联系客服</a>| <a
+				href="/index/help">帮助</a>| <a href="#" data-toggle="modal"
+				data-target="complaintForm">举报</a>
+		</div>
+		<div style="color: #AAA; font-size: 12px; margin-top: .3em">
+			<p>Power By 微信CRM 交流 共享 互利 共赢</p>
+			<p class="footer-userinfo">
+				当前帐号：刘淋<a href="/oauth/logout"
+					onclick="return confirm('是否确认需要重新登录？'); return false;">重新登录</a><a
+					href="#" onclick="window.location.reload(); return false;">刷新</a>
+			</p>
+		</div>
+	</footer>
+
+</body>
+</html>

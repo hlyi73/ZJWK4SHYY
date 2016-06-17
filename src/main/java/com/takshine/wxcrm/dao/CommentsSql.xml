@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 消息 sql处理语句 -->
+<mapper namespace="commentsSql">
+	<!-- 分页查询消息 -->
+	<select id="findCommentsListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Comments"
+		resultType="com.takshine.wxcrm.domain.Comments">
+		SELECT
+		  id,
+		  rela_id,
+		  rela_type,
+		  comments_grade, 
+		  comments,
+		  create_time,
+		  creator,
+		  assignerid,
+		  eval_type,
+		  crm_id as crmId,
+		  org_id as orgId
+		  FROM TB_COMMENTS where 1=1
+		  <if test="rela_id != null"> and rela_id = #{rela_id}</if>
+		  <if test="rela_type !=null"> and rela_type = #{rela_type}</if>
+		  order by create_time
+		  <if test="flag == 'asc'">
+		  		asc
+		  </if>
+		  <if test="flag == 'desc'">
+		  		desc
+		  </if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<select id="findWorkReportNoEvalCount"
+		parameterType="com.takshine.wxcrm.domain.Comments"
+		resultType="Integer">
+		SELECT COUNT(1) FROM TB_WORK_REPORT t1
+			LEFT OUTER JOIN TB_COMMENTS t2 ON  (t1.id = t2.rela_id 
+			AND t2.eval_type = 'lead'
+			AND t2.creator=#{creator})
+			WHERE 	  t2.id IS  NULL   
+		  <if test="assignerid != null"> and t1.assigner_id = #{assignerid}</if>
+	</select>
+	
+	<!-- 统计消息总数 -->
+	<select id="countCommentsByFilter"
+		parameterType="com.takshine.wxcrm.domain.Comments"
+		resultType="Integer">
+		select count(1)
+			from TB_COMMENTS
+		where 1=1
+		  <if test="rela_id != null"> and rela_id = #{rela_id}</if>
+		  <if test="rela_type !=null"> and rela_type = #{rela_type}</if>
+		  <if test="createTime != null"> and create_time >= #{createTime}</if>
+	</select>
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertComments"
+		parameterType="com.takshine.wxcrm.domain.Comments">
+		insert into TB_COMMENTS
+		(
+		  id,
+		  rela_id,
+		  rela_type,
+		  comments_grade, 
+		  comments,
+		  create_time,
+		  creator,
+		  assignerid,
+		  crm_id,
+		  org_id,
+		  eval_type
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="rela_id != null">#{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="rela_type != null">#{rela_type},</if>
+		    <if  test="rela_type == null">NULL,</if>
+		    <if  test="comments_grade != null">#{comments_grade},</if>
+		    <if  test="comments_grade == null">NULL,</if>
+		    <if  test="comments != null">#{comments},</if>
+		    <if  test="comments == null">NULL,</if>
+		    <if  test="create_time != null">now(),</if>
+		    <if  test="create_time ==null">now(),</if>
+		    <if  test="creator != null">#{creator},</if>
+		    <if test="creator ==null">NULL,</if>
+		    <if test="assignerid != null">#{assignerid},</if>
+		    <if test="assignerid ==null">NULL,</if>
+		    <if test="crmId != null">#{crmId},</if>
+		    <if test="crmId ==null">NULL,</if>
+		    <if test="orgId != null">#{orgId},</if>
+		    <if test="orgId ==null">NULL,</if>
+		    <if test="eval_type != null">#{eval_type}</if>
+		    <if test="eval_type ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条消息 -->
+	<update id="updateCommentsById"
+		parameterType="com.takshine.wxcrm.domain.Comments">
+		UPDATE TB_COMMENTS SET
+		    <if  test="rela_id != null">rela_id = #{rela_id},</if>
+		    <if  test="rela_id == null">rela_id = NULL,</if>
+		    <if  test="rela_type != null">rela_type = #{rela_type},</if>
+		    <if  test="rela_type == null">rela_type = NULL,</if>
+		    <if  test="comments_grade != null">comments_grade = #{comments_grade},</if>
+		    <if  test="comments_grade == null">comments_grade = NULL,</if>
+		    <if  test="comments != null">comments = #{comments},</if>
+		    <if  test="comments == null">comments =NULL,</if>
+		    <if  test="assignerid != null">assignerid = #{assignerid}</if>
+		    <if  test="assignerid == null">assignerid = NULL</if>
+		 WHERE id=#{id}
+	</update>
+	
+</mapper>

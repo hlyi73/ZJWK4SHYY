@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 标签 sql处理语句 -->
+<mapper namespace="tagSql">
+	<!-- 分页查询标签 -->
+	<select id="findTagListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Tag"
+		resultType="com.takshine.wxcrm.domain.Tag">
+		SELECT
+		    id,
+			name,
+			type
+		  FROM RM_TAG where 1=1
+		  <if test="name != null"> and name = #{name}</if>
+		  <if test="type != null"> and type = #{type}</if>
+		  limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 统计标签总数 -->
+	<select id="countTagByFilter"
+		parameterType="com.takshine.wxcrm.domain.Tag"
+		resultType="Integer">
+		select count(1)
+			from RM_TAG
+		where 1=1
+		 <if test="type != null"> and type = #{type}</if>
+	</select>
+	
+	<!-- 插入一条 标签 -->
+	<insert id="insertTag"
+		parameterType="com.takshine.wxcrm.domain.Tag">
+		insert into RM_TAG
+		(
+		    id,
+			name,
+			type
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="type != null">#{type}</if>
+		    <if  test="type == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 删除标签记录 -->
+	<delete id="deleteTagById"
+		parameterType="java.lang.String">
+		delete from RM_TAG where id = #{value}
+	</delete>
+</mapper>
+

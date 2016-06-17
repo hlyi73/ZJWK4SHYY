@@ -1,0 +1,67 @@
+html {
+	-webkit-text-size-adjust: none;
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	min-width: 320px;
+	font-family: 'Microsoft YaHei';
+	position: relative;
+	color: #333;
+	line-height: 1;
+	overflow-y: scroll;
+	-webkit-user-select: none;
+	background-color:#fff;
+	font-size:14px;
+}
+
+.nextpage{
+	width:100% auto;
+	text-align:center;
+	background-color:#fff;
+	margin:8px;
+	padding:8px;
+	border:1px solid #ddd;
+	display:none;
+}
+
+a:hover { color:#804000;}
+a { text-decoration:none; cursor:pointer; color:#078E46; outline:none;}
+
+.clear { clear:both; height:1px; line-height:0; font-size:1px;}
+
+.zjwk_fg_multi_system{background:#eee;line-height: 35px;border-top: 1px solid #ddd; margin:0 0 0.5em 0; width: 100%;}
+.zjwk_fg_nav{font-size: 14px;width: 100%;margin-bottom: 5px;background:rgba(238, 238, 238, 0.55);text-align: right;line-height: 40px;padding-right: 8px;}
+.zjwk_fg_nav_1{font-size: 14px;width: 100%;margin-bottom: 5px;background:rgba(238, 238, 238, 0.55);text-align: right;line-height: 40px;padding-right: 8px;}
+.zjwk_fg_nav_2{font-size: 14px;width: 100%;margin-bottom: 5px;border-bottom:1px solid #ddd;text-align: right;line-height: 40px;padding-right: 8px;}
+.zjwk_fg_nav_3{font-size: 14px;width: 100%;margin-bottom: 5px;border-bottom:1px solid #ddd;text-align: right;line-height: 40px;padding-right: 8px;}
+.zjwk_fg_nav_left{font-size: 14px;width: 100%;margin-bottom: 5px;background:rgba(238, 238, 238, 0.55);border-bottom:1px solid #ddd;text-align: left;line-height: 40px;padding-left: 8px;}
+.zjwk_fg_nav_1 a,.zjwk_fg_nav a,.zjwk_fg_nav_2 a{color:#9B9A9A;}
+
+.zjwk_fg_org_list{  line-height: 30px;width: 100%;padding: 5px 10px;background-color: #fff;border-bottom: 1px solid #ddd;border-top: 1px solid #ddd;}
+
+.zjwk_fg_wrap {max-width:640px; margin:0 auto;zoom:1; overflow:hidden;}
+.zjwk_fg_wrap .weather_div {zoom:1;overflow:hidden;background:#659ce7;height:130px;color:#fff;font-size:16px;padding:10px 5px;}
+.zjwk_fg_wrap .weather_div .icon {float:left;width:85px;height:30px;margin-right:10px;text-align:center;padding-top:70px;font-size:14px;}
+.zjwk_fg_wrap .weather_div .txt {float:left;padding-top:10px;}
+.zjwk_fg_wrap .weather_div .txt p{padding-top:10px;padding-bottom: 10px;}
+.zjwk_fg_wrap .weather_div .txt span {font-size:32px;margin-right:20px;}
+.zjwk_fg_wrap .weather_div .txt .weather {font-size:14px;margin-right:10px;}
+.zjwk_fg_wrap .weather_div .txt .year {font-size:14px;margin-right:20px;}
+.zjwk_fg_wrap .weather_div .icon1 {background:url(../img/icon1.png) top center no-repeat;background-size:50px 50px;margin-top:15px;}
+
+
+.zjwk_fg_wrap .tmod {background:#eee;height:40px;line-height:40px;padding:0 10px 0 10px;}
+.zjwk_fg_wrap .titbox {}
+.zjwk_fg_wrap .titbox a {float:right;color:#000;font-size:14px;margin-right:10px;}
+.zjwk_fg_wrap .titbox h3 {font-size:14px;font-weight:400;}
+.zjwk_fg_wrap .titbox .btn_more {float:right;width:48px;height:60px;background:url(../img/icon2.png) center no-repeat;}
+.zjwk_fg_wrap .activitylist{padding:0px 10px;}
+.zjwk_fg_wrap .div_more_notice{width: 100% auto; text-align:center; background-color: #fff;padding: 15px;}   
+
+
+.zjwk_fg_wrap .handler {font-size:28px;zoom:1;overflow:hidden;}
+
+
+.zjwk_form_row_div{padding:0px 8px;border-bottom:1px solid #ddd;line-height:30px;background-color:#fff;margin-right:10px;}

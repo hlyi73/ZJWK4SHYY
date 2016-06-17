@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 模块标签 sql处理语句 -->
+<mapper namespace="tagModelSql">
+	<!-- 分页查询模块标签 -->
+	<select id="findModelTagListByFilter" parameterType="com.takshine.wxcrm.domain.Tag"
+		resultType="com.takshine.wxcrm.domain.Tag">
+		SELECT
+		id,
+		open_id as openId,
+		tag_name as tagName,
+		model_type as modelType,
+		model_id as modelId
+		FROM TB_MODEL_TAG where 1=1
+		<if test="modelId != null"> and model_id = #{modelId}</if>
+			<if test="modelType != null"> and model_type = #{modelType}</if>
+	</select>
+
+	<!-- 根据标签查询客户列表 -->
+	<select id="findCustomerListByTag" parameterType="com.takshine.wxcrm.domain.Customer"
+		resultType="com.takshine.wxcrm.domain.Customer">
+		SELECT b.* FROM TB_MODEL_TAG a LEFT JOIN CACHE_CUSTOMER b ON
+		a.model_id=b.rowid WHERE a.tag_name LIKE
+		 <if test="tagName != null">#{tagName}</if>
+		 AND b.rowid IS
+		NOT NULL
+	</select>
+	
+		<!-- 根据标签查询联系人列表 -->
+	<select id="findContactListByTag" parameterType="com.takshine.wxcrm.domain.Contact"
+		resultType="com.takshine.wxcrm.domain.Contact">
+		select model_id as rowid from TB_MODEL_TAG where open_id=#{openId} and model_type=#{modelType} and tag_name like concat('%',#{tagName},'%')
+	</select>
+	<select id="findTagListAndCountByMy" parameterType="com.takshine.wxcrm.domain.Tag"
+		resultType="com.takshine.wxcrm.domain.Tag">
+		SELECT  id,
+		a.model_id as modelId,
+		a.model_type as modelType,
+		a.tag_name as tagName,
+		a.creater_party_id as createBy,		
+		b.jisu as total FROM TB_MODEL_TAG a LEFT JOIN 
+   (SELECT COUNT(*) AS jisu, object_id FROM TB_PRINT WHERE object_type='TAG' AND operative_type='PRAISE' GROUP BY object_id) b
+   ON a.id=b.object_id  
+   WHERE 1=1
+		<if test="modelId != null"> and model_id = #{modelId}</if>
+		<if test="createBy != null"> and creater_party_id = #{createBy}</if>
+	</select>
+	<select id="findTagListAndCountByOther" parameterType="com.takshine.wxcrm.domain.Tag"
+		resultType="com.takshine.wxcrm.domain.Tag">
+		SELECT  id,
+		a.model_id as modelId,
+		a.model_type as modelType,
+		a.tag_name as tagName,
+		a.creater_party_id as createBy,		
+		b.jisu as total FROM TB_MODEL_TAG a LEFT JOIN 
+   (SELECT COUNT(*) AS jisu, object_id FROM TB_PRINT WHERE object_type='TAG' AND operative_type='PRAISE' GROUP BY object_id) b
+   ON a.id=b.object_id  
+   WHERE 1=1
+		<if test="modelId != null"> and model_id = #{modelId} and creater_party_id != #{modelId}</if>
+	</select>
+		<!-- 根据标签查询商机列表 -->
+	<select id="findOpptyListByTag" parameterType="com.takshine.wxcrm.domain.Opportunity"
+		resultType="com.takshine.wxcrm.domain.Opportunity">
+		SELECT b.* FROM TB_MODEL_TAG a LEFT JOIN CACHE_OPPTY b ON
+		a.model_id=b.rowid WHERE a.tag_name LIKE
+		 <if test="tagName != null">#{tagName}</if>
+		 AND b.rowid IS
+		NOT NULL
+	</select>
+
+	<!-- 插入一条 模块标签 -->
+	<insert id="insertModelTag" parameterType="com.takshine.wxcrm.domain.Tag">
+		insert into TB_MODEL_TAG
+		(
+		id,
+		open_id,
+		tag_name,
+		model_type,
+		model_id,
+		creater_party_id
+		) values (
+		<if test="id != null">#{id},</if>
+		<if test="id == null">NULL,</if>
+		<if test="openId != null">#{openId},</if>
+		<if test="openId == null">NULL,</if>
+		<if test="tagName != null">#{tagName},</if>
+		<if test="tagName == null">NULL,</if>
+		<if test="modelType != null">#{modelType},</if>
+		<if test="modelType == null">NULL,</if>
+		<if test="modelId != null">#{modelId},</if>
+		<if test="modelId == null">NULL,</if>
+		<if test="createBy != null">#{createBy}</if>
+		<if test="createBy == null">NULL</if>
+		)
+	</insert>
+	
+	
+	<!-- 更新一条注册信息 -->
+	<update id="updateTageInfo"
+		parameterType="com.takshine.wxcrm.domain.Tag">
+	UPDATE TB_MODEL_TAG SET tag_name = 
+		<if test="tagName != null">#{tagName}</if>
+		<if test="tagName == null">NULL</if>
+	 WHERE model_id = 
+		<if test="modelId != null">#{modelId}</if>
+		<if test="modelId == null">NULL</if>
+		AND model_type = 
+		<if test="modelType != null">#{modelType},</if>
+		<if test="modelType == null">NULL,</if>
+		 AND open_id = 
+		<if test="openId != null">#{openId},</if>
+		<if test="openId == null">NULL,</if>
+	</update>
+
+	<!-- 删除模块标签记录 -->
+	<delete id="deleteModelTag" parameterType="com.takshine.wxcrm.domain.Tag">
+		delete from TB_MODEL_TAG where
+		<if test="modelId != null">model_id = #{modelId}</if>
+		<if test="modelType != null">AND model_type = #{modelType}</if>
+		<if test="openId != null">AND open_id = #{openId}</if>
+		<if test="tagName != null">AND tag_name = #{tagName}</if>
+	</delete>
+
+
+	<!-- 删除模块标签记录 -->
+	<delete id="deleteModelTagById" parameterType="java.lang.String">
+		delete from TB_MODEL_TAG where id=#{id}
+		
+	</delete>
+	
+	<!-- 批量插入 -->
+	<insert id="batchInsertTags" parameterType="java.util.List">
+		<![CDATA[
+		    insert into TB_MODEL_TAG
+		    (
+		    	id,
+				open_id,
+				tag_name,
+				model_type,
+				model_id,
+				creater_party_id
+			)
+		    values 
+		]]>
+    	<foreach collection ="list" item ="item" index ="index" separator =","> 
+	       (#{item.id},#{item.openId},#{item.tagName},#{item.modelType},#{item.modelId},#{item.createBy}) 
+    	</foreach > 
+	</insert>
+</mapper>
+

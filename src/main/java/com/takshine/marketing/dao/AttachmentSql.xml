@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 附件sql处理语句 -->
+<mapper namespace="attachmentSql">
+	<!-- 获取附件列表 -->
+	<select id="findAttachmentList"
+		parameterType="com.takshine.marketing.domain.Attachment"
+		resultType="com.takshine.marketing.domain.Attachment">
+		  select
+		  	tma.id,
+		  	file_name,
+			url,
+			file_type,
+			attachment_type,
+			file_size,
+			create_time,
+			file_rela_name
+		  from TB_MK_ATTACHMENT tma,TB_MK_ACTIVITY_ATTACHMENT tmaa
+		  where tma.id = tmaa.attachment_id and tmaa.activity_id=#{activity_id}
+	</select>
+	
+	<!-- 查询单个活动的附件列表-->
+	<select id="findAttachmentByActivityId"
+	parameterType="java.lang.String"
+		resultType="com.takshine.marketing.domain.Attachment">
+		select ta.id,ta.file_name,ta.url,ta.file_type,ta.file_size,ta.attachment_type, 
+			ta.created_by as createBy,
+			 ta.create_time as createTime 
+			  from TB_MK_ACTIVITY_ATTACHMENT t left join TB_MK_ATTACHMENT ta on t.attachment_id=ta.id where t.activity_id=#{activityid}
+	</select>
+	
+	<!-- 删除附件 -->
+	<insert id="deleteAttachmentById"
+		parameterType="java.lang.String">
+		delete from TB_MK_ATTACHMENT where id=#{value}
+	</insert>
+	
+	<!-- 删除附件 -->
+	<insert id="deleteAttachmentRelaById"
+		parameterType="com.takshine.marketing.domain.Attachment">
+		delete from TB_MK_ACTIVITY_ATTACHMENT where activity_id=#{activity_id} and attachment_id = #{rela_id}
+	</insert>
+	
+	<!-- 添加附件 -->
+	<insert id="saveAttachment"
+		parameterType="com.takshine.marketing.domain.Attachment">
+		insert into TB_MK_ATTACHMENT(
+			id,
+			file_name,
+			url,
+			file_type,
+			attachment_type,
+			file_size,
+			create_time,
+			file_rela_name,
+			created_by
+		) values(
+			#{id},
+			<if test="file_name != null"> #{file_name},</if>
+			<if test="file_name == null"> NULL, </if>
+			<if test="url != null"> #{url},</if>
+			<if test="url == null"> NULL, </if>
+			<if test="file_type != null"> #{file_type},</if>
+			<if test="file_type == null"> NULL, </if>
+			<if test="attachment_type != null"> #{attachment_type},</if>
+			<if test="attachment_type == null"> NULL, </if>
+			<if test="file_size != null"> #{file_size},</if>
+			<if test="file_size == null"> NULL, </if>
+			now(),
+			<if test="file_rela_name != null"> #{file_rela_name},</if>
+			<if test="file_rela_name == null"> NULL, </if>
+			<if test="createBy != null"> #{createBy}</if>
+			<if test="createBy == null"> NULL </if>
+		)
+	</insert>
+	
+	<!-- 添加附件 -->
+	<update id="saveRelaActivityAndAttachment"
+		parameterType="com.takshine.marketing.domain.Attachment">
+		insert into TB_MK_ACTIVITY_ATTACHMENT(
+			id,
+			activity_id,
+			attachment_id
+		)values (
+			#{rela_id},
+			#{activity_id},
+			#{id}
+		)
+	</update>
+</mapper>
+

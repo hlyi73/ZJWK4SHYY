@@ -1,0 +1,83 @@
+.none {
+	display: none;
+}
+
+#discugroup_list {
+	width: 100%;
+	z-index: 9997;
+	/*background-color: #FAFAFA;*/
+	top: 0px;
+	height: 100%;
+	font-size: 14px;
+}
+
+#discugroup_list .content {
+	width: 100%;
+	line-height: 35px;
+	/*border-bottom: 1px solid #ddd;*/
+}
+
+.cancel {
+	float: left;
+	padding: 0px 10px;
+}
+
+.selected {
+	background-color: rgb(21, 190, 120);
+	color: #fff;
+}
+
+.noselected {
+	background-color: #fff;
+	color: #555;
+}
+
+.ahref_type {
+	padding: 3px 5px;
+}
+
+.tabselected {
+	/*border-bottom: 5px solid #00D1DA;
+	color: #00D1DA;*/
+	color:#fff;
+	background-color:rgb(21, 190, 120);
+}
+
+.tabseleted02 {
+	margin: 2px;
+	padding : 0px 5px; 
+	color : #fff;
+	padding: 0px 5px;
+	color: #fff;
+	background: #2FE7A5;
+}
+
+.tabselected03 {
+	border-bottom: 5px solid #F54108;
+	color: #F54108;
+}
+
+.tabselected04 {
+    color: #FD0707;
+    font-weight: 800;
+}
+
+.check-radio{
+	display: inline-block;
+	vertical-align: middle;
+	width: 1.5em;
+	height: 1.5em;
+	background-color: #e1e1e1;
+	-webkit-border-radius: .2em;
+	border-radius: .2em;
+}
+.rsel{
+	background: url(../../image/gou.png) #3e6790 no-repeat center;
+	-webkit-background-size: 70% auto;
+	background-size: 70% auto;
+}
+
+.myDefMsgBox{
+   border: 1px solid #C8C8C8;
+   background-color: #FFF;
+}

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 个性化设置 sql处理语句 -->
+<mapper namespace="userPerferencesSql">
+	<!-- 分页查询个性化设置 -->
+	<select id="findUserPerferencesListByFilter"
+		parameterType="com.takshine.wxcrm.domain.UserPerferences"
+		resultType="com.takshine.wxcrm.domain.UserPerferences">
+		SELECT
+		      id,
+			  category,
+			  create_time,
+			  modify_time,
+			  user_id,
+			  contents
+		  FROM TB_USER_PERFERENCES where 1=1
+		  <if test="id != null"> and id = #{id} </if>
+		  <if test="category != null"> and category = #{category} </if>
+		  <if test="user_id != null"> and user_id = #{user_id} </if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 插入一条 个性化设置 -->
+	<insert id="insertUserPerferences"
+		parameterType="com.takshine.wxcrm.domain.UserPerferences">
+		insert into TB_USER_PERFERENCES
+		(
+		      id,
+			  category,
+			  create_time,
+			  modify_time,
+			  user_id,
+			  contents
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="category != null">#{category},</if>
+		    <if  test="category == null">NULL,</if>
+		    <if  test="create_time != null">now(),</if>
+		    <if  test="create_time == null">now(),</if>
+		    <if  test="modify_time != null">now(),</if>
+		    <if  test="modify_time ==null">now(),</if>
+		    <if  test="user_id != null">#{user_id},</if>
+		    <if  test="user_id ==null">NULL,</if>
+		    <if  test="contents != null">#{contents}</if>
+		    <if test="contents ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条个性化设置 -->
+	<update id="updateUserPerferencesById"
+		parameterType="com.takshine.wxcrm.domain.UserPerferences">
+		UPDATE TB_USER_PERFERENCES SET
+		    <if  test="category != null">category = #{category},</if>
+		    <if  test="category == null">NULL,</if>
+		    <if  test="modify_time != null">modify_time = now(),</if>
+		    <if  test="modify_time == null">modify_time = now(),</if>
+		    <if  test="user_id != null">user_id = #{user_id},</if>
+		    <if  test="user_id == null">NULL,</if>
+		    <if  test="contents != null">contents = #{contents}</if>
+		    <if  test="contents == null">NULL</if>
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 更新个性化设置标志为已读 -->
+	<delete id="deleteUserPerferencesById"
+		parameterType="java.lang.String">
+		delete from TB_USER_PERFERENCES where id=#{value}
+	</delete>
+	<!-- 更新个性化设置标志为已读 -->
+	<delete id="deleteUserPerferencesByParam"
+		parameterType="com.takshine.wxcrm.domain.UserPerferences">
+		delete from TB_USER_PERFERENCES where user_id= #{user_id} and category = #{category}
+	</delete>
+	<!-- 
+	 * 自动创建日工作计划
+	-->
+	<insert id="insertAutoDayWorkRerportByParam" parameterType="com.takshine.wxcrm.domain.UserPerferences">
+		INSERT INTO TB_WORK_REPORT
+		(
+		  id,
+		  TYPE,
+		  start_date,
+		  end_date,
+		  title,
+		  assigner_id,
+		  STATUS,
+		  remark,
+		  create_time,
+		  crm_id,
+		  org_id,
+		  creator
+		) SELECT UUID() ,'day',DATE_ADD(CURDATE(), INTERVAL 2 DAY),
+		 DATE_ADD(CURDATE(), INTERVAL 2 DAY),
+		 CONCAT(DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 2 DAY), '%Y-%m-%d'),'工作计划'),
+		t.open_id,'draft','自动生成工作计划',NOW(),
+		t.crm_id,
+		t.org_id,
+		t.creator
+		FROM (SELECT
+			t1.crm_id,t1.open_id,t1.org_id,IFNULL(SUBSTRING_INDEX(SUBSTRING_INDEX(t2.contents,'|',3),'|',-1),
+			SUBSTRING_INDEX(SUBSTRING_INDEX(t.contents,'|',3),'|',-1)) AS creator
+			FROM 
+			TB_USER_PERFERENCES t
+			LEFT OUTER JOIN TR_OPERATOR_MOBILE t1 ON t.user_id = t1.org_id
+			LEFT OUTER JOIN TB_USER_PERFERENCES t2 ON (t1.crm_id = t2.user_id AND t2.category = 'WorkReport' 
+			    AND SUBSTRING_INDEX(SUBSTRING_INDEX(t2.contents,'|',2),'|',-1) = 'day')
+			WHERE t.category = 'WorkPlanGlobalFlag' AND SUBSTRING_INDEX(t.contents,'|',1) ='Y'
+			AND SUBSTRING_INDEX(SUBSTRING_INDEX(t.contents,'|',2),'|',-1) = 'day'
+			AND IFNULL(SUBSTRING_INDEX(t.contents,'|',1),'Y') = 'Y') t,
+		(SELECT CASE WHEN (DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 2 DAY))>1 
+		                  AND DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 2 DAY)) &lt; 7) 
+		   THEN CASE WHEN COUNT(1) =0 THEN 1 ELSE 0 END
+		   ELSE COUNT(1) END AS c1 FROM (
+		 SELECT CASE WHEN (DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 2 DAY))>1 
+		                  AND DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 2 DAY)) &lt; 7) THEN  	
+		         CASE WHEN t.is_holiday= 'Y' THEN 1 ELSE 0 END
+		         ELSE CASE WHEN t.is_holiday = 'N' THEN 1 ELSE 0 END END AS c1,
+		         CURDATE()+2,t.* 
+			   FROM TC_HOLIDAY_FLG t WHERE t.id  = CURDATE()+2) t) t1
+		WHERE t1.c1 = 1			
+		</insert>
+	<!-- 
+	 * 自动创建周工作计划
+	-->	
+	<insert id="insertAutoWeekWorkRerportByParam" parameterType="com.takshine.wxcrm.domain.UserPerferences">
+		INSERT INTO TB_WORK_REPORT
+		(
+		  id,
+		  TYPE,
+		  start_date,
+		  end_date,
+		  title,
+		  assigner_id,
+		  STATUS,
+		  remark,
+		  create_time,
+		  crm_id,
+		  org_id,
+		  creator
+		) SELECT UUID(),'week',t1.min_day,t1.max_day,
+CONCAT(DATE_FORMAT(t1.min_day, '%Y-%m-%d'),'至',DATE_FORMAT(t1.max_day, '%Y-%m-%d'),'工作计划') AS title,
+		t.open_id,'draft','自动生成工作计划',NOW(),
+		t.crm_id,
+		t.org_id,
+		t.creator
+		FROM (SELECT
+t1.crm_id,t1.open_id,t1.org_id,IFNULL(SUBSTRING_INDEX(SUBSTRING_INDEX(t2.contents,'|',3),'|',-1),
+SUBSTRING_INDEX(SUBSTRING_INDEX(t.contents,'|',3),'|',-1)) AS creator
+FROM 
+TB_USER_PERFERENCES t
+LEFT OUTER JOIN TR_OPERATOR_MOBILE t1 ON t.user_id = t1.org_id
+LEFT OUTER JOIN TB_USER_PERFERENCES t2 ON (t1.crm_id = t2.user_id  AND t2.category = 'WorkReport' 
+    AND SUBSTRING_INDEX(SUBSTRING_INDEX(t2.contents,'|',2),'|',-1) = 'week')
+WHERE t.category = 'WorkPlanGlobalFlag' AND SUBSTRING_INDEX(t.contents,'|',1) ='Y'
+AND SUBSTRING_INDEX(SUBSTRING_INDEX(t.contents,'|',2),'|',-1) = 'week'
+AND IFNULL(SUBSTRING_INDEX(t.contents,'|',1),'Y') = 'Y') t,
+		(SELECT MIN(t1.c1) AS min_day,MAX(t1.c1) AS max_day FROM (
+			SELECT DATE_ADD(CURDATE(), INTERVAL 1 DAY) AS c1,DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 1 DAY)) AS c2
+			UNION 
+			SELECT DATE_ADD(CURDATE(), INTERVAL 2 DAY) AS c1,DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 2 DAY)) AS c2
+			UNION 
+			SELECT DATE_ADD(CURDATE(), INTERVAL 3 DAY) AS c1,DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 3 DAY)) AS c2
+			UNION 
+			SELECT DATE_ADD(CURDATE(), INTERVAL 4 DAY) AS c1,DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 4 DAY)) AS c2
+			UNION 
+			SELECT DATE_ADD(CURDATE(), INTERVAL 5 DAY) AS c1,DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 5 DAY)) AS c2
+			UNION 
+			SELECT DATE_ADD(CURDATE(), INTERVAL 6 DAY) AS c1,DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 6 DAY)) AS c2
+			UNION 
+			SELECT DATE_ADD(CURDATE(), INTERVAL 7 DAY) AS c1,DAYOFWEEK(DATE_ADD(CURDATE(), INTERVAL 7 DAY)) AS c2) t1
+			LEFT OUTER JOIN TC_HOLIDAY_FLG t2 ON t1.c1 = t2.id
+			WHERE t2.id IS NULL
+			OR CASE WHEN t1.c2 >1 OR t1.c2 &lt; 7 THEN CASE WHEN t2.is_holiday = 'N' THEN 1 ELSE 0 END
+				 ELSE CASE WHEN t2.is_holiday = 'Y' THEN 1 ELSE 0 END END = 1
+		)t1
+		WHERE t1.min_day IS NOT NULL
+		
+	</insert>
+</mapper>
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 微信用户基本信息 sql处理语句 -->
+<mapper namespace="socialContactSql">
+	
+	<!-- 根据id查找用户和手机绑定关系表  -->
+	<select id="findSocialContactById"
+		parameterType="com.takshine.wxcrm.domain.SocialContact"
+		resultType="com.takshine.wxcrm.domain.SocialContact">
+		<![CDATA[
+			select
+			  socialuid as uid,
+			  contactid,
+			  access_token
+			from TB_SOCIALUSER_CONTACT
+			  where contactid=#{contactid}  
+		]]>
+	</select>
+
+	
+	<!-- 插入一条用户和手机绑定关系表记录 -->
+	<insert id="insertSocialContact"
+		parameterType="com.takshine.wxcrm.domain.SocialContact">
+		insert into TB_SOCIALUSER_CONTACT
+		(
+			   id,
+			   socialuid,
+		       contactid,
+		       access_token
+		) values (
+		 	<if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+			<if test="uid != null"> #{uid}, </if>
+		    <if test="uid == null"> NULL,  </if>
+		    <if test="contactid != null"> #{contactid}, </if>
+		    <if test="contactid == null"> NULL,  </if>
+		    <if test="access_token != null"> #{access_token} </if>
+		    <if test="access_token == null"> NULL  </if>
+		 )
+	</insert>
+</mapper>
+

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 用户订阅 sql处理语句 -->
+<mapper namespace="rssNewsSql">
+	
+	<!-- 根据id查找用户和手机绑定关系表  -->
+	<select id="findRssNewsListByFilter"
+		parameterType="com.takshine.wxcrm.domain.RssNews"
+		resultType="com.takshine.wxcrm.domain.RssNews">
+			select  id,openid,crmid,content,type,url,
+			date_format(create_date,'%Y-%m-%d') as createTime
+			from TB_RSSNEWS
+			  where crmid=#{crmId}
+		  	  <if test="type != null"> and type = #{type} </if>
+			  order by create_date desc
+			  limit #{currpages},#{pagecounts}
+	</select>
+
+	
+	<!-- 插入一条用户和手机绑定关系表记录 -->
+	<insert id="insertRssNews"
+		parameterType="com.takshine.wxcrm.domain.RssNews">
+		insert into TB_RSSNEWS
+		(
+			   id,
+			   openid,
+		       crmid,
+		       create_date,
+		       content,
+		       url,
+		       type
+		) values (
+		 	<if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+			<if test="openId != null"> #{openId}, </if>
+		    <if test="openId == null"> NULL,  </if>
+		    <if test="crmId != null"> #{crmId}, </if>
+		    <if test="crmId == null"> NULL,  </if>
+		    <if test="createTime != null"> now(),</if>
+		    <if test="createTime == null"> now(), </if>
+		    <if test="content != null"> #{content},</if>
+		    <if test="content == null"> NULL, </if>
+		    <if test="url != null"> #{url},</if>
+		    <if test="url == null"> NULL, </if>
+		    <if test="type != null"> #{type}</if>
+		    <if test="type == null"> NULL </if>
+		 )
+	</insert>
+	
+	
+	<!-- 根据ID删除文章记录 -->
+	<delete id="deleteRssNewsById"
+		parameterType="com.takshine.wxcrm.domain.RssNews">
+		delete from TB_RSSNEWS where id = #{id}
+	</delete>
+	
+</mapper>
+

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 消息 sql处理语句 -->
+<mapper namespace="messagesSql">
+	<!-- 分页查询消息 -->
+	<select id="findMessagesListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Messages"
+		resultType="com.takshine.wxcrm.domain.Messages">
+		SELECT
+		  id as id,
+		  userid as userId,
+		  username as username,
+		  targetuid as targetUId,
+		  targetuname as targetUName,
+		  msg_type as msgType,
+		  create_time as createTime,
+		  content as content,
+		  rela_module as relaModule,
+		  rela_id as relaId,
+		  rela_name as relaName,
+		  sub_rela_id as subRelaId,
+		  read_flag as readFlag,
+		  create_time as createTime
+		  FROM TB_MESSAGES where 1=1 
+		  <if test="relaId != null"> and rela_id = #{relaId}</if>
+		  <if test="relaModule != null"> and rela_module = #{relaModule}</if>
+		  <if test="targetUId != null and targetUId != ''"> 
+			   <if test="relaModule== 'System_LiuPer_Msg_Reply'"> 
+			  	and (targetuid = #{targetUId} OR userid =#{targetUId})
+			  </if>
+			    <if test="relaModule != 'System_LiuPer_Msg_Reply'"> 
+			 	 and targetuid = #{targetUId}
+			  </if>
+		  </if>
+		  <if test="targetUId == null or targetUId == ''"> and ((targetuid = '' or targetuid is null) or userid=targetuid)</if>
+		  <if test="readFlag != null"> and read_flag = #{readFlag}</if>
+		  <if test="createTime != null"> and create_time >= #{createTime}</if>
+		  ORDER BY create_time desc
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	
+	<select id="findSystemMessagesByTargetId"
+		parameterType="com.takshine.wxcrm.domain.Messages"
+		resultType="com.takshine.wxcrm.domain.Messages">
+		select id,userId,username,targetUId,targetUName,msgType,createTime,content,relaModule,relaId,relaName,subRelaId,readFlag,createTime,headimgurl,cardname,cardimg,orgId from 
+		(
+		SELECT
+		  tb.id as id,
+		  tb.userid as userId,
+		  tb.username as username,
+		  tb.targetuid as targetUId,
+		  tb.targetuname as targetUName,
+		  tb.msg_type as msgType,
+		  tb.create_time as createTime,
+		  tb.content as content,
+		  tb.rela_module as relaModule,
+		  tb.rela_id as relaId,
+		  tb.rela_name as relaName,
+		  tb.sub_rela_id as subRelaId,
+		  tb.read_flag as readFlag,
+		  tw.headimgurl,
+		  (select name from TB_BUSINESS_CARD where party_row_id = tb.userid limit 0,1) as cardname,
+		  (select head_img_url from TB_BUSINESS_CARD where party_row_id = tb.userid limit 0,1) as cardimg, 
+		  (
+		  	case when tb.rela_module = 'Opportunities' then (select org_id from CACHE_OPPTY where rowid=tb.rela_id) 
+		  		 when tb.rela_module = 'customer' then (select org_id from CACHE_CUSTOMER where rowid=tb.rela_id) 
+		  		 when tb.rela_module = 'schedule' then (select org_id from CACHE_SCHEDULE where rowid=tb.rela_id) 
+		  		 else '' end
+		  ) as orgId
+		  FROM (select * from TB_MESSAGES order by create_time desc) tb,TB_WXUSER_INFO tw where tb.userid = tw.party_row_id and tb.targetuid = #{targetUId} and (tb.rela_id is not null and tb.rela_id != '')
+		  <if test="relaId != null"> and tb.rela_id = #{relaId}</if>
+		  <if test="readFlag != null"> and tb.read_flag = #{readFlag}</if>
+		  group by tb.rela_id
+		  
+		union 
+		  SELECT
+			  tb.id as id,
+			  tb.userid as userId,
+			  tb.username as username,
+			  tb.targetuid as targetUId,
+			  tb.targetuname as targetUName,
+			  tb.msg_type as msgType,
+			  tb.create_time as createTime,
+			  tb.content as content,
+			  tb.rela_module as relaModule,
+			  tb.rela_id as relaId,
+			  tb.rela_name as relaName,
+			  tb.sub_rela_id as subRelaId,
+			  tb.read_flag as readFlag,
+			  '' as headimgurl,
+			  (select name from TB_BUSINESS_CARD where party_row_id = tb.userid limit 0,1) as cardname,
+			  '' as cardimg,
+			  '' as orgId
+			  FROM TB_MESSAGES tb where tb.targetuid = #{targetUId} and (tb.rela_id is null or tb.rela_id ='')
+			  <if test="readFlag != null"> and tb.read_flag = #{readFlag}</if>
+		  )	msg
+		  
+		  ORDER BY createTime desc
+		  limit #{currpages},#{pagecounts}
+	</select>	
+	
+	<!-- 统计消息总数 -->
+	<select id="countMessagesByFilter"
+		parameterType="com.takshine.wxcrm.domain.Messages"
+		resultType="Integer">
+		<!-- select count(1)
+			from TB_MESSAGES
+		where 1=1
+		<if test="relaId != null"> and rela_id = #{relaId}</if>
+		<if test="relaModule != null"> and rela_module = #{relaModule}</if>
+		<if test="targetUId != null and targetUId != ''"> and targetuid = #{targetUId}</if>
+		<if test="targetUId == null or targetUId == ''"> and (targetuid = '' or targetuid is null)</if>
+		<if test="readFlag != null"> and read_flag = #{readFlag}</if>
+		<if test="createTime != null"> and create_time >= #{createTime}</if> -->
+		
+		select count(1) from 
+		(
+		SELECT
+		  tb.id as id
+		  FROM (select * from TB_MESSAGES order by create_time desc) tb,TB_WXUSER_INFO tw where tb.userid = tw.party_row_id and (tb.rela_id is not null and tb.rela_id != '')
+		  <if test="relaId != null and relaId != ''"> and tb.rela_id = #{relaId}</if>
+		  <if test="relaModule != null and relaModule != ''"> and tb.rela_module = #{relaModule}</if>
+		  <if test="targetUId != null and targetUId != ''"> and tb.targetuid = #{targetUId}</if>
+		  <if test="readFlag != null"> and tb.read_flag = #{readFlag}</if>
+		  <!-- group by tb.rela_id -->
+		  
+		union 
+		  SELECT
+			  tb.id as id
+			  FROM TB_MESSAGES tb where (tb.rela_id is null or tb.rela_id ='')
+			  <if test="readFlag != null"> and tb.read_flag = #{readFlag}</if>
+			  <if test="targetUId != null and targetUId != ''"> and tb.targetuid = #{targetUId}</if>
+			  <if test="relaModule != null and relaModule != ''"> and tb.rela_module = #{relaModule}</if>
+		  )	msg
+		  
+	</select>
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertMessages"
+		parameterType="com.takshine.wxcrm.domain.Messages">
+		insert into TB_MESSAGES
+		(
+		      ID,
+			  USERID,
+              USERNAME,
+              TARGETUID,
+		      TARGETUNAME,
+		      MSG_TYPE,
+			  CREATE_TIME,
+			  CONTENT,
+			  RELA_MODULE,
+			  RELA_ID,
+			  RELA_NAME,
+			  SUB_RELA_ID,
+			  READ_FLAG
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="userId != null">#{userId},</if>
+		    <if  test="userId == null">NULL,</if>
+		    <if  test="username != null">#{username},</if>
+		    <if  test="username == null">NULL,</if>
+		    <if  test="targetUId != null">#{targetUId},</if>
+		    <if  test="targetUId == null">NULL,</if>
+		    <if  test="targetUName != null">#{targetUName},</if>
+		    <if  test="targetUName == null">NULL,</if>
+		    <if  test="msgType != null">#{msgType},</if>
+		    <if  test="msgType == null">NULL,</if>
+		    <if  test="createTime != null">now(),</if>
+		    <if  test="createTime == null">now(),</if>
+		    <if  test="content != null">#{content},</if>
+		    <if  test="content ==null">NULL,</if>
+		    <if  test="relaModule != null">#{relaModule},</if>
+		    <if  test="relaModule ==null">NULL,</if>
+		    <if  test="relaId != null">#{relaId},</if>
+		    <if test="relaId ==null">NULL,</if>
+		    <if  test="relaName != null">#{relaName},</if>
+		    <if test="relaName ==null">NULL,</if>
+		    <if  test="subRelaId != null">#{subRelaId},</if>
+		    <if test="subRelaId ==null">NULL,</if>
+		    <if  test="readFlag != null">#{readFlag}</if>
+		    <if test="readFlag ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条消息 -->
+	<update id="updateMessagesById"
+		parameterType="com.takshine.wxcrm.domain.Messages">
+		UPDATE TB_MESSAGES SET
+		    <if  test="userId != null">USERID = #{userId},</if>
+		    <if  test="userId == null">NULL,</if>
+		    <if  test="username != null">USERNAME = #{username},</if>
+		    <if  test="username == null">NULL,</if>
+		    <if  test="targetUId != null">TARGETUID = #{targetUId},</if>
+		    <if  test="targetUId == null">NULL,</if>
+		    <if  test="targetUName != null">TARGETUNAME = #{targetUName},</if>
+		    <if  test="targetUName == null">NULL,</if>
+		    <if  test="msgType != null">MSG_TYPE = #{msgType},</if>
+		    <if  test="msgType == null">NULL,</if>
+		    <if  test="createTime != null">CREATE_TIME = #{createTime},</if>
+		    <if  test="createTime == null">NULL,</if>
+		    <if  test="content != null">CONTENT = #{content},</if>
+		    <if  test="content == null">NULL,</if>
+		    <if  test="relaModule != null">RELA_MODULE = #{relaModule},</if>
+		    <if  test="relaModule == null">NULL,</if>
+		    <if  test="relaId != null">RELA_ID = #{relaId},</if>
+		    <if  test="relaId == null">NULL,</if>
+		    <if  test="relaName != null">RELA_NAME = #{relaName},</if>
+		    <if  test="relaName == null">NULL,</if>
+		    <if  test="readFlag != null">READ_FLAG = #{readFlag},</if>
+		    <if  test="readFlag == null">NULL,</if>
+		    <if  test="subRelaId != null">SUB_RELA_ID = #{subRelaId}</if>
+		    <if  test="subRelaId == null">NULL</if>
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 更新消息标志为已读 -->
+	<update id="updateMessagesFlag"
+		parameterType="com.takshine.wxcrm.domain.Messages">
+		UPDATE TB_MESSAGES SET
+		    READ_FLAG = 'Y'
+		 WHERE TARGETUID=#{targetUId} and READ_FLAG='N'
+		 <if test="relaId != null">and RELA_id=#{relaId}</if>
+		 <if test="relaModule != null">and RELA_MODULE=#{relaModule}</if>
+	</update>
+	
+	<!-- 更新消息标志为已读 -->
+	<update id="updateMessagesFlagById"
+		parameterType="com.takshine.wxcrm.domain.Messages">
+		UPDATE TB_MESSAGES SET
+		    READ_FLAG = 'Y'
+		 WHERE ID=#{id} and READ_FLAG='N'
+	</update>
+	
+		<update id="updateMessagesFlagByTargetUID"
+		parameterType="com.takshine.wxcrm.domain.Messages">
+		UPDATE TB_MESSAGES SET
+		    READ_FLAG = 'Y'
+		 WHERE TARGETUID=#{targetUId} and READ_FLAG='N'
+	</update>
+	
+	<select id="searchMessagesByRelaIds"
+		parameterType="com.takshine.wxcrm.domain.Messages"
+		resultType="com.takshine.wxcrm.domain.Messages">
+		select userid as userId,username,content,rela_id as relaId,rela_name as relaName,rela_module as relaModule,create_time as msgtime,date_format(create_time,'%m-%d %i:%s') as shorttime from (select rela_module, rela_id,rela_name,userid,username,content,create_time from TB_MESSAGES 
+		where rela_id in(${relaId})
+		order by create_time desc) msg group by rela_id	order by create_time desc
+	</select>
+	
+	<!-- 更新消息标志为已读 -->
+	<delete id="deleteMessagesById"
+		parameterType="java.lang.String">
+		delete from TB_MESSAGES where id=#{value}
+	</delete>
+	
+	<!-- 删除消息-->
+	<delete id="deleteMessagesByTargetId"
+		parameterType="com.takshine.wxcrm.domain.Messages">
+		delete from TB_MESSAGES where TARGETUID=#{targetUId}
+	</delete>
+</mapper>
+

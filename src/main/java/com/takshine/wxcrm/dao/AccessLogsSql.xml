@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 访问日志 sql处理语句 -->
+<mapper namespace="accessLogsSql">
+	<!-- 分页查询访问日志 -->
+	<select id="findAccessLogsListByFilter"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs"
+		resultType="com.takshine.wxcrm.domain.AccessLogs">
+		SELECT
+			  id as id,
+			  ip as ip,
+			  url as url,
+			  params as params,
+			  createTime as createTime,
+			  org_id as orgId,
+			  partyId
+		  FROM TB_ACCESS_LOGS where 1=1
+		  <if test="url != null"> and url like #{url}</if>
+		  <if test="startDate != null"> and DATE_FORMAT(createTime,'%Y-%m-%d') &gt; #{startDate}</if>
+		  <if test="endDate != null"> and DATE_FORMAT(createTime,'%Y-%m-%d') &lt;= #{endDate}</if>
+		  <if test="createTime != null"> and createTime = #{createTime}</if>
+		  <if test="orgId != null"> and orgId = #{orgId}</if>
+		  <if test="partyId != null"> and partyId = #{partyId}</if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 每日访问统计 -->
+	<select id="countAccessLogsByDate"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs"
+		resultType="com.takshine.wxcrm.domain.AccessLogs">
+			SELECT 
+			DATE_FORMAT(CREATETIME,'%Y-%m-%d') AS startDate,
+			COUNT(*) AS accessCount 
+			FROM TB_ACCESS_LOGS ta
+			LEFT JOIN TB_BUSINESS_CARD tbc ON tbc.party_row_id = ta.partyId
+			LEFT JOIN TB_WXUSER_INFO twi ON twi.party_row_id = tbc.party_row_id
+			LEFT JOIN TR_OPERATOR_MOBILE tom ON tom.open_id = twi.open_id
+			WHERE tom.org_id !=#{orgId}
+			AND EXISTS (SELECT org_id FROM TR_OPERATOR_MOBILE WHERE open_id = #{openId} AND ORG_ID=tom.org_id)
+			AND 
+			(ta.URL LIKE '%/home%' OR ta.URL LIKE '%/customer%' OR ta.URL LIKE '%/zjactivity%' 
+			OR ta.URL LIKE '%/oppty%' OR ta.URL LIKE '%/schedule%' OR ta.URL LIKE '%/contact%' 
+			OR ta.URL LIKE '%/discuGroup%' OR ta.URL LIKE '%/resource%' OR ta.URL LIKE '%/workplan%'
+			OR ta.URL LIKE '%/businesscard%' OR ta.URL LIKE '%/zjwkactivity%'
+			)
+			AND 
+			(ta.URL NOT LIKE '%/download%')
+			<if test="startDate != null"> and DATE_FORMAT(ta.createTime,'%Y-%m-%d') &gt;= #{startDate}</if>
+		  	<if test="endDate != null"> and DATE_FORMAT(ta.createTime,'%Y-%m-%d') &lt;= #{endDate}</if>
+			GROUP BY DATE_FORMAT(ta.CREATETIME,'%Y-%m-%d') ORDER BY ta.CREATETIME ASC
+	</select>
+
+	<!-- 模块访问统计 -->
+	<select id="countAccessLogsByModule"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs"
+		resultType="com.takshine.wxcrm.domain.AccessLogs">
+		SELECT startDate,accessModule,COUNT(*) AS accessCount FROM(
+			SELECT 
+			  DATE_FORMAT(ta.CREATETIME,'%Y-%m-%d') AS startDate,
+		      (CASE WHEN ta.URL LIKE '%/home%' THEN '通知'
+		      WHEN ta.URL LIKE '%/customer%' THEN '客户'
+		      WHEN ta.URL LIKE '%/oppty%' THEN '生意'
+		      WHEN ta.URL LIKE '%/schedule%' THEN '任务'
+		      WHEN ta.URL LIKE '%/contact%' THEN '联系人'
+		      WHEN ta.URL LIKE '%/zjactivity%' THEN '活动'
+		      WHEN ta.URL LIKE '%/discuGroup%' THEN '讨论组'
+		      WHEN ta.URL LIKE '%/resource%' THEN '文章'
+		      WHEN ta.URL LIKE '%/workplan%' THEN '工作计划'
+		      WHEN ta.URL LIKE '%/zjwkactivity%' THEN '活动'
+		      WHEN ta.URL LIKE '%/businesscard%' THEN '个人' END) AS accessModule
+					FROM TB_ACCESS_LOGS ta
+				LEFT JOIN TB_BUSINESS_CARD tbc ON tbc.party_row_id = ta.partyId
+				LEFT JOIN TB_WXUSER_INFO twi ON twi.party_row_id = tbc.party_row_id
+				LEFT JOIN TR_OPERATOR_MOBILE tom ON tom.open_id = twi.open_id
+				WHERE tom.org_id !=#{orgId}
+				AND EXISTS (SELECT org_id FROM TR_OPERATOR_MOBILE WHERE open_id = #{openId} AND ORG_ID=tom.org_id) 
+			      AND 
+			      (ta.URL LIKE '%/home%' OR ta.URL LIKE '%/customer%' OR ta.URL LIKE '%/zjactivity%' 
+					OR ta.URL LIKE '%/oppty%' OR ta.URL LIKE '%/schedule%' OR ta.URL LIKE '%/contact%' 
+					OR ta.URL LIKE '%/discuGroup%' OR ta.URL LIKE '%/resource%' OR ta.URL LIKE '%/workplan%'
+					OR ta.URL LIKE '%/businesscard%' OR ta.URL LIKE '%/zjwkactivity%' )
+			      AND 
+				(ta.URL NOT LIKE '%/download%')
+				<if test="startDate != null"> AND DATE_FORMAT(createTime,'%Y-%m-%d') &gt;= #{startDate}</if>
+				<if test="endDate != null"> AND DATE_FORMAT(createTime,'%Y-%m-%d') &lt;= #{endDate}</if>
+				) a GROUP BY startDate,
+				accessModule 
+				ORDER BY startDate ASC 
+	</select>
+	
+	<!-- 用户访问统计 -->
+	<select id="countAccessLogsByUser"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs"
+		resultType="com.takshine.wxcrm.domain.AccessLogs">
+		SELECT opName,accessCount FROM(
+		SELECT 
+		tbc.NAME AS opName,COUNT(*) AS accessCount
+		 FROM TB_ACCESS_LOGS tal
+		 LEFT JOIN TB_BUSINESS_CARD tbc ON tbc.party_row_id = tal.partyId
+		 LEFT JOIN TB_WXUSER_INFO twi ON twi.party_row_id = tbc.party_row_id
+		LEFT JOIN TR_OPERATOR_MOBILE tom ON tom.open_id = twi.open_id
+		WHERE tom.org_id !=${orgId}
+		AND EXISTS (SELECT org_id FROM TR_OPERATOR_MOBILE WHERE open_id = #{openId} AND ORG_ID=tom.org_id)
+		AND  
+		(tal.URL LIKE '%/home%' OR tal.URL LIKE '%/customer%' OR tal.URL LIKE '%/zjactivity%' 
+		OR tal.URL LIKE '%/oppty%' OR tal.URL LIKE '%/schedule%' OR tal.URL LIKE '%/contact%' 
+		OR tal.URL LIKE '%/discuGroup%' OR tal.URL LIKE '%/resource%' OR tal.URL LIKE '%/workplan%'
+		OR tal.URL LIKE '%/businesscard%' OR tal.URL LIKE '%/zjwkactivity%' )
+		<if test="startDate != null"> AND DATE_FORMAT(createTime,'%Y-%m-%d') &gt;= #{startDate}</if>
+		<if test="endDate != null"> AND DATE_FORMAT(createTime,'%Y-%m-%d') &lt;= #{endDate}</if>
+		GROUP BY tbc.name
+		) a ORDER BY a.accessCount DESC
+	</select>
+	
+	<!-- 用户访问统计TOP5 -->
+	<select id="countAccessLogsByUserTop5"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs"
+		resultType="com.takshine.wxcrm.domain.AccessLogs">
+		SELECT opName,accessCount FROM(
+		SELECT 
+		tbc.NAME AS opName,COUNT(*) AS accessCount
+		 FROM TB_ACCESS_LOGS tal
+		 LEFT JOIN TB_BUSINESS_CARD tbc ON tbc.party_row_id = tal.partyId
+		 LEFT JOIN TB_WXUSER_INFO twi ON twi.party_row_id = tbc.party_row_id
+		LEFT JOIN TR_OPERATOR_MOBILE tom ON tom.open_id = twi.open_id
+		WHERE tom.org_id !=#{orgId}
+		AND EXISTS (SELECT org_id FROM TR_OPERATOR_MOBILE WHERE open_id = #{openId} AND ORG_ID=tom.org_id)
+		AND  
+		(tal.URL LIKE '%/home%' OR tal.URL LIKE '%/customer%' OR tal.URL LIKE '%/zjactivity%' 
+		OR tal.URL LIKE '%/oppty%' OR tal.URL LIKE '%/schedule%' OR tal.URL LIKE '%/contact%' 
+		OR tal.URL LIKE '%/discuGroup%' OR tal.URL LIKE '%/resource%' OR tal.URL LIKE '%/workplan%'
+		OR tal.URL LIKE '%/businesscard%' OR tal.URL LIKE '%/zjwkactivity%' )
+		<if test="startDate != null"> AND DATE_FORMAT(createTime,'%Y-%m-%d') &gt;= #{startDate}</if>
+		<if test="endDate != null"> AND DATE_FORMAT(createTime,'%Y-%m-%d') &lt;= #{endDate}</if>
+		GROUP BY tbc.name
+		) a ORDER BY a.accessCount DESC LIMIT 0,5 
+	</select>
+	
+	<!-- 用户访问统计Bottom5 -->
+	<select id="countAccessLogsByUserBottom5"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs"
+		resultType="com.takshine.wxcrm.domain.AccessLogs">
+		SELECT opName,accessCount FROM(
+		SELECT 
+		tbc.NAME AS opName,COUNT(*) AS accessCount
+		 FROM TB_ACCESS_LOGS tal
+		 LEFT JOIN TB_BUSINESS_CARD tbc ON tbc.party_row_id = tal.partyId
+		 LEFT JOIN TB_WXUSER_INFO twi ON twi.party_row_id = tbc.party_row_id
+		LEFT JOIN TR_OPERATOR_MOBILE tom ON tom.open_id = twi.open_id
+		WHERE tom.org_id !=#{orgId}
+		AND EXISTS (SELECT org_id FROM TR_OPERATOR_MOBILE WHERE open_id = #{openId} AND ORG_ID=tom.org_id)
+		AND  
+		(tal.URL LIKE '%/home%' OR tal.URL LIKE '%/customer%' OR tal.URL LIKE '%/zjactivity%' 
+		OR tal.URL LIKE '%/oppty%' OR tal.URL LIKE '%/schedule%' OR tal.URL LIKE '%/contact%' 
+		OR tal.URL LIKE '%/discuGroup%' OR tal.URL LIKE '%/resource%' OR tal.URL LIKE '%/workplan%'
+		OR tal.URL LIKE '%/businesscard%' OR tal.URL LIKE '%/zjwkactivity%' )
+		<if test="startDate != null"> AND DATE_FORMAT(createTime,'%Y-%m-%d') &gt;= #{startDate}</if>
+		<if test="endDate != null"> AND DATE_FORMAT(createTime,'%Y-%m-%d') &lt;= #{endDate}</if>
+		GROUP BY tbc.name
+		) a ORDER BY a.accessCount ASC LIMIT 0,5
+	</select>
+	
+	<!-- 统计访问日志总数 -->
+	<select id="countAccessLogsByFilter"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs"
+		resultType="Integer">
+		select count(1)
+			from TB_ACCESS_LOGS
+		where 1=1
+		 <if test="url != null"> and url like #{url}</if>
+		 <if test="params != null"> and params like #{params}</if>
+		 <if test="startDate != null"> and createTime &gt;= #{startDate} </if>
+		 <if test="endDate != null"> and createTime &lt;= #{endDate} </if>
+		 <if test="createTime != null"> and createTime = #{createTime},</if>
+		 <if test="orgId != null"> and org_id = #{orgId},</if>
+		 <if test="partyId != null"> and partyId = #{partyId}</if>
+	</select>
+	
+	<!-- 插入一条 访问日志 -->
+	<insert id="insertAccessLogs"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs">
+		insert into TB_ACCESS_LOGS
+		(
+		      ID,
+		      IP,
+			  URL,
+			  PARAMS,
+			  CREATETIME,
+			  ORG_ID,
+			  partyId	
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="ip != null">#{ip},</if>
+		    <if  test="ip == null">NULL,</if>
+		    <if  test="url != null">#{url},</if>
+		    <if  test="url == null">NULL,</if>
+		    <if  test="params != null">#{params},</if>
+		    <if  test="params == null">NULL,</if>
+		    <if  test="createTime != null">#{createTime},</if>
+		    <if  test="createTime == null">NULL,</if>
+		    <if  test="orgId != null">#{orgId},</if>
+		    <if  test="orgId == null">NULL,</if>
+		    <if  test="partyId != null">#{partyId}</if>
+		    <if  test="partyId == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条访问日志 -->
+	<update id="updateAccessLogsById"
+		parameterType="com.takshine.wxcrm.domain.AccessLogs">
+		UPDATE TB_ACCESS_LOGS SET
+		    <if  test="ip != null">IP = #{ip},</if>
+		    <if  test="ip == null">NULL,</if>
+		    <if  test="url != null">URL = #{url},</if>
+		    <if  test="url == null">NULL,</if>
+		    <if  test="params != null">PARAMS = #{params},</if>
+		    <if  test="params == null">NULL,</if>
+		    <if  test="createtime != null">CREATETIME = #{createtime},</if>
+		    <if  test="createtime == null">NULL,</if>
+		    <if  test="orgId != null">ORG_ID = #{orgId},</if>
+		    <if  test="orgId == null">NULL,</if>
+		    <if  test="partyId != null">partyId = #{partyId}</if>
+		    <if  test="partyId == null">NULL</if>
+		   
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteAccessLogsById"
+		parameterType="java.lang.String">
+		delete from TB_ACCESS_LOGS where ID = #{value}
+	</delete>
+</mapper>
+

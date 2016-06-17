@@ -1,0 +1,148 @@
+<html lang="zh-cn">
+<head>
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+<script src="../jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<!--框架样式-->
+<link rel="stylesheet" href="css/wb.css">
+<script src="js/wb.js" type="text/javascript"></script>
+<title>刘淋亲戚通讯录 - 群友通讯录</title>
+</head>
+<body>
+	<div id="site-nav" class="navbar">
+		<a href="#" onclick="history.back();return false;" class="act-primary"><i
+			class="icon-back"></i></a>
+		<div class="act-secondary" data-toggle="navbar"
+			data-target="nav-collapse">
+			<i class="icon-menu"><b></b></i>
+		</div>
+		<div class="toggleTitle">刘淋亲戚通讯录</div>
+	</div>
+	<div id="nav-collapse" class="navbar-menu">
+		<ul>
+			<li><a href="/index/my">我的通讯录</a></li>
+			<li><a href="/activity/my">我的聚会</a></li>
+			<li><a href="/card/setting">我的名片</a></li>
+			<li><a href="/recommend/index" data-ajax="false">群推荐中心</a></li>
+			<li><a href="/download/index">下载手机APP</a></li>
+		</ul>
+	</div>
+	<div class="view site-phonebook">
+		<div id="page-header" class="page-header container">
+			<p>刘氏家谱通讯录</p>
+			<h1>刘淋亲戚通讯录</h1>
+			<p>人数：1人</p>
+			<p>爱系千里,亲情无间</p>
+		</div>
+		<div class="well text-center wrapper" style="padding: 3em 0">
+			<h3 class="text-info" style="font-size: 18px;">通讯录创建成功!</h3>
+			<br> 马上把此页面发送到<br> 微信群、朋友圈、QQ群、微博<br> 邀请家谱成员一起来填写吧<br>
+			<br>
+			<a href="#" data-action="share" class="btn "><span
+				class="icon icon-share"></span> 点击开始分享</a>
+		</div>
+		<div id="list-book"
+			class="view-list list list-group listview accordion">
+			<div href="#" class="list-group-item accordion-group">
+				<div class="listview-item accordion-hd">
+					<div class="list-group-item-bd  ">
+						<div class="thumb">
+							<img class="" data-src="http://qun.hk/index/avatar?url="
+								src="http://qun.hk/index/avatar?url=">
+						</div>
+						<div class="content">
+							<h2 class="title">
+								刘淋 (刘淋) <small> (管理员) </small>
+							</h2>
+							<p></p>
+							<p>takshineIT攻城师</p>
+							<p>13716460437</p>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-bd show">
+					<p>
+						邮箱：<a href="mailto:zhenoo124@126.com">zhenoo124@126.com</a>
+					</p>
+					<p>
+						电话：<a href="tel:13716460437">13716460437</a>
+					</p>
+					<p>地址：北京市北京市</p>
+					<div class="button-ctrl" style="margin: 1em 0">
+						<a href="/card/setting/id/gffm4p?return=/family/q5fksodt"
+							class="btn btn-block" onclick="return confirm('确认修改您的名片吗？')">
+							修改我的名片 </a>
+					</div>
+					<div class="button-ctrl" style="margin: 1em 0">
+						<a href="http://qun.hk/card/gffm4p" class="btn  btn-mini">
+							查看详细名片 </a><a
+							href="/family/remove?code=q5fksodt&amp;openid=phone-13716460437"
+							class="btn btn-mini btn-default"
+							onclick="return confirm('是否确认删除此成员？')"> 删除成员 </a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="button-ctrl wrapper">
+			<a href="/family/join/code/q5fksodt?assist=1"
+				class="btn btn-block btn-success"> 帮助家人录入 </a><a href="#"
+				data-action="share" class="btn btn-block"> 邀请更多亲戚朋友加入 </a>
+		</div>
+		<div class="wrapper text-center other-ctrl">
+			<a href="/family/create/code/q5fksodt"> 编辑家谱通讯录信息 </a><a
+				href="/family/join/code/q5fksodt"> 修改我的资料 </a><a
+				href="/family/dismiss/code/q5fksodt"
+				onclick="return confirm('确定要删除此通讯录吗？删除后无法恢复')"> 删除整个通讯录 </a>
+		</div>
+		<div class="footer-create well text-center wrapper">
+			<a class="btn btn-block" href="/family/create"><span
+				class="icon icon-plus"></span>发起家谱宗亲通讯录 </a>
+			<p style="margin-top: 1em">爱系千里，亲情无间</p>
+			<p>为您的宗族建立一份通讯录</p>
+			<p>让同宗聚首，促进交流合作！</p>
+		</div>
+	</div>
+	<div class="gotop" style="display: block;">
+		<i class="icon icon-arrow-up"></i>
+	</div>
+	<div id="complaintForm" data-modal="alert" class="modal">
+		<form method="post" action="/complaint/index" class="modal-container"
+			novalidate="true">
+			<div class="modal-title">举报</div>
+			<div class="form-group">
+				<div class="control-label"></div>
+				<textarea class="form-control" required="" name="message"
+					placeholder="举报此页面的理由（色情，反动，广告，侵权等）" rows="3"></textarea>
+				<div class="help-block empty">请填写具体举报理由</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-block btn-default" type="submit">确认举报</button>
+			</div>
+			<div class="actions">
+				<div class="btn btn-block" data-dismiss="modal">关闭窗口</div>
+			</div>
+		</form>
+	</div>
+	<footer class="site-ft wrapper" data-position="">
+		<p>
+			<i class="icon icon-lock"></i> 数据已进行隐私加密，请放心使用
+		</p>
+		<div class="menu">
+			<a href="/index/follow" style="font-weight: bold;">关注我们</a>| <a
+				href="weixin://contacts/profile/bibi100"
+				onclick="alert('请查找微信号【bibi100】欢迎咨询！')">联系客服</a>| <a
+				href="/index/help">帮助</a>| <a href="#" data-toggle="modal"
+				data-target="complaintForm">举报</a>
+		</div>
+		<div style="color: #AAA; font-size: 12px; margin-top: .3em">
+			<p>Power By 群友通讯录 交流 共享 互利 共赢</p>
+			<p class="footer-userinfo">
+				当前帐号：刘淋<a href="/oauth/logout"
+					onclick="return confirm('是否确认需要重新登录？'); return false;">重新登录</a><a
+					href="#" onclick="window.location.reload(); return false;">刷新</a>
+			</p>
+		</div>
+	</footer>
+
+</body>
+</html>

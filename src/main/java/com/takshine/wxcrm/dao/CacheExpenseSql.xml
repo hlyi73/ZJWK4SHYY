@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!--  sql处理语句 -->
+<mapper namespace="cacheExpenseSql">
+	<!-- 分页查询 -->
+	<select id="findCacheExpenseListByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheExpense"
+		resultType="com.takshine.wxcrm.domain.cache.CacheExpense">
+			SELECT
+			  crm_id,
+			  name,
+			  open_id,
+			  rowid,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  expense_type,
+			  expense_subtype,
+			  parent_id,
+			  parent_type,
+			  parent_name,
+			  expense_status,
+			  date_format(expense_date,'%Y-%m-%d') as expense_date,
+		  	  expense_amount
+		  FROM CACHE_EXPENSE where 1=1 and enabled_flag = 'enabled'
+		  <if test="org_id != null and org_id !=''"> and org_id = #{org_id}</if>
+		  <if test="crm_id != null and crm_id !=''"> and crm_id = #{crm_id}</if>
+		  <if test="expense_status != null and expense_status !=''"> and expense_status = #{expense_status}</if>
+		  <if test="expense_type != null and expense_type !=''"> and expense_type = #{expense_type}</if>
+		  <if test="expense_subtype != null and expense_subtype !=''"> and expense_subtype = #{expense_subtype}</if>
+		  <if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and crm_id in
+		   <foreach collection="crm_id_in" index="index" item="crmid" open="("
+		    separator="," close=")">
+		   #{crmid}
+		  </foreach>
+		   </if>
+		  <if test="rowid_in != null and rowid_in.size > 0">
+		   and rowid in
+		   <foreach collection="rowid_in" index="index" item="rowid" open="("
+		    separator="," close=")">
+		   #{rowid}
+		  </foreach>
+		   </if>
+		  <if test="rowid != null"> and rowid = #{rowid}</if>
+		  order by F_GetPY(name) limit #{currpage},#{pagecount}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="findCacheExpenseListByCrmId"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheExpense"
+		resultType="com.takshine.wxcrm.domain.cache.CacheExpense">
+		SELECT 
+		  cc.crm_id,
+		  name,
+		  open_id,
+		  rowid,
+		  org_id,
+		  create_date,
+		  create_by,
+		  modify_date,
+		  modify_by,
+		  expense_type,
+		  expense_subtype,
+		  parent_id,
+		  parent_type,
+		  parent_name,
+		  expense_status,
+		  date_format(expense_date,'%Y-%m-%d') as expense_date,
+		  enabled_flag,
+		  expense_amount,
+		  (
+		   	case when parent_type='Accounts' then (select name from CACHE_CUSTOMER where rowid=parent_id) 
+			   	when parent_type='Opportunities' then (select name from CACHE_OPPTY where rowid=parent_id) 
+			   	when parent_type='Tasks' then (select name from CACHE_SCHEDULE where rowid=parent_id) 
+			   	when parent_type='Activity' then (select title from TB_MK_ACTIVITY where rowid=parent_id)  
+		   	else '' end
+		  ) as parent_name
+		FROM
+		  CACHE_EXPENSE cc,
+		  (SELECT 
+		    crm_id 
+		  FROM
+		    TR_OPERATOR_MOBILE 
+		  WHERE open_id = 
+		    (SELECT 
+		      open_id 
+		    FROM
+		      TR_OPERATOR_MOBILE 
+		    WHERE crm_id = #{crm_id})) op 
+		WHERE 1 = 1 and cc.enabled_flag = 'enabled'
+		  AND cc.crm_id = op.crm_id 
+		   <if test="name != null and name != ''"> and cc.name like CONCAT('%',#{name},'%') </if>
+		   <if test="expense_status != null and expense_status !=''"> and expense_status = #{expense_status}</if>
+		   <if test="expense_type != null and expense_type !=''"> and expense_type = #{expense_type}</if>
+		  <if test="expense_subtype != null and expense_subtype !=''"> and expense_subtype = #{expense_subtype}</if>
+		  <if test="org_id != null and org_id !=''"> and cc.org_id = #{org_id}</if>
+		   <if test="orderByString  == 'dedate'">
+	       order by expense_date desc
+	      </if>
+	      <if test="orderByString  == 'aedate'">
+	       order by expense_date 
+	      </if>
+	      <if test="orderByString  == 'aname'">
+	       order by name
+	      </if>
+		limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 统计总数 -->
+	<select id="countCacheExpenseByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheExpense"
+		resultType="Integer">
+		select count(1)
+			from CACHE_EXPENSE
+		where 1=1
+		 <if test="org_id != null"> and org_id = #{org_id}</if>
+	</select>
+	
+	<!-- 插入一条  -->
+	<insert id="insertCacheExpense"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheExpense">
+		insert into CACHE_EXPENSE
+		(
+		      rowid,
+		      name,
+			  crm_id,
+			  open_id,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  expense_date,
+			  expense_type,
+			  expense_subtype,
+			  expense_status,
+			  parent_id,
+			  parent_type,
+			  parent_name,
+			  enabled_flag,
+			  expense_amount
+		) values (
+		    <if  test="rowid != null">#{rowid},</if>
+		    <if  test="rowid == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="crm_id != null">#{crm_id},</if>
+		    <if  test="crm_id == null">NULL,</if>
+		    <if  test="open_id != null">#{open_id},</if>
+		    <if  test="open_id == null">NULL,</if>
+		    <if  test="org_id != null">#{org_id},</if>
+		    <if  test="org_id == null">NULL,</if>
+		    <if  test="create_date != null">#{create_date},</if>
+		    <if  test="create_date == null">NULL,</if>
+		    <if  test="create_by != null">#{create_by},</if>
+		    <if  test="create_by == null">NULL,</if>
+		    <if  test="modify_date != null">#{modify_date},</if>
+		    <if  test="modify_date == null">NULL,</if>
+		    <if  test="modify_by != null">#{modify_by},</if>
+		    <if  test="modify_by == null">NULL,</if>
+		    <if  test="expense_date != null">#{expense_date},</if>
+		    <if  test="expense_date == null">NULL,</if>
+		    <if  test="expense_type != null">#{expense_type},</if>
+		    <if  test="expense_type == null">NULL,</if>
+		    <if  test="expense_subtype != null">#{expense_subtype},</if>
+		    <if  test="expense_subtype == null">NULL,</if>
+		    <if  test="expense_status != null">#{expense_status},</if>
+		    <if  test="expense_status == null">NULL,</if>
+		    <if  test="parent_id != null">#{parent_id},</if>
+		    <if  test="parent_id == null">NULL,</if>
+		    <if  test="parent_type != null">#{parent_type},</if>
+		    <if  test="parent_type == null">NULL,</if>
+		    <if  test="parent_name != null">#{parent_name},</if>
+		    <if  test="parent_name == null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag},</if>
+		    <if  test="enabled_flag == null">NULL,</if>
+		    <if  test="expense_amount != null">#{expense_amount}</if>
+		    <if  test="expense_amount == null">0</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条 -->
+	<update id="updateCacheExpenseById"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheExpense">
+		UPDATE CACHE_EXPENSE SET
+		    <if  test="modify_date != null">modify_date = #{modify_date},</if>
+		    <if  test="modify_date == null">modify_date = NULL,</if>
+		    <if  test="modify_by != null">modify_by = #{modify_by},</if>
+		    <if  test="modify_by == null">modify_by = NULL,</if>
+		    <if  test="name != null">name = #{name},</if>
+		    <if  test="name == null">name = NULL,</if>
+		    <if  test="expense_type != null">expense_type = #{expense_type},</if>
+		    <if  test="expense_type == null">expense_type = NULL,</if>
+		    <if  test="expense_subtype != null">expense_subtype = #{expense_subtype},</if>
+		    <if  test="expense_subtype == null">expense_subtype = NULL,</if>
+		    <if  test="parent_id != null">parent_id = #{parent_id},</if>
+		    <if  test="parent_id == null">parent_id = NULL,</if>
+		    <if  test="parent_type != null">parent_type = #{parent_type},</if>
+		    <if  test="parent_type == null">parent_type = NULL,</if>
+		    <if  test="parent_name != null">parent_name = #{parent_name},</if>
+		    <if  test="parent_name == null">parent_name = NULL,</if>
+		    <if  test="expense_status != null">expense_status = #{expense_status},</if>
+		    <if  test="expense_status == null">expense_status = NULL,</if>
+		    <if  test="enabled_flag != null">enabled_flag = #{enabled_flag},</if>
+		    <if  test="expense_date != null">expense_date = #{expense_date},</if>
+		    <if  test="expense_date == null">expense_date = NULL,</if>	
+		    <if  test="expense_amount != null">expense_amount = #{expense_amount}</if>
+		    <if  test="expense_amount == null">expense_amount = NULL</if>		   
+		  WHERE rowid=#{rowid}
+	</update>
+	
+	<!-- 更新一条 -->
+	<update id="updateEnabledFlag"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheExpense">
+		UPDATE CACHE_EXPENSE SET enabled_flag = #{enabled_flag} WHERE rowid = #{rowid}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteCacheExpenseById"
+		parameterType="java.lang.String">
+		delete from CACHE_EXPENSE where rowid = #{value}
+	</delete>
+
+</mapper>
+

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 注册信息 sql处理语句 -->
+<mapper namespace="articleTypeSql">
+	<!-- 分页查询注册信息 -->
+	<select id="findArticleTypeListByFilter"
+		parameterType="com.takshine.wxcrm.domain.ArticleType"
+		resultType="com.takshine.wxcrm.domain.ArticleType">
+		SELECT
+			  id as id,
+			  code as code,
+			  name as name,
+			  parentId as parentId,
+			  parentName as parentName
+		  
+		  FROM TB_ARTICLE_TYPE where 1=1
+		  <if test="name != null"> and name = #{name}</if>
+		  <if test="parentId != null"> and parentId = #{parentId}</if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计注册信息总数 -->
+	<select id="countArticleTypeByFilter"
+		parameterType="com.takshine.wxcrm.domain.ArticleType"
+		resultType="Integer">
+		select count(1)
+			from TB_ARTICLE_TYPE
+		where 1=1
+		 <if test="name != null"> and name = #{name}</if>
+		 <if test="parentId != null"> and parentId = #{parentId}</if>
+	</select>
+	
+	<!-- 插入一条 注册信息 -->
+	<insert id="insertArticleType"
+		parameterType="com.takshine.wxcrm.domain.ArticleType">
+		insert into TB_ARTICLE_TYPE
+		(
+		      ID ,
+		      CODE,
+			  NAME ,
+			  PARENTID ,
+			  PARENTNAME 
+			  
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="code != null">#{code},</if>
+		    <if  test="code == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="parentId != null">#{parentId},</if>
+		    <if  test="parentId == null">NULL,</if>
+		    <if  test="parentName != null">#{parentName},</if>
+		    <if  test="parentName == null">NULL,</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条注册信息 -->
+	<update id="updateArticleTypeById"
+		parameterType="com.takshine.wxcrm.domain.ArticleType">
+		UPDATE TB_ARTICLE_TYPE SET
+		    <if  test="name != null">NAME = #{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="parentId != null">PARENTID = #{parentId},</if>
+		    <if  test="parentId == null">NULL,</if>
+		    <if  test="parentName != null">PARENTNAME = #{parentName}</if>
+		    <if  test="parentName == null">NULL</if>
+		   
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据ID删除文章类别记录 -->
+	<delete id="deleteArticleInfoById"
+		parameterType="java.lang.String">
+		delete from TB_ARTICLE_TYPE where ID = #{value}
+	</delete>
+</mapper>
+

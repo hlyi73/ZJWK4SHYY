@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 活动 sql处理语句 -->
+<mapper namespace="activitySql">
+	<!-- 获取活动列表 -->
+	<select id="findActivityList"
+		parameterType="com.takshine.marketing.domain.Activity"
+		resultType="com.takshine.marketing.domain.Activity">
+			select 
+			 id,
+			 title,
+			 content,
+			 date_format(start_date,'%Y-%m-%d') as start_date,
+			 date_format(act_end_date,'%Y-%m-%d') as act_end_date,
+			 date_format(end_date,'%Y-%m-%d') as end_date,
+			 place,
+			 status,
+			 type,
+			 title_img as logo,
+			 create_name as createName,
+			 head_image_url as headImageUrl,
+			 remark,
+			 ispublish,
+			 islive,
+			 isregist,
+			 live_parameter,
+			 created_by as create_by,
+			 orgId,
+			 crmId,
+			 (select count(*) from TB_MK_ACTIVITY_PRINT where type='VISIT' and activity_id = ta.id) as readnum,
+			 (select count(*) from (select t.source_id,t.activity_id  from TB_MK_ACTIVITY_PRINT t where type='PRAISE' group by t.activity_id,t.source_id) a WHERE a.activity_id = ta.id) as praisenum,
+			 (select count(DISTINCT t.id) from TB_MESSAGES t where t.rela_id=ta.id and t.rela_module = 'Activity') as commentnum,
+			 (select count(*) from TB_MK_ACTIVITY_PARTICIPANT where activity_id=ta.id) as joinnum
+			 from TB_MK_ACTIVITY ta where 1=1 and enabled_flag='enabled'
+			 <if test="createBy != null">
+			  	and created_by=#{createBy}  
+			 </if>
+			 <!-- <if test="source != null">
+			  	 and source=#{source} 
+			 </if>  -->
+			 <if test="createBy == null or createBy == '' ">
+			  	 and status = 'publish' and ispublish ='open'
+			 </if> 
+			  <if test="firstChar != null">
+			  	 and F_GetPY(title)=#{firstChar}  
+			 </if> 
+			  <if test="start_date != null"> and DATE_FORMAT(start_date,'%Y-%m-%d %H:%i:%s') &gt; #{start_date} </if>
+		  	 <if test="end_date != null"> and DATE_FORMAT(end_date,'%Y-%m-%d %H:%i:%s') &lt;= #{end_date} </if>
+		  	 <if test="orgId != null and orgId !='' "> and orgId=#{orgId} </if>
+			 order by start_date desc
+		  <if test="currpage != null and pagecount!= null"> 
+		  	  limit #{currpages},#{pagecounts}
+		  </if>
+	</select>
+	
+	<!-- 获取关注的活动列表 -->
+	<select id="findAllAttenActivityList"
+		parameterType="com.takshine.marketing.domain.Activity"
+		resultType="com.takshine.marketing.domain.Activity">
+			select 
+			 ta.id,
+			 title,
+			 content,
+			 date_format(start_date,'%Y-%m-%d') as start_date,
+			 date_format(end_date,'%Y-%m-%d') as end_date,
+			 date_format(act_end_date,'%Y-%m-%d') as act_end_date,
+			 place,
+			 status,
+			 type,
+			 title_img as logo,
+			 create_name as createName,
+			 head_image_url as headImageUrl,
+			 remark,
+			 ispublish,
+			 islive,
+			 isregist,
+			 live_parameter,
+			 created_by as create_by,
+			 (select count(*) from TB_MK_ACTIVITY_PRINT where type='VISIT' and activity_id = ta.id) as readnum,
+			 (select count(*) from (select t.source_id,t.activity_id  from TB_MK_ACTIVITY_PRINT t where type='PRAISE' group by t.activity_id,t.source_id) a WHERE a.activity_id = ta.id) as praisenum,
+			 (select count(DISTINCT t.id) from TB_MESSAGES t where t.rela_id=ta.id and t.rela_module = 'Activity') as commentnum,
+			 (select count(*) from TB_MK_ACTIVITY_PARTICIPANT where activity_id=ta.id) as joinnum
+			 from TB_MK_ACTIVITY ta,TB_MK_ACTIVITY_RELA tar where 1=1 
+			 and ta.id = tar.activity_id and tar.rela_id = #{openId}
+			 order by start_date desc limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 获取活动列表 -->
+	<select id="findAllActivityList"
+		parameterType="com.takshine.marketing.domain.Activity"
+		resultType="com.takshine.marketing.domain.Activity">
+			select 
+			 id,
+			 title,
+			 content,
+			 date_format(start_date,'%Y-%m-%d') as start_date,
+			 date_format(end_date,'%Y-%m-%d') as end_date,
+			 date_format(act_end_date,'%Y-%m-%d') as act_end_date,
+			 place,
+			 status,
+			 type,
+			 title_img as logo,
+			 create_name as createName,
+			 head_image_url as headImageUrl,
+			 remark,
+			 ispublish,
+			 islive,
+			 isregist,
+			 live_parameter,
+			 created_by as create_by
+			 from TB_MK_ACTIVITY ta where 1=1 
+			 <if test="start_date != null"> and start_date = #{start_date} </if>
+			 and isregist = 'Y'
+			 order by start_date desc limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询我下属的活动列表 -->
+	<select id="findBranchActivityList"
+		parameterType="com.takshine.marketing.domain.Activity"
+		resultType="com.takshine.marketing.domain.Activity">
+			select 
+			 id,
+			 title,
+			 content,
+			 date_format(start_date,'%Y-%m-%d') as start_date,
+			 date_format(end_date,'%Y-%m-%d') as end_date,
+			 date_format(act_end_date,'%Y-%m-%d') as act_end_date,
+			 place,
+			 status,
+			 type,
+			 title_img as logo,
+			 create_name as createName,
+			 head_image_url as headImageUrl,
+			 remark,
+			 ispublish,
+			 islive,
+			 isregist,
+			 live_parameter,
+			 created_by as create_by,
+			 orgId,
+			 crmId,
+			 (select count(*) from TB_MK_ACTIVITY_PRINT where type='VISIT' and activity_id = ta.id) as readnum,
+			 (select count(*) from (select t.source_id,t.activity_id  from TB_MK_ACTIVITY_PRINT t where type='PRAISE' group by t.activity_id,t.source_id) a WHERE a.activity_id = ta.id) as praisenum,
+			 (select count(*) from TB_MK_ACTIVITY_PARTICIPANT where activity_id=ta.id) as joinnum,
+			 (select count(DISTINCT t.id) from TB_MESSAGES t where t.rela_id=ta.id and t.rela_module = 'Activity') as commentnum
+			 from TB_MK_ACTIVITY ta where 1=1 and enabled_flag='enabled'
+			 and status = 'publish' and ispublish ='open'
+			  <if test="crm_id_in != null and crm_id_in.size >0 ">
+			  	and crmId in 
+			  	<foreach collection="crm_id_in" index="index" item="crmid" open="("
+				    separator="," close=")">
+				   #{crmid}
+				</foreach>
+			  </if>
+			  <if test="title !=null"> and title like %#{title}% </if>
+			 <if test="start_date != null"> and DATE_FORMAT(start_date,'%Y-%m-%d %H:%i:%s') &gt; #{start_date} </if>
+		  	 <if test="end_date != null"> and DATE_FORMAT(start_date,'%Y-%m-%d %H:%i:%s') &lt;= #{end_date} </if>
+		  	 <if test="orgId != null and orgId !='' "> and orgId=#{orgId} </if>
+			 order by start_date desc
+		  <if test="currpage != null and pagecount!= null"> 
+		  	  limit #{currpages},#{pagecounts}
+		  </if>
+	</select>
+	
+		<!-- 获取参与活动列表 -->
+	<select id="findJoinActivityList"
+		parameterType="com.takshine.marketing.domain.ActivityParticipant"
+		resultType="com.takshine.marketing.domain.Activity">
+			select 
+			ta.id,
+			 ta.title,
+			 ta.content,
+			 date_format(ta.start_date,'%Y-%m-%d') as start_date,
+			 date_format(ta.end_date,'%Y-%m-%d') as end_date,
+			 date_format(ta.act_end_date,'%Y-%m-%d') as act_end_date,
+			 ta.place,
+			 ta.status,
+			 ta.type,
+			 ta.title_img as logo,
+			 ta.create_name as createName,
+			 ta.head_image_url as headImageUrl,
+			 ta.remark,
+			 ta.created_by as create_by,
+			 ta.ispublish,
+			 ta.islive,
+			 ta.isregist,
+			 ta.live_parameter,
+			 ta.orgId,
+			 ta.crmId,
+			  (select count(*) from TB_MK_ACTIVITY_PRINT where type='VISIT' and activity_id = ta.id) as readnum,
+			 (select count(*) from (select t.source_id,t.activity_id  from TB_MK_ACTIVITY_PRINT t where type='PRAISE' group by t.activity_id,t.source_id) a WHERE a.activity_id = ta.id) as praisenum,
+			(select count(DISTINCT tm.id) from TB_MESSAGES tm where tm.rela_id=ta.id and tm.rela_module = 'Activity') as commentnum,
+			 (select count(*) from TB_MK_ACTIVITY_PARTICIPANT where activity_id=ta.id) as joinnum
+			 from TB_MK_ACTIVITY_PARTICIPANT t left join TB_MK_ACTIVITY ta on t.activity_id= ta.id where 1=1  and enabled_flag='enabled'
+			 <!-- <if test="sourceid != null"> 
+			  and t.source_id=#{sourceid} 
+			 </if> -->
+			  <if test="source != null"> 
+			  and t.source=#{source}  
+			  </if>
+			  <if test="participantid != null"> 
+			  and t.participant_id=#{participantid}  
+			  </if>
+			    <if test="startdate != null"> and DATE_FORMAT(ta.start_date,'%Y-%m-%d %H:%i:%s') &gt; #{startdate} </if>
+		  	 <if test="enddate != null"> and DATE_FORMAT(ta.end_date,'%Y-%m-%d %H:%i:%s') &lt;= #{enddate} </if>
+		  	 <if test="orgId != null and orgId !='' "> and orgId=#{orgId} </if>
+			 order by ta.start_date desc 
+			 
+		  <if test="currpage != null and pagecount!= null"> 
+		  	  limit #{currpages},#{pagecounts}
+		  </if>
+	</select>
+	
+	<!-- 获取推荐的活动列表 -->
+	<select id="findRecommendActivityList"
+		parameterType="com.takshine.marketing.domain.Activity"
+		resultType="com.takshine.marketing.domain.Activity">
+			select 
+			ta.id,
+			 ta.title,
+			 ta.content,
+			 date_format(ta.start_date,'%Y-%m-%d') as start_date,
+			 date_format(ta.end_date,'%Y-%m-%d') as end_date,
+			 date_format(ta.act_end_date,'%Y-%m-%d') as act_end_date,
+			 ta.place,
+			 ta.status,
+			 ta.type,
+			 ta.title_img as logo,
+			 ta.create_name as createName,
+			 ta.head_image_url as headImageUrl,
+			 ta.remark,
+			 ta.created_by as create_by,
+			 ta.ispublish,
+			 ta.islive,
+			 ta.isregist,
+			 ta.orgId,
+			 ta.crmId,
+			 ta.live_parameter,
+			  DATEDIFF(DATE_FORMAT(
+			   ta.start_date,
+			    '%Y-%m-%d'
+			  ),DATE_FORMAT(
+			    NOW(),
+			    '%Y-%m-%d'
+			  )) AS diffnum,
+			  (select count(*) from TB_MK_ACTIVITY_PRINT where type='VISIT' and activity_id = ta.id) as readnum,
+			 (select count(*) from (select t.source_id,t.activity_id  from TB_MK_ACTIVITY_PRINT t where type='PRAISE' group by t.activity_id,t.source_id) a WHERE a.activity_id = ta.id) as praisenum,
+			(select count(DISTINCT tm.id) from TB_MESSAGES tm where tm.rela_id=ta.id and tm.rela_module = 'Activity') as commentnum,
+			 (select count(*) from TB_MK_ACTIVITY_PARTICIPANT where activity_id=ta.id) as joinnum
+			 from TB_MK_ACTIVITY ta left join TB_MK_ACTIVITY_PARTICIPANT t on t.activity_id= ta.id where 1=1  and ta.enabled_flag='enabled' and ta.status = 'publish' and ta.ispublish ='open'
+			 group by diffnum  HAVING diffnum &gt;=0 
+			 order by readnum desc,ta.start_date asc limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询单个活动 -->
+	<select id="findFirstList"
+		parameterType="com.takshine.marketing.domain.Activity"
+		resultType="java.lang.String">
+		SELECT DISTINCT F_GetPY(title) FROM  TB_MK_ACTIVITY WHERE 1=1 and enabled_flag='enabled'
+	   <if test="createBy != null">
+			  	and created_by=#{createBy}  
+	 </if>
+		<if test="source != null">
+			  	 and source=#{source} 
+	 </if> 
+	 ORDER BY  title
+	</select>
+	
+	
+	<!-- 查询单个活动 -->
+	<select id="findActivityById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.marketing.domain.Activity">
+		select 
+			 act.id as id,
+			 title,
+			 content,
+			 date_format(start_date,'%Y-%m-%d') as start_date,
+			 date_format(end_date,'%Y-%m-%d') as end_date,
+			 date_format(act_end_date,'%Y-%m-%d') as act_end_date,
+			 expense,
+			 charge_type,
+			 (select lov_value from TB_MK_LOV where lov_key = act.charge_type and lov_name='lov_charge_type') as charge_typename,
+			 place,
+			 phone,
+			 type,
+			 status,
+			 remark,
+			 title_img as logo,
+			 create_name as createName,
+			 head_image_url as headImageUrl,
+			 act.created_by as createBy,
+			 act.create_time as createTime, 
+			 limit_number,
+			 display_member,
+			 ispublish,
+			 islive,
+			 isregist,
+			 live_parameter,
+			 orgId,
+			 crmId,
+			 res_open_time as resopentime,
+			 act.source as source,
+			  (select count(*) from TB_MK_ACTIVITY_PRINT where type='VISIT' and activity_id = act.id) as readnum,
+			 (select count(*) from (select t.source_id,t.activity_id  from TB_MK_ACTIVITY_PRINT t where type='PRAISE' group by t.activity_id,t.source_id) a WHERE a.activity_id = act.id) as praisenum,
+			(select count(DISTINCT t.id) from TB_MESSAGES t where t.rela_id=act.id and t.rela_module = 'Activity') as commentnum,
+			 (select count(*) from TB_MK_ACTIVITY_PARTICIPANT where activity_id=act.id) as joinnum,
+			 (SELECT GROUP_CONCAT(CONCAT(rela_name,':',rela_user_phone)) FROM TB_MK_ACTIVITY_RELA WHERE activity_id=act.id AND rela_type='contact') AS contactlistval,
+			 (SELECT GROUP_CONCAT(CONCAT(rela_id,'|',rela_name,'|',rela_user_phone)) FROM TB_MK_ACTIVITY_RELA WHERE activity_id=act.id AND rela_type='contact') AS contactlistval1,
+			 (SELECT GROUP_CONCAT(rela_name) FROM TB_MK_ACTIVITY_RELA WHERE activity_id=act.id AND rela_type='customer') AS customerlistval,
+			 (SELECT GROUP_CONCAT(rela_id,'|',rela_name) FROM TB_MK_ACTIVITY_RELA WHERE activity_id=act.id AND rela_type='customer') AS customerlistval1
+			 from TB_MK_ACTIVITY act where act.id=#{id} and act.enabled_flag='enabled'
+	</select>
+	
+	<!-- 修改活动 -->
+	<insert id="updateActivityById"
+		parameterType="com.takshine.marketing.domain.Activity">
+		update TB_MK_ACTIVITY set 
+		<if test="title !=null and title !=''">title=#{title},</if> 
+		<if test="content !=null and content !=''">content=#{content},</if> 
+		<if test="start_date !=null and start_date !=''">start_date=#{start_date},</if> 
+		<if test="end_date !=null and end_date != ''">end_date=#{end_date},</if> 
+		<if test="place != null and place !=''">place= #{place}, </if>
+		<if test="phone != null and phone !=''">phone= #{phone}, </if>
+		<if test="act_end_date != null and act_end_date !=''"  >act_end_date= #{act_end_date}, </if>
+		<if test="expense != null and expense !=''">expense= #{expense}, </if>
+		<if test="logo != null and logo !=''">title_img= #{logo}, </if>
+		<if test="limit_number != null and limit_number !=''">limit_number=#{limit_number}, </if>
+		<if test="display_member != null and display_member !=''"> display_member=#{display_member}, </if>
+		<if test="charge_type != null and charge_type !=''"> charge_type=#{charge_type}, </if>
+		<if test="remark != null and remark !=''"> remark=#{remark}, </if>
+		<if test="status != null and status !=''"> status=#{status}, </if>
+		<if test="type != null and type !=''"> type=#{type} ,</if>
+		<if test="ispublish != null and ispublish !=''"> ispublish=#{ispublish}, </if>
+		<if test="islive != null and islive !=''"> islive=#{islive}, </if>
+		<if test="isregist != null and isregist !=''"> isregist=#{isregist}, </if>
+		<if test="live_parameter != null and live_parameter !=''"> live_parameter=#{live_parameter}, </if>
+		<if test="resopentime != null and resopentime !=''"> res_open_time=#{resopentime},</if>
+		id=#{id} 
+		where id=#{id}
+	</insert>
+	
+	<!-- 添加活动 -->
+	<update id="saveActivity"
+		parameterType="com.takshine.marketing.domain.Activity">
+		insert into TB_MK_ACTIVITY(id,title,content,start_date,enabled_flag,end_date,expense,place,phone,title_img,create_time,created_by,limit_number,display_member,charge_type,status,type,source,create_name,remark,head_image_url,ispublish,islive,isregist,live_parameter,orgId,crmId,act_end_date)
+		values(#{id},#{title},#{content},#{start_date},#{enabled_flag},
+		<if test="end_date != null and end_date != ''"> #{end_date}, </if>
+		<if test="end_date == null or end_date == ''"> null, </if>
+		<if test="expense != null"> #{expense}, </if>
+		<if test="expense == null"> null, </if>
+		<if test="place != null"> #{place}, </if>
+		<if test="place == null"> null, </if>
+		<if test="phone != null"> #{phone}, </if>
+		<if test="phone == null"> null, </if>
+		<if test="logo != null"> #{logo}, </if>
+		<if test="logo == null"> null, </if>
+		now(),
+		<if test="createBy != null"> #{createBy}, </if>
+		<if test="createBy == null"> null, </if>
+		<if test="limit_number != null"> #{limit_number}, </if>
+		<if test="limit_number == null"> 0, </if>
+		<if test="display_member != null"> #{display_member}, </if>
+		<if test="display_member == null"> 'N', </if>
+		<if test="charge_type != null"> #{charge_type}, </if>
+		<if test="charge_type == null"> null, </if>
+		<if test="status != null"> #{status}, </if>
+		<if test="status == null"> null, </if>
+		<if test="type != null"> #{type}, </if>
+		<if test="type == null"> 'activity',</if>
+		<if test="source != null"> #{source},</if>
+		<if test="source == null"> null, </if>
+		<if test="createName != null"> #{createName} ,</if>
+		<if test="createName == null"> null, </if>
+		<if test="remark != null"> #{remark} ,</if>
+		<if test="remark == null"> null, </if>
+		<if test="headImageUrl != null"> #{headImageUrl}, </if>
+		<if test="headImageUrl == null"> null, </if>
+		<if test="ispublish != null"> #{ispublish}, </if>
+		<if test="ispublish == null"> null, </if>
+		<!-- <if test="islive != null"> #{islive}, 暂时关闭直翻</if>
+		<if test="islive == null"> null, </if> -->
+		'close',
+		<if test="isregist != null"> #{isregist}, </if>
+		<if test="isregist == null"> null, </if>
+		<if test="live_parameter != null"> #{live_parameter}, </if>
+		<if test="live_parameter == null">null, </if>
+		<if test="orgId != null"> #{orgId}, </if>
+		<if test="orgId == null">null, </if>
+		<if test="crmId != null"> #{crmId}, </if>
+		<if test="crmId == null">null,</if>
+		<if test="act_end_date != null"> #{act_end_date} </if>
+		<if test="act_end_date == null">null</if>
+		)
+	</update>
+	
+	<!-- 更新活动标志 -->
+	<update id="updateActivityFlag"
+		parameterType="java.lang.String">
+		UPDATE TB_MK_ACTIVITY SET
+		    enabled_flag = 'disabled'
+		 WHERE id=#{value}
+	</update>
+	
+	<!-- 修改活动 -->
+	<update id="updateActivityByParams"
+		parameterType="com.takshine.marketing.domain.Activity">
+		update TB_MK_ACTIVITY 
+		set title=#{title},
+		    content=#{content},
+		    start_date=#{start_date},
+		    end_date=#{end_date} 
+		<if test="isregist != null"> ,isregist=#{isregist} </if>
+		<if test="isregist == null"> ,isregist=null </if>
+		<if test="live_parameter != null"> ,live_parameter=#{live_parameter} </if>
+		<if test="live_parameter == null"> ,live_parameter=null </if>
+		where id = #{id}
+	</update>
+	
+	<!-- 更新活动标志 -->
+	<update id="updateActivityCrmIdAndOrgId"
+		parameterType="com.takshine.marketing.domain.Activity">
+		UPDATE TB_MK_ACTIVITY SET
+		    crmId = #{crmId}, orgId=#{orgId}
+		 WHERE id=#{id}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteActivityById"
+		parameterType="java.lang.String">
+		delete from TB_MK_ACTIVITY where id = #{value} 
+	</delete>
+	
+</mapper>
+

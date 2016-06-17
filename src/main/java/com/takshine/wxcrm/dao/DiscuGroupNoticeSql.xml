@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 讨论组公告 sql处理语句 -->
+<mapper namespace="discuGroupNoticeSql">
+	<!-- 查询讨论组公告 -->
+	<select id="findDiscuGroupNoticeListByFilter"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupNotice"
+		resultType="com.takshine.wxcrm.domain.DiscuGroupNotice">
+		SELECT
+		  id,
+		  rela_id,
+		  rela_type,
+		  rela_name,
+		  content,
+		  type,
+		  create_time,
+		  creator,
+		  img_url
+		  
+		FROM TB_DISCUGROUP_NOTICE where 1=1
+		<if test="id != null"> AND id = #{id} </if>
+		<if test="rela_id != null"> AND rela_id = #{rela_id} </if>
+		<if test="creator != null"> AND creator = #{creator} </if>
+		order by create_time desc 
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询讨论组公告 -->
+	<select id="countDiscuGroupNoticeByFilter"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupNotice"
+		resultType="java.lang.Integer">
+		SELECT
+		  count(1)
+		FROM TB_DISCUGROUP_NOTICE where 1=1
+		<if test="rela_id != null"> AND rela_id = #{rela_id} </if>
+	</select>
+	
+	<!-- 插入一条 讨论组公告 -->
+	<insert id="insertDiscuGroupNotice"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupNotice">
+		insert into TB_DISCUGROUP_NOTICE
+		(
+		      id,
+			  rela_id,
+			  rela_type,
+			  rela_name,
+			  content,
+			  type,
+			  create_time,
+			  creator,
+			  img_url
+			  
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="rela_id != null">#{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="rela_type != null">#{rela_type},</if>
+		    <if  test="rela_type == null">NULL,</if>
+		    <if  test="rela_name != null">#{rela_name},</if>
+		    <if  test="rela_name == null">NULL,</if>
+		    <if  test="content != null">#{content},</if>
+		    <if  test="content == null">NULL,</if>
+		    <if  test="type != null">#{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    <if  test="create_time != null">now(),</if>
+		    <if  test="create_time == null">NULL,</if>
+		    <if  test="creator != null">#{creator},</if>
+		    <if  test="creator == null">NULL,</if>
+		    <if  test="img_url != null">#{img_url}</if>
+		    <if  test="img_url == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条讨论组公告 -->
+	<update id="updateDiscuGroupNoticeById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupNotice">
+		UPDATE TB_DISCUGROUP_NOTICE SET
+		    <if  test="rela_id != null">rela_id = #{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="rela_type != null">rela_type = #{rela_type},</if>
+		    <if  test="rela_type == null">NULL,</if>
+		    <if  test="rela_name != null">rela_name = #{rela_name},</if>
+		    <if  test="rela_name == null">NULL,</if>
+		    <if  test="content != null">content = #{content},</if>
+		    <if  test="content == null">NULL,</if>
+		    <if  test="type != null">type = #{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    <if  test="img_url != null">img_url = #{img_url}</if>
+		    <if  test="img_url == null">img_url = NULL</if>
+		 WHERE id=#{id}
+	</update>
+	
+	<!-- 删除一个话题 -->
+	<delete id="deleteDiscuGroupNoticeById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupNotice">
+		DELETE FROM TB_DISCUGROUP_NOTICE 
+		 WHERE id=#{id}
+	</delete>
+	
+</mapper>
+

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 消息 sql处理语句 -->
+<mapper namespace="resourceSql">
+	<!-- 查询资料 -->
+	<select id="findResourceListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Resource"
+		resultType="com.takshine.wxcrm.domain.Resource">
+		SELECT
+		  DISTINCT(resource_id),
+		  resource_id as resourceId,
+		  resource_name as resourceName,
+		  resource_type as resourceType,
+		  resource_title as resourceTitle,
+		  resource_content as resourceContent,
+		  resource_url as resourceUrl,
+		  (case when resource_type ='img' or resource_type='link' or resource_type='timg' then (select filename from TB_MESSAGES_EXT where rela_id=tr.resource_id limit 0,1) when resource_type='timg' then resource_url else '' end) as resourceImg,
+		  resource_mark as resourceMark,
+		  resource_status as resourceStatus,
+		  resource_remark as resource_Remark,
+		  date_format(create_time,'%Y-%m-%d') as resourceCreateDate,
+		  modify_time as resourceModifyDate,
+		  resource_info1 as resourceInfo1,
+		  resource_info2 as resourceInfo2,
+		  resource_info3 as resourceInfo3,
+		  creator as creator,
+		  (select head_img_url  from TB_BUSINESS_CARD where party_row_id=tr.creator and status='0' limit 0,1) as createUrl,
+		  (select rela_explore_num from TB_RESOURCE_RELA where rela_resource_id = tr.resource_id) as readnum
+		FROM TB_RESOURCE tr LEFT JOIN TB_MODEL_TAG TM ON tr.resource_id=TM.model_id
+		where 1=1
+		<if test="resourceId != null">
+		 	AND resource_id = #{resourceId}
+		</if>
+		<if test="resourceTitle != null">
+		 	AND resource_title = #{resourceTitle}
+		</if>
+		<if test="resourceUrl != null">
+		 	AND resource_url = #{resourceUrl}
+		</if>
+		<if test="creator != null">
+		 	AND creator = #{creator}
+		</if>
+		<if test="resourceType != null">
+		 	AND resource_type = #{resourceType}
+		</if>
+		<if test="resourceInfo3 != null">
+		 	AND (resource_title like CONCAT('%',#{resourceInfo3},'%') OR resource_content like CONCAT('%',#{resourceInfo3},'%') OR TM.tag_name LIKE CONCAT('%',#{resourceInfo3},'%'))
+		</if>
+		and resource_status = '1' 
+		order by create_time desc
+	    limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询资料 -->
+	<select id="findResourceByUrl"
+		parameterType="com.takshine.wxcrm.domain.Resource"
+		resultType="com.takshine.wxcrm.domain.Resource">
+		SELECT
+		  resource_id as resourceId
+		FROM TB_RESOURCE where 1=1
+		 	AND creator = #{creator}
+		 	AND resource_url = #{resourceUrl}
+		and resource_status = '1' 
+	</select>
+	
+	<!-- 查询资料关系 -->
+	<select id="findResourceRelaListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Resource"
+		resultType="com.takshine.wxcrm.domain.Resource">
+		SELECT
+		  rela_id as relaId,
+		  rela_resource_id as relaResourceId,
+		  rela_user_id as relaUserId,
+		  rela_explore_num as relaExploreNum,
+		  rela_info1 as relaInfo1,
+		  rela_info2 as relaInfo2,
+		  rela_info3 as relaInfo3,
+		  create_time as relaCreateDate,
+		  modify_time as relaModifyDate 
+		FROM TB_RESOURCE_RELA where 1=1
+		<if test="relaResourceId != null">
+		 	AND rela_resource_id = #{relaResourceId}
+		</if>
+		<if test="relaUserId != null">
+		 	AND rela_user_id = #{relaUserId}
+		</if>
+		order by create_time desc
+	    limit #{currpages},#{pagecounts}
+	</select>
+	
+		<!-- 查询系统推荐数据 -->
+	<select id="findResourceBySys"
+		parameterType="com.takshine.wxcrm.domain.Resource"
+		resultType="com.takshine.wxcrm.domain.Resource">
+		SELECT 
+		  tr.resource_id as resourceId,
+		  tr.resource_name as resourceName,
+		  tr.resource_type as resourceType,
+		  tr.resource_title as resourceTitle,
+		  tr.resource_content as resourceContent,
+		   resource_url as resourceUrl,
+		  (case when resource_type ='img' or resource_type='link' or resource_type='timg' then (select filename from TB_MESSAGES_EXT where rela_id=tr.resource_id limit 0,1) when resource_type='timg' then resource_url else '' end) as resourceImg,
+		  tr.resource_mark as resourceMark,
+		  tr.resource_status as resourceStatus,
+		  tr.resource_remark as resource_Remark,
+		  date_format(tr.create_time,'%Y-%m-%d') as resourceCreateDate,
+		  tr.modify_time as resourceModifyDate,
+		  tr.resource_info1 as resourceInfo1,
+		  tr.resource_info2 as resourceInfo2,
+		  tr.resource_info3 as resourceInfo3,
+		  tr.creator as creator,
+		  (select head_img_url  from TB_BUSINESS_CARD where party_row_id=tr.creator and status='0' limit 0,1) as createUrl,
+		  (select name from TB_BUSINESS_CARD where party_row_id=tr.creator and status='0' limit 0,1) as createName,
+		  (select rela_explore_num from TB_RESOURCE_RELA where rela_resource_id = tr.resource_id) as readnum
+		  from TB_RESOURCE tr,TB_RESOURCE_RELA trr WHERE tr.resource_status = '1' and
+		  tr.resource_id = trr.rela_resource_id 
+		  <if test="creator != null">
+		 	AND tr.creator = #{creator}
+		  </if>
+		  <if test="resourceInfo3 != null">
+		 	AND (tr.resource_title like CONCAT('%',#{resourceInfo3},'%') OR tr.resource_content like CONCAT('%',#{resourceInfo3},'%'))
+		  </if>
+		  <if test="notinresid != null">
+		 	AND tr.resource_id != #{notinresid}
+		  </if>
+		  
+		 order by  trr.rela_explore_num desc, trr.rela_info1 desc
+		 limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询文章创建人标签信息 -->
+	<select id="findTagByCreator"
+		parameterType="java.lang.String"
+		resultType="java.lang.String">
+		select DISTINCT(tt.tag_name) from TB_MODEL_TAG tt, TB_RESOURCE_RELA tr where tt.model_id = tr.rela_resource_id and tr.rela_user_id = #{value}
+	</select>
+	
+	<!-- 插入一条 资料 -->
+	<insert id="insertResource"
+		parameterType="com.takshine.wxcrm.domain.Resource">
+		insert into TB_RESOURCE
+		(
+		      resource_id,
+			  resource_name,
+              resource_type,
+			  resource_title,
+			  resource_content,
+			  resource_url,
+			  resource_mark,
+			  resource_status,
+			  resource_remark,
+			  create_time,
+			  modify_time,
+			  resource_info1,
+			  resource_info2,
+			  resource_info3,
+			  creator
+		) values (
+		    <if  test="resourceId != null">#{resourceId},</if>
+		    <if  test="resourceId == null">NULL,</if>
+		    <if  test="resourceName != null">#{resourceName},</if>
+		    <if  test="resourceName == null">NULL,</if>
+		    <if  test="resourceType != null">#{resourceType},</if>
+		    <if  test="resourceType == null">NULL,</if>
+		    <if  test="resourceTitle != null">#{resourceTitle},</if>
+		    <if  test="resourceTitle == null">NULL,</if>
+		    <if  test="resourceContent != null">#{resourceContent},</if>
+		    <if  test="resourceContent == null">NULL,</if>
+		    <if  test="resourceUrl != null">#{resourceUrl},</if>
+		    <if  test="resourceUrl == null">NULL,</if>
+		    <if  test="resourceMark != null">#{resourceMark},</if>
+		    <if  test="resourceMark == null">0,</if>
+		    <if  test="resourceStatus != null">#{resourceStatus},</if>
+		    <if  test="resourceStatus == null">1,</if>
+		    <if  test="resourceRemark != null">#{resourceRemark},</if>
+		    <if  test="resourceRemark == null">NULL,</if>
+		    <if  test="resourceCreateDate != null">#{resourceCreateDate},</if>
+		    <if  test="resourceCreateDate == null">NOW(),</if>
+		    <if  test="resourceModifyDate != null">#{resourceModifyDate},</if>
+		    <if  test="resourceModifyDate == null">NOW(),</if>
+		    <if  test="resourceInfo1 != null">#{resourceInfo1},</if>
+		    <if  test="resourceInfo1 == null">NULL,</if>
+		    <if  test="resourceInfo2 != null">#{resourceInfo2},</if>
+		    <if  test="resourceInfo2 == null">NULL,</if>
+		    <if  test="resourceInfo3 != null">#{resourceInfo3},</if>
+		    <if  test="resourceInfo3 == null">NULL,</if>
+		    <if  test="creator != null">#{creator}</if>
+		    <if  test="creator == null">NULL</if>
+		 )
+	</insert>
+	
+		<!-- 插入一条 资料关系 -->
+	<insert id="insertResourceRela"
+		parameterType="com.takshine.wxcrm.domain.ResourceRela">
+		insert into TB_RESOURCE_RELA
+		(
+		      rela_id,
+			  rela_resource_id,
+              rela_user_id,
+			  rela_explore_num,
+			  rela_info1,
+			  rela_info2,
+			  rela_info3,
+			  create_time,
+			  modify_time
+		) values (
+		    <if  test="relaId != null">#{relaId},</if>
+		    <if  test="relaId == null">NULL,</if>
+		    <if  test="relaResourceId != null">#{relaResourceId},</if>
+		    <if  test="relaResourceId == null">NULL,</if>
+		    <if  test="relaUserId != null">#{relaUserId},</if>
+		    <if  test="relaUserId == null">NULL,</if>
+		    <if  test="relaExploreNum != null">#{relaExploreNum},</if>
+		    <if  test="relaExploreNum == null">0,</if>
+		    <if  test="relaInfo1 != null">#{relaInfo1},</if>
+		    <if  test="relaInfo1 == null">NULL,</if>
+		    <if  test="relaInfo2 != null">#{relaInfo2},</if>
+		    <if  test="relaInfo2 == null">NULL,</if>
+		    <if  test="relaInfo3 != null">#{relaInfo3},</if>
+		    <if  test="relaInfo3 == null">NULL,</if>
+		    <if  test="relaCreateDate != null">#{relaCreateDate},</if>
+		    <if  test="relaCreateDate == null">NOW(),</if>
+		    <if  test="relaModifyDate != null">#{relaModifyDate}</if>
+		    <if  test="relaModifyDate == null">NOW()</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条资料 -->
+	<update id="updateResourceById"
+		parameterType="com.takshine.wxcrm.domain.Resource">
+		UPDATE TB_RESOURCE SET
+		    <if  test="resourceName != null">resource_name = #{resourceName},</if>
+		    <if  test="resourceType != null">resource_type = #{resourceType},</if>
+		    <if  test="resourceTitle != null">resource_title = #{resourceTitle},</if>
+		    <if  test="resourceContent != null">resource_content = #{resourceContent},</if>
+		    <if  test="resourceUrl != null">resource_url = #{resourceUrl},</if>
+		    <if  test="resourceMark != null">resource_mark = #{resourceMark},</if>
+		    <if  test="resourceStatus != null">resource_status = #{resourceStatus},</if>
+		    <if  test="resourceRemark != null">resource_remark = #{resourceRemark},</if>
+		    <if  test="resourceInfo1 != null">resource_info1 = #{resourceInfo1},</if>
+		    <if  test="resourceInfo2 != null">resource_info2 = #{resourceInfo2},</if>
+		    <if  test="resourceInfo3 != null">resource_info3 = #{resourceInfo3},</if>
+		    modify_time = NOW()
+		 WHERE resource_id=#{resourceId}
+	</update>
+	
+	<!-- 更新一条资料关系 -->
+	<update id="updateResourceRelaById"
+		parameterType="com.takshine.wxcrm.domain.ResourceRela">
+		UPDATE TB_RESOURCE_RELA SET
+		    <if  test="relaExploreNum != null">rela_explore_num =  ifnull(rela_explore_num,0) + 1,</if>
+		    <if  test="relaInfo1 != null">rela_info1 = ifnull(rela_info1,0) + 1,</if>
+		    <if  test="relaInfo2 != null">rela_info2 = ifnull(rela_info2,0) + 1,</if>
+		    modify_time = NOW()
+		 WHERE rela_resource_id=#{relaResourceId} and rela_user_id=#{relaUserId}
+	</update>
+	
+		<!-- 根据关联ID删除资料关系记录 -->
+	<delete id="deleteResourceRelaById"
+		parameterType="com.takshine.wxcrm.domain.ResourceRela">
+		DELETE FROM TB_RESOURCE_RELA 
+		WHERE rela_resource_id=#{relaResourceId} 
+		AND rela_user_id=#{relaUserId}
+	</delete>
+	
+	
+	
+	
+</mapper>
+

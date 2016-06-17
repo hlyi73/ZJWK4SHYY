@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 用户资源 sql处理语句 -->
+<mapper namespace="userFuncSql">
+	<resultMap id="userFunctMap" type="com.takshine.wxcrm.domain.UserFunc">
+	  <id property="opId" column="op_id" />
+	  <result property="crmId" column="crm_id"/>
+	  <result property="opName" column="op_name"/>
+	  <result property="orgId" column="org_id"/>
+	  <result property="roleId" column="role_id"/>
+	  <result property="funId" column="fun_id"/>
+	  <result property="funName" column="fun_name"/>
+	  <result property="funLevel" column="fun_level"/>
+	  <result property="funParentId" column="fun_parent_id"/>
+	  <result property="funIdx" column="fun_idx"/>
+	  <result property="funMem" column="fun_mem"/>
+	  <result property="funModel" column="fun_model"/>
+	  <result property="funUri" column="fun_uri"/>
+	  <result property="funImg" column="fun_img"/>
+	</resultMap>
+	
+	<!-- 查询手机端的德成CRM用户 所拥有的功能菜单列表  -->
+	<select id="findUserFuncListByFilter"
+		parameterType="com.takshine.wxcrm.domain.UserFunc"
+		resultMap="userFunctMap">
+		SELECT op.op_id,
+		       op.crm_id,
+		       op.op_name,
+		       op.org_id,
+		       ro.role_id,
+		       func.fun_id,
+		       func.fun_name,
+		       func.fun_level,
+		       func.fun_parent_id,
+		       func.fun_idx,
+		       func.fun_mem,
+		       func.fun_model,
+		       func.fun_uri,
+		       func.fun_img,
+		       count(func.fun_id)
+		       
+		  FROM TB_DCCRM_OPERATOR  op,
+		       TR_OPERATOR_ROLE opro,
+		       TB_ROLE      ro,
+		       TR_ROLE_FUNCTION rofc,
+		       TB_FUNCTION     func
+		       
+		 WHERE op.op_id = opro.op_id
+		   AND opro.role_id = ro.role_id
+		   AND ro.role_id = rofc.role_id
+		   AND rofc.fun_id = func.fun_id
+		   
+		 AND op.crm_id = #{crmId} 
+		 AND opro.op_type = '1' 
+		 AND func.enable_flag = '1'
+		<if test="funId != null">
+		 	AND func.fun_id = #{funId}
+		</if>
+		<if test="funParentId != null">
+		 	AND func.fun_parent_id = #{funParentId}
+		</if>
+        <if test="funIdx != null">
+		    AND func.fun_idx = #{funIdx}
+	    </if>
+	     GROUP by func.fun_id
+		 ORDER BY func.fun_order
+	</select>
+	
+	
+	<!-- 查询功能菜单列表  -->
+	<select id="findUserFuncList"
+		parameterType="com.takshine.wxcrm.domain.UserFunc"
+		resultMap="userFunctMap">
+			SELECT op.op_id,
+			       op.crm_id,
+			       op.op_name,
+			       op.org_id,
+			       ro.role_id,
+	               ro.role_name,
+			       func.fun_id,
+			       func.fun_name,
+			       func.fun_level,
+			       func.fun_parent_id,
+			       func.fun_model,
+			       func.fun_uri,
+			       func.fun_img
+			FROM TB_DCCRM_OPERATOR  op,
+				 TR_OPERATOR_ROLE opro,
+				 TB_ROLE ro,
+				 TR_ROLE_FUNCTION rofc,
+				 TB_FUNCTION func
+			 WHERE op.op_id = opro.op_id
+				 AND opro.role_id = ro.role_id
+				 AND ro.role_id = rofc.role_id
+				 AND rofc.fun_id = func.fun_id
+			     AND opro.op_type = '1' 
+				 AND func.enable_flag = '1'
+		<if test="funId != null">
+		 	AND func.fun_id = #{funId}
+		</if>
+		<if test="funParentId != null">
+		 	AND func.fun_parent_id = #{funParentId}
+		</if>
+		<if test="crmId != null">
+		 	AND op.crm_id = #{crmId}
+		</if>
+		<if test="orgId != null">
+		 	AND op.org_id = #{orgId}
+		</if>
+		<if test="roleId != null">
+		 	AND ro.role_id = #{roleId}
+		</if>
+		ORDER BY func.fun_order
+	</select>
+	
+	
+	<!-- 查询所有功能菜单列表  -->
+	<select id="findALLFuncList"
+		parameterType="com.takshine.wxcrm.domain.UserFunc"
+		resultMap="userFunctMap">
+			SELECT func.fun_id,
+			       func.fun_name,
+			       func.fun_level,
+			       func.fun_parent_id,
+			       func.fun_model,
+			       func.fun_uri,
+			       func.fun_img
+			FROM TB_FUNCTION func
+			 WHERE func.enable_flag = '1'
+		ORDER BY func.fun_order
+	</select>
+	
+	<!-- 获取角色列表 -->
+	<select id="findRolesList"
+		parameterType="com.takshine.wxcrm.domain.UserFunc"
+		resultType="com.takshine.wxcrm.domain.UserFunc">
+		select role_id as roleId,role_name as funName from TB_ROLE where enable_flag ='1' and ent_id=#{orgId}
+	</select>
+	
+	<!-- 获取角色用户列表 -->
+	<select id="findRoleUsersList"
+		parameterType="com.takshine.wxcrm.domain.DcCrmOperator"
+		resultType="com.takshine.wxcrm.domain.DcCrmOperator">
+		select 
+		tdo.op_id as opId,tdo.crm_id as crmId,tdo.op_name as opName
+		from TR_OPERATOR_ROLE tor,TB_DCCRM_OPERATOR tdo,TB_ROLE tr
+		where tor.op_id = tdo.op_id and tr.enable_flag='1'
+		and tor.role_id=tr.role_id and tr.role_id=#{roleId} and tdo.org_id = #{orgId}
+	</select>
+	
+	<!-- 获取某组织下所有用户列表 -->
+	<select id="findUsersList"
+		parameterType="com.takshine.wxcrm.domain.UserFunc"
+		resultType="com.takshine.wxcrm.domain.DcCrmOperator">
+		select 
+			tdo.op_id as opId,tdo.crm_id as crmId,tdo.op_name as opName
+			from TB_DCCRM_OPERATOR tdo where org_id = #{orgId}
+	</select>
+	
+	<!-- 删除角色下的用户 -->
+	<delete id="deleteRoleUserByOrgId"
+		parameterType="com.takshine.wxcrm.domain.UserFunc">
+		delete from TR_OPERATOR_ROLE where role_id=#{roleId}
+	</delete>
+	
+	
+	<!-- 删除角色下的功能 -->
+	<delete id="deleteRoleFuncByOrgId"
+		parameterType="com.takshine.wxcrm.domain.UserFunc">
+		delete from TR_ROLE_FUNCTION where role_id=#{roleId}
+	</delete>
+	
+	<!-- 保存角色下的用户 -->
+	<insert id="saveRoleUsers"
+		parameterType="java.util.List">
+		insert into TR_OPERATOR_ROLE(auto_id,role_id,op_id,op_type) values
+		<foreach collection="list" item="func" index="index" separator=",">
+			(
+				#{func.id},#{func.roleId},#{func.opId},'1'
+			)
+		</foreach>
+	</insert>
+	
+	<!-- 保存角色下的功能 -->
+	<insert id="saveRoleFuncs"
+		parameterType="java.util.List">
+		insert into TR_ROLE_FUNCTION(auto_id,role_id,fun_id) values
+		<foreach collection="list" item="func" index="index" separator=",">
+			(
+				#{func.id},#{func.roleId},#{func.funId}
+			)
+		</foreach>
+	</insert>
+</mapper>
+

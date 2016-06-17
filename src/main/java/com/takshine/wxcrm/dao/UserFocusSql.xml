@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 用户关注 关系 sql处理语句 -->
+<mapper namespace="userFocusSql">	
+	<!-- 根据id查找用户关注 关系表  -->
+	<select id="findUserFocusById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.wxcrm.domain.UserFocus">
+		<![CDATA[
+		select
+		  	  ID as id,
+			  TYPE as type,
+			  CRM_ID as crmId,
+              CRM_NAME as crmName,
+			  FOCUS_CRM_ID as focusCrmId,
+              FOCUS_CRM_NAME as focusCrmName,
+			  CREATE_BY as createBy,
+			  CREATE_TIME as createTime
+			from TR_USER_FOCUS
+			where ID=#{value}]]>
+	</select>
+	
+	<!-- 查询出全部的用户关注 关系表记录 -->
+	<select id="findAllUserFocusList"
+		resultType="com.takshine.wxcrm.domain.UserFocus">
+		select
+			  ID as id,
+			  TYPE as type,
+			  CRM_ID as crmId,
+              CRM_NAME as crmName,
+			  FOCUS_CRM_ID as focusCrmId,
+              FOCUS_CRM_NAME as focusCrmName,
+			  CREATE_BY as createBy,
+			  CREATE_TIME as createTime
+			from TR_USER_FOCUS
+		where 1=1
+		<if test="orderByString != ''">  
+			$orderByString$
+		</if>
+	</select>
+	
+	<!-- 按照查询条件查询出用户关注 关系表记录 -->
+	<select id="findUserFocusListByFilter"
+		parameterType="com.takshine.wxcrm.domain.UserFocus"
+		resultType="com.takshine.wxcrm.domain.UserFocus">
+		select
+			  ID as id,
+			  TYPE as type,
+			  CRM_ID as crmId,
+              CRM_NAME as crmName,
+			  FOCUS_CRM_ID as focusCrmId,
+              FOCUS_CRM_NAME as focusCrmName,
+			  CREATE_BY as createBy,
+			  CREATE_TIME as createTime
+			from TR_USER_FOCUS
+		where 1=1
+		    <if test="id != null"> and ID = #{id}</if>
+		    <if test="type != null"> and TYPE = #{type}</if>
+		    <if test="crmId != null"> and CRM_ID = #{crmId}</if>
+		    <if test="crmName != null"> and CRM_NAME = #{crmName}</if>
+		    <if test="focusCrmId != null"> and FOCUS_CRM_ID = #{focusCrmId}</if>
+		    <if test="focusCrmName != null"> and FOCUS_CRM_NAME = #{focusCrmName}</if>
+		    <if test="createBy != null"> and CREATE_BY = #{createBy}</if>
+		    <if test="createTime != null"> and CREATE_TIME = #{createTime}</if>
+		<if test="orderByString != null">
+		     $orderByString$
+		</if>
+	</select>
+	
+	<!-- equal 条件 -->
+	<sql id="kh_equal_param">
+	     <if  test="equal.crmId != ''">
+	      CRM_ID =  #{equal.crmId}# 
+	     </if>
+	</sql>
+	
+	<!-- like 条件 -->
+	<sql id="kh_like_param">
+		<if  test="like.crmId != ''">
+		CRM_ID like '%' || #{like.crmId} || '%' 
+		</if>
+	</sql>
+	
+	<!-- 分页查询 客户信息数据 -->
+	<select id="findUserFocusPageByFilter"
+		parameterType="com.takshine.wxcrm.base.filter.QueryFilter"
+		resultType="com.takshine.wxcrm.domain.UserFocus">
+		     SELECT 
+			  	  ID as id,
+				  TYPE as type,
+				  CRM_ID as crmId,
+	              CRM_NAME as crmName,
+				  FOCUS_CRM_ID as focusCrmId,
+	              FOCUS_CRM_NAME as focusCrmName,
+				  CREATE_BY as createBy,
+				  CREATE_TIME as createTime
+		     FROM 
+			      (
+			      SELECT A.*, ROWNUM RN 
+			        FROM (SELECT * FROM TR_USER_FOCUS where 1 = 1
+			           <include refid="kh_equal_param"/>
+			           <include refid="kh_like_param"/>
+					   <if  test="orderByString != null">
+					    $orderByString$
+					   </if>
+			      ) A 
+			      <![CDATA[ WHERE ROWNUM <= #{endNum} ]]>
+			      )
+			 <![CDATA[ WHERE RN > #{startNum} ]]>
+	</select>
+	
+	<!-- 分页查询 客户信息数据 统计客户信息总数 -->
+	<select id="countUserFocusByFilter"
+		parameterType="com.takshine.wxcrm.base.filter.QueryFilter"
+		resultType="Integer">
+		select count(1)
+			from TR_USER_FOCUS
+		where 1=1
+		 <include refid="kh_equal_param"/>
+		 <include refid="kh_like_param"/>
+	</select>
+	
+	<!-- 插入一条用户关注 关系表记录 -->
+	<insert id="insertUserFocus"
+		parameterType="com.takshine.wxcrm.domain.UserFocus">
+		insert into TR_USER_FOCUS
+		(
+		      ID,
+			  TYPE,
+			  CRM_ID,
+              CRM_NAME,
+			  FOCUS_CRM_ID,
+              FOCUS_CRM_NAME,
+			  CREATE_BY,
+			  CREATE_TIME
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="type != null">#{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    <if  test="crmId != null">#{crmId},</if>
+		    <if  test="crmId == null">NULL,</if>
+		    <if  test="crmName != null">#{crmName},</if>
+		    <if  test="crmName == null">NULL,</if>
+		    <if  test="focusCrmId != null">#{focusCrmId},</if>
+		    <if  test="focusCrmId == null">NULL,</if>
+		    <if  test="focusCrmName != null">#{focusCrmName},</if>
+		    <if  test="focusCrmName == null">NULL,</if>
+		    <if  test="createBy != null">#{createBy},</if>
+		    <if  test="createBy == null">NULL,</if>
+		    <if  test="createTime != null">#{createTime}</if>
+		    <if  test="createTime == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 根据id更新一条用户关注 关系表记录 -->
+	<update id="updateUserFocusById"
+		parameterType="com.takshine.wxcrm.domain.UserFocus">
+		UPDATE TR_USER_FOCUS SET
+		    <if  test="id != null">ID = #{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="type != null">TYPE = #{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    <if  test="crmId != null">CRM_ID = #{crmId},</if>
+		    <if  test="crmId == null">NULL,</if>
+		    <if  test="crmName != null">CRM_NAME = #{crmName},</if>
+		    <if  test="crmName == null">NULL,</if>
+		    <if  test="focusCrmId != null">FOCUS_CRM_ID = #{focusCrmId},</if>
+		    <if  test="focusCrmId == null">NULL,</if>
+		    <if  test="focusCrmName != null">FOCUS_CRM_NAME = #{focusCrmName},</if>
+		    <if  test="focusCrmName == null">NULL,</if>
+		    <if  test="createBy != null">CREATE_BY = #{createBy},</if>
+		    <if  test="createBy == null">NULL,</if>
+		    <if  test="createTime != null">CREATE_TIME = #{createTime},</if>
+		    <if  test="createTime == null">NULL</if>
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据id删除一条用户关注 关系表记录 -->
+	<delete id="deleteUserFocusById"
+		parameterType="java.lang.String">
+		delete from TR_USER_FOCUS where ID=#{value}
+	</delete>
+</mapper>
+

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 用户订阅 sql处理语句 -->
+<mapper namespace="innerUserSql">
+	<select id="findInnerUserListByOpenid"
+		parameterType="com.takshine.wxcrm.domain.InnerUser"
+		resultType="com.takshine.wxcrm.domain.InnerUser">
+			SELECT
+ 			a.op_id as id,
+ 			a.crm_id as crmId,
+			a.op_name as opName,
+			a.op_duty as opDuty,
+			a.op_depart as opDepart,
+			a.op_mobile as opMobile,
+			a.op_phone as opPhone,
+			a.op_email as opEmail,
+			a.op_fax as opFax,
+			a.op_country as opCountry,
+			a.op_province as opProvince,
+			a.op_city as opCity,
+			a.op_address as opAddress,
+			a.op_status as opStatus,
+			a.op_signature as opSignature,
+			a.op_gender as opGender,
+			a.op_company as opCompany,
+			a.op_image as opImage,
+			b.open_id as openId,
+			c.headimgurl as headImage,
+			F_GetPY(a.op_name) as firstChar,
+			d.id as rssId
+			 FROM  TB_DCCRM_OPERATOR a 
+			LEFT JOIN TR_OPERATOR_MOBILE b ON a.op_id=b.op_id
+			LEFT JOIN TB_WXUSER_INFO c ON b.open_id=c.open_id
+			LEFT JOIN TB_SUBSCRIBE d ON b.open_id=d.feedid AND d.type='user' AND d.openid=#{openId} 
+			WHERE a.org_id IN (SELECT f.org_id FROM TR_OPERATOR_MOBILE f WHERE f.open_id=#{openId} AND f.org_id !='Default Organization')  and b.open_id !=#{openId}  
+			  <if test="firstChar != null"> and F_GetPY(a.op_name)=#{firstChar} </if>
+			 ORDER BY  F_GetPY(a.op_name)
+	</select>
+
+		<select id="findRssUserListByOpenid"
+		parameterType="com.takshine.wxcrm.domain.Subscribe"
+		resultType="com.takshine.wxcrm.domain.InnerUser">
+			SELECT d.op_id AS id,
+ 			d.crm_id AS crmId,
+			d.op_name AS opName,
+			d.op_duty AS opDuty,
+			d.op_depart AS opDepart,
+			d.op_mobile AS opMobile,
+			d.op_phone AS opPhone,
+			d.op_email AS opEmail,
+			d.op_fax AS opFax,
+			d.op_country AS opCountry,
+			d.op_province AS opProvince,
+			d.op_city AS opCity,
+			d.op_address AS opAddress,
+			d.op_status AS opStatus,
+			d.op_signature AS opSignature,
+			d.op_gender AS opGender,
+			d.op_company AS opCompany,
+			d.op_image AS opImage,
+			b.open_id AS openId,
+			b.headimgurl AS headImage,
+			a.id AS rssId 
+			FROM TB_SUBSCRIBE a 
+			LEFT JOIN TB_WXUSER_INFO b ON a.feedid=b.open_id   
+			LEFT JOIN TR_OPERATOR_MOBILE c ON c.open_id=a.feedid  and c.org_id !='Default Organization' 
+			LEFT JOIN TB_DCCRM_OPERATOR d ON c.op_id=d.op_id 
+			WHERE 1=1 
+			<if test="openId != null"> and a.openid=#{openId} </if>
+			<if test="type != null"> and a.type=#{type} </if>
+			 order by a.create_date desc 
+	</select>	
+	
+	<select id="findFirstList"
+		parameterType="java.lang.String"
+		resultType="java.lang.String">
+			SELECT DISTINCT F_GetPY(a.op_name) as firstChar
+	 		FROM  TB_DCCRM_OPERATOR a LEFT JOIN TR_OPERATOR_MOBILE b ON a.op_id=b.op_id
+			WHERE a.org_id IN (SELECT f.org_id FROM TR_OPERATOR_MOBILE f WHERE f.open_id=#{id} AND f.org_id != 'Default Organization') AND b.open_id !=#{id} 
+			  ORDER BY  F_GetPY(a.op_name) 
+	</select>
+	<!-- 插入一条用户和手机绑定关系表记录 -->	
+</mapper>
+

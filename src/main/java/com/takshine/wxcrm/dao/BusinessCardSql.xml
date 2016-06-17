@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 标签 sql处理语句 -->
+<mapper namespace="businessCardSql">
+	<!-- 分页查询标签 -->
+	<select id="findBusinessCardListByFilter"
+		parameterType="com.takshine.wxcrm.domain.BusinessCard"
+		resultType="com.takshine.wxcrm.domain.BusinessCard">
+		SELECT
+		    id,
+		    party_row_id as partyId,
+			name,
+			phone,
+			ext_phone as extPhone,
+			company,
+			shortcompany,
+			position,
+			head_img_url as headImageUrl,
+			is_validation as isValidation,
+			is_emailvalidation as isEmailValidation,
+			open_id as openId,
+			email,
+			city,
+			address,
+			sex,
+			status 
+		  FROM TB_BUSINESS_CARD where 1=1
+		  <if test="id != null"> and id = #{id}</if>
+		  <if test="partyId != null"> and party_row_id = #{partyId}</if>
+		  <if test="name != null"> and name = #{name}</if>
+		    <if test="phone != null"> and phone = #{phone}</if>
+		  <if test="status != null"> and status = #{status}</if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+		<!-- 分页查询标签 -->
+	<select id="searchBusinessCardListByFilter"
+		parameterType="com.takshine.wxcrm.domain.BusinessCard"
+		resultType="com.takshine.wxcrm.domain.BusinessCard">
+		SELECT
+		    id,
+		    party_row_id as partyId,
+			name,
+			phone,
+			ext_phone as extPhone,
+			company,
+			shortcompany,
+			position,
+			head_img_url as headImageUrl,
+			is_validation as isValidation,
+			is_emailvalidation as isEmailValidation,
+			open_id as openId,
+			email,
+			city,
+			address,
+			sex,
+			status 
+		  FROM TB_BUSINESS_CARD where 1=1 and (
+		 <if test="name != null"> name like CONCAT('%',#{name},'%') or </if>
+		 <if test="company != null">  company like CONCAT('%',#{company},'%') or </if>
+		 <if test="shortcompany != null">  shortcompany like CONCAT('%',#{shortcompany},'%') or </if>
+		  <if test="phone != null">  phone like CONCAT('%',#{phone},'%')  </if>
+		   )
+		   <if test="status != null"> and status = #{status}</if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计标签总数 -->
+	<select id="countBusinessCardByFilter"
+		parameterType="com.takshine.wxcrm.domain.BusinessCard"
+		resultType="Integer">
+		select count(1) 
+		FROM TB_BUSINESS_CARD 
+		where 1=1
+		 <if test="id != null"> and id = #{id}</if>
+		  <if test="partyId != null"> and party_row_id = #{partyId}</if>
+		  <if test="name != null"> and name = #{name}</if>
+		    <if test="phone != null"> and phone = #{phone}</if>
+		  <if test="status != null"> and status = #{status}</if>
+	</select>
+	
+	<!-- 插入一条 标签 -->
+	<insert id="insertBusinessCard"
+		parameterType="com.takshine.wxcrm.domain.BusinessCard">
+		insert into TB_BUSINESS_CARD
+		(
+		    id,
+		    party_row_id,
+			name,
+			phone,
+			ext_phone,
+			company,
+			shortcompany,
+			position,
+			head_img_url,
+			is_validation,
+			is_emailvalidation,
+			open_id,
+			email,
+			city,
+			address,
+			sex,
+			status 
+		) values (#{id},#{partyId},
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="phone != null">#{phone},</if>
+		    <if  test="phone == null">NULL,</if>
+		     <if  test="extPhone != null">#{extPhone},</if>
+		    <if  test="extPhone == null">NULL,</if>
+		     <if  test="company != null">#{company},</if>
+		    <if  test="company == null">NULL,</if>
+		    <if  test="shortcompany == null">NULL,</if>
+		    <if  test="position != null">#{position},</if>
+		    <if  test="position == null">NULL,</if>
+		    <if  test="headImageUrl != null">#{headImageUrl},</if>
+		    <if  test="headImageUrl == null">NULL,</if>
+		    <if  test="isValidation != null">#{isValidation},</if>
+		    <if  test="isValidation == null">NULL,</if>
+		    <if  test="isEmailValidation != null">#{isEmailValidation},</if>
+		    <if  test="isEmailValidation == null">NULL,</if>
+		   <if  test="openId != null">#{openId},</if>
+		    <if  test="openId == null">NULL,</if>
+		   <if  test="email != null">#{email},</if>
+		    <if  test="email == null">NULL,</if>
+		    <if  test="city != null">#{city},</if>
+		    <if  test="city == null">NULL,</if>
+		     <if  test="address != null">#{address},</if>
+		    <if  test="address == null">NULL,</if>
+		    <if  test="sex != null">#{sex},</if>
+		    <if  test="sex == null">NULL,</if>
+		    <if  test="status != null">#{status}</if>
+		    <if  test="status == null">NULL</if>
+		 )
+	</insert>
+	<!-- 根据crmId更新一条德成CRM用户记录 -->
+	<update id="updateBusinessCardById"
+		parameterType="com.takshine.wxcrm.domain.BusinessCard">
+		UPDATE TB_BUSINESS_CARD SET
+			<if test="name != null">name =  #{name},</if>
+			<if test="name == null">name =NULL,</if>
+			<if test="phone != null">phone =  #{phone},</if>
+			<if test="phone == null">phone =NULL,</if>
+			<if test="extPhone != null">ext_phone =  #{extPhone},</if>
+			<if test="extPhone == null">ext_phone =  NULL,</if>
+			<if test="position != null">position =  #{position},</if>
+			<if test="position == null">position = NULL,</if>
+			<if test="email != null">email =  #{email},</if>
+			<if test="email == null">email =NULL,</if>
+			<if test="company != null">company =  #{company},</if>
+			<if test="company == null">company =  NULL,</if>
+			<if test="shortcompany != null">shortcompany =  #{shortcompany},</if>
+			<if test="shortcompany == null">shortcompany =  NULL,</if>
+			<if test="address != null">address =  #{address},</if>
+			<if test="address == null">address = NULL,</if>
+			<if test="headImageUrl != null">head_img_url =  #{headImageUrl},</if>
+			<if test="headImageUrl == null">head_img_url = NULL,</if>
+			<if test="sex != null">sex =  #{sex},</if>
+			<if test="sex == null">sex =  NULL,</if>
+			<if test="status != null">status =  #{status},</if>
+			<if test="status == null">status ='0',</if>
+			<if test="city != null">city =  #{city},</if>
+			<if test="city == null">city =  NULL,</if>
+			<if test="isValidation != null">is_validation =  #{isValidation},</if>
+			<if test="isValidation == null">is_validation ='0',</if>
+			<if test="isEmailValidation != null">is_emailvalidation =  #{isEmailValidation}</if>
+			<if test="isEmailValidation == null">is_emailvalidation ='0'</if>
+		 WHERE id= #{id}
+	</update>
+	
+	<!-- 根据Id更新名片电话号码验证状态 -->
+	<update id="updatePhoneValidationStatus"
+		parameterType="com.takshine.wxcrm.domain.BusinessCard">
+		UPDATE TB_BUSINESS_CARD SET is_validation =#{isValidation}
+		 WHERE id= #{id}
+	</update>
+	
+	<!-- 根据Id更新名片电话号码验证状态 -->
+	<update id="updateEmailValidationStatus"
+		parameterType="com.takshine.wxcrm.domain.BusinessCard">
+		UPDATE TB_BUSINESS_CARD SET is_emailvalidation =#{isEmailValidation}
+		 WHERE id= #{id}
+	</update>
+</mapper>
+

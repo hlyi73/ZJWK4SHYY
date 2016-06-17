@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!--  sql处理语句 -->
+<mapper namespace="cacheScheduleSql">
+	<!-- 分页查询 -->
+	<select id="findCacheScheduleListByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheSchedule"
+		resultType="com.takshine.wxcrm.domain.cache.CacheSchedule">
+		SELECT
+			  crm_id,
+			  (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cc.crm_id limit 0,1) AS assigner_name,
+			  open_id,
+			  rowid,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  name,
+			  assinger_id,
+			  date_format(start_date,'%Y-%m-%d %H:%i') as start_date,
+			  date_format(end_date,'%Y-%m-%d %H:%i') as end_date,
+			  status,
+			  rela_id,
+			  rela_name,
+			  rela_type,
+			  sche_type,
+			  enabled_flag,
+			  is_public
+		  
+		  FROM CACHE_SCHEDULE cc where 1=1 and cc.enabled_flag = 'enabled'
+		  <if test="org_id != null"> and org_id = #{org_id}</if>
+		  <if test="crm_id != null"> and crm_id = #{crm_id}</if>
+		  <if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and crm_id in
+		   <foreach collection="crm_id_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid_in != null and rowid_in.size > 0">
+		   and rowid in
+		   <foreach collection="rowid_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		   <if test="status_in != null and status_in.size > 0">
+		   and status in
+		   <foreach collection="status_in" index="index" item="status" open="("
+		    separator="," close=")">
+		   #{status}
+		  </foreach>
+		   </if>
+		  <if test="rowid != null"> and rowid = #{rowid}</if>
+		   <if test="ispublic != null"> and is_public = #{ispublic}</if>
+		   <if test="viewtype == 'calendarview'">
+		   		<if test="start_date != null and start_date != '' and end_date != null and end_date != ''"> 
+		   			and ((date_format(start_date,'%Y-%m-%d') &gt;= #{start_date} and date_format(start_date,'%Y-%m-%d') &lt;= #{end_date})
+		   			or (date_format(start_date,'%Y-%m-%d') &lt; #{start_date} and date_format(end_date,'%Y-%m-%d') &gt;= #{start_date})) 
+		   		</if>
+		   		<if test="start_date != null and start_date != '' and (end_date == null or end_date == '')"> 
+		   			and ((date_format(start_date,'%Y-%m-%d') &gt;= #{start_date}) 
+		   			or (date_format(start_date,'%Y-%m-%d') &lt; #{start_date} and date_format(end_date,'%Y-%m-%d') &gt;= #{start_date}))
+		   		</if>
+		   		<if test="(start_date == null or start_date == '') and end_date != null and end_date != ''">
+		   			and date_format(start_date,'%Y-%m-%d') &lt;= #{end_date}
+		   		</if>
+		   </if>
+		   <if test="viewtype != 'calendarview'">
+		   		<if test="start_date != null and start_date != ''"> and  date_format(start_date,'%Y-%m-%d') &gt;= #{start_date}</if>
+		   		<if test="end_date != null and end_date != ''">and  date_format(start_date,'%Y-%m-%d') &lt;= #{end_date}</if>
+		   </if>
+		  <if test="name != null and name != ''">
+		   	 and name like CONCAT('%',#{name},'%')
+		   </if>
+		 <if test="assinger_name!=null and assinger_name!=''">
+		 	and assigner_name like CONCAT('%',#{assinger_name},'%')
+		 </if>
+		   order by start_date desc
+		  limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="findCacheScheduleListByCrmId"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheSchedule"
+		resultType="com.takshine.wxcrm.domain.cache.CacheSchedule">
+		
+	 select * from(	
+		SELECT 
+		  cc.crm_id,
+		   (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cc.crm_id limit 0,1) AS assigner_name,
+		  open_id,
+		  rowid,
+		  org_id,
+		  create_date,
+		  create_by,
+		  modify_date,
+		  modify_by,
+		  name,
+		  assinger_id,
+		  assinger_name,
+		  date_format(start_date,'%Y-%m-%d %H:%i') as start_date,
+		  date_format(end_date,'%Y-%m-%d %H:%i') as end_date,
+		  status,
+		  rela_id,
+		  rela_name,
+		  rela_type,
+		  sche_type,
+		  enabled_flag
+		FROM
+		  CACHE_SCHEDULE cc,
+		  (SELECT 
+		    crm_id 
+		  FROM
+		    TR_OPERATOR_MOBILE 
+		  WHERE open_id = 
+		    (SELECT 
+		      open_id 
+		    FROM
+		      TR_OPERATOR_MOBILE 
+		    WHERE crm_id = #{crm_id})) op 
+		WHERE 1 = 1 and cc.enabled_flag = 'enabled'
+		  AND cc.crm_id = op.crm_id 
+		  <if test="viewtype  == 'todayview'">
+	          and date_format(cc.start_date,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d')
+	      </if>
+		  <if test="viewtype  == 'historyview'">
+	          and date_format(cc.start_date,'%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+	      </if>
+		  <if test="viewtype  == 'planview'">
+	          and date_format(cc.start_date,'%Y-%m-%d') > DATE_FORMAT(NOW(),'%Y-%m-%d')
+	      </if>
+		  <if test="viewtype  == 'homeview'">
+	         <if test="start_date != null and start_date != '' and end_date != null and end_date != ''">
+	          and 
+	          ( (date_format(cc.start_date,'%Y-%m-%d') >= #{start_date} 
+	              and date_format(cc.end_date,'%Y-%m-%d') &lt;= #{end_date} ) 
+	          or 
+	           ( date_format(cc.end_date,'%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+	               and cc.status != 'Completed' and cc.status != 'Cancel' 
+	           ) ) 
+	         </if>
+	      </if>
+	       <if test="viewtype  == null or viewtype ==''">
+	       		 <if  test="start_date != null and start_date != ''">
+	       		 	and date_format(cc.start_date,'%Y-%m-%d') = #{start_date} 
+	       		 </if> 
+	       		 <if test="end_date != null and end_date != ''">
+	       		 	and date_format(cc.end_date,'%Y-%m-%d') = #{end_date} 
+	       		 </if> 
+	       </if>
+	      <if test="status_in != null and status_in.size > 0">
+		   and status in
+		   <foreach collection="status_in" index="index" item="status" open="("
+		    separator="," close=")">
+		   #{status}
+		  </foreach>
+		   </if>
+		   <if test="name != null and name != ''">
+		   	 and name like CONCAT('%',#{name},'%')
+		   </if>
+		   ) a
+		 	<if test="assigner_name != null and assigner_name != ''">
+		 		where	assigner_name like CONCAT('%',#{assigner_name},'%')
+			</if> 
+			order by start_date desc
+	      limit #{currpage},#{pagecount}
+	</select>
+	
+	
+	<!-- 查询任务    用于微信命令字菜单 -->
+	<select id="findCacheScheduleListByOpenId"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheSchedule"
+		resultType="com.takshine.wxcrm.domain.cache.CacheSchedule">
+		SELECT 
+		  cc.crm_id,
+		   (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cc.crm_id limit 0,1) AS assigner_name,
+		  open_id,
+		  rowid,
+		  org_id,
+		  create_date,
+		  create_by,
+		  modify_date,
+		  modify_by,
+		  name,
+		  assinger_id,
+		  assinger_name,
+		  date_format(start_date,'%Y-%m-%d %H:%i') as start_date,
+		  date_format(end_date,'%Y-%m-%d %H:%i') as end_date,
+		  status,
+		  rela_id,
+		  rela_name,
+		  rela_type,
+		  sche_type,
+		  enabled_flag
+		FROM
+		  CACHE_SCHEDULE cc 
+		WHERE 1 = 1 and cc.enabled_flag = 'enabled'
+		  AND cc.crm_id = #{crm_id}
+	      <if test="status_in != null and status_in.size > 0">
+		   and status in
+		   <foreach collection="status_in" index="index" item="status" open="("
+		    separator="," close=")">
+		   #{status}
+		  </foreach>
+		   </if>
+		  order by start_date desc
+	      limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 统计总数 -->
+	<select id="countCacheScheduleByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheSchedule"
+		resultType="Integer">
+		select count(1)
+			from CACHE_SCHEDULE
+		where 1=1
+		 <if test="org_id != null"> and org_id = #{org_id}</if>
+	</select>
+	
+	<!-- 插入一条  -->
+	<insert id="insertCacheSchedule"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheSchedule">
+		insert into CACHE_SCHEDULE
+		(
+			  rowid,
+			  crm_id,
+			  open_id,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  name,
+			  assinger_id,
+			  assinger_name,
+			  start_date,
+			  end_date,
+			  status,
+			  rela_id,
+			  rela_name,
+			  rela_type,
+			  sche_type,
+			  enabled_flag,
+			  is_public
+			  
+		) values (
+		    <if  test="rowid != null">#{rowid},</if>
+		    <if  test="rowid == null">NULL,</if>
+		    <if  test="crm_id != null">#{crm_id},</if>
+		    <if  test="crm_id == null">NULL,</if>
+		    <if  test="open_id != null">#{open_id},</if>
+		    <if  test="open_id == null">NULL,</if>
+		    <if  test="org_id != null">#{org_id},</if>
+		    <if  test="org_id == null">NULL,</if>
+		    <if  test="create_date != null">#{create_date},</if>
+		    <if  test="create_date == null">NULL,</if>
+		    <if  test="create_by != null">#{create_by},</if>
+		    <if  test="create_by == null">NULL,</if>
+		    <if  test="modify_date != null">#{modify_date},</if>
+		    <if  test="modify_date == null">NULL,</if>
+		    <if  test="modify_by != null">#{modify_by},</if>
+		    <if  test="modify_by == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="assinger_id != null">#{assinger_id},</if>
+		    <if  test="assinger_id == null">NULL,</if>
+		    <if  test="assinger_name != null">#{assinger_name},</if>
+		    <if  test="assinger_name == null">NULL,</if>
+		    <if  test="start_date != null and start_date != ''">#{start_date},</if>
+		    <if  test="start_date == null or start_date == ''">NULL,</if>
+		    <if  test="end_date != null and end_date != ''">#{end_date},</if>
+		    <if  test="end_date == null or end_date == ''">NULL,</if>
+		    <if  test="status != null">#{status},</if>
+		    <if  test="status == null">NULL,</if>
+		    <if  test="rela_id != null">#{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="rela_name != null">#{rela_name},</if>
+		    <if  test="rela_name == null">NULL,</if>
+		    <if  test="rela_type != null">#{rela_type},</if>
+		    <if  test="rela_type == null">NULL,</if>
+		    <if  test="sche_type != null">#{sche_type},</if>
+		    <if  test="sche_type == null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag},</if>
+		    <if  test="enabled_flag == null">NULL,</if>
+		     <if  test="ispublic != null">#{ispublic}</if>
+		      <if  test="ispublic == null">0</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条 -->
+	<update id="updateCacheScheduleById"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheSchedule">
+		UPDATE CACHE_SCHEDULE SET
+		    <if  test="modify_date != null">modify_date = #{modify_date},</if>
+		    <if  test="modify_date == null">modify_date = NULL,</if>
+		    <if  test="modify_by != null">modify_by = #{modify_by},</if>
+		    <if  test="modify_by == null">modify_by = NULL,</if>
+		    <if  test="start_date != null">start_date = #{start_date},</if>
+		    <if  test="start_date == null">start_date = NULL,</if>
+		    <if  test="end_date != null">end_date = #{end_date},</if>
+		    <if  test="end_date == null">end_date = NULL,</if>
+		    <if  test="status != null">status = #{status},</if>
+		    <if  test="status == null">status = NULL,</if>
+		    <if  test="rela_id != null">rela_id = #{rela_id},</if>
+		    <if  test="rela_id == null">rela_id = NULL,</if>
+		    <if  test="rela_name != null">rela_name = #{rela_name},</if>
+		    <if  test="rela_name == null">rela_name = NULL,</if>
+		    <if  test="rela_type != null">rela_type = #{rela_type},</if>
+		    <if  test="rela_type == null">rela_type = NULL,</if>
+		    <if  test="sche_type != null">sche_type = #{sche_type},</if>
+		    <if  test="sche_type == null">sche_type = NULL,</if>
+		    <if  test="assinger_id != null">assinger_id = #{assinger_id},</if>
+		    <if  test="assinger_id == null">assinger_id = NULL,</if>
+		    <if  test="assinger_name != null">assinger_name = #{assinger_name},</if>
+		    <if  test="assinger_name == null">assinger_name = NULL,</if>
+		    <if  test="enabled_flag != null">enabled_flag = #{enabled_flag},</if>
+		    <if  test="enabled_flag == null">enabled_flag = NULL,</if>
+		    <if  test="ispublic != null">is_public = #{ispublic}</if>
+		   <if  test="ispublic == null">is_public=0 </if>
+		 WHERE rowid=#{rowid}
+	</update>
+	
+	<!-- 更新一条 -->
+	<update id="updateEnabledFlag"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheSchedule">
+		UPDATE CACHE_SCHEDULE SET enabled_flag = #{enabled_flag} WHERE rowid=#{rowid}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteCacheScheduleById"
+		parameterType="java.lang.String">
+		delete from CACHE_SCHEDULE where rowid = #{value}
+	</delete>
+	
+	<!-- 更新相关 -->
+	<update id="updateScheduleParent"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheSchedule">
+		UPDATE CACHE_SCHEDULE SET rela_id = #{rela_id} WHERE rela_id=#{rowid} and rela_type=#{rela_type}
+	</update>
+</mapper>
+

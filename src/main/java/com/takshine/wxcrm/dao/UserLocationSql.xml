@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 用户位置 sql处理语句 -->
+<mapper namespace="userLocationSql">	
+	<!-- 根据id查找用户位置表  -->
+	<select id="findUserLocationById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.wxcrm.domain.UserLocation">
+		<![CDATA[
+		select
+			  	ID as id,
+				OPEN_ID as openId,
+				LAT as lat,
+				LNG as lng,
+				BD09_LNG as bd09Lng,
+				BD09_LAT as bd09Lat,
+				CREATE_TIME as createTime
+				
+			from TB_USER_LOCATION
+			where ID=#{value}]]>
+	</select>
+	
+	<!-- 查询出全部的用户位置表记录 -->
+	<select id="findAllUserLocationList"
+		resultType="com.takshine.wxcrm.domain.UserLocation">
+		select
+			    ID as id,
+				OPEN_ID as openId,
+				LAT as lat,
+				LNG as lng,
+				BD09_LNG as bd09Lng,
+				BD09_LAT as bd09Lat,
+				CREATE_TIME as createTime
+				
+			from TB_USER_LOCATION
+		where 1=1
+		<if test="orderByString != ''">
+		    $orderByString$
+		</if>	
+	</select>
+	
+	<!-- 按照查询条件查询出用户位置表记录 -->
+	<select id="findUserLocationListByFilter"
+		parameterType="com.takshine.wxcrm.domain.UserLocation"
+		resultType="com.takshine.wxcrm.domain.UserLocation">
+		select
+			    ID as id,
+				OPEN_ID as openId,
+				LAT as lat,
+				LNG as lng,
+				BD09_LNG as bd09Lng,
+				BD09_LAT as bd09Lat,
+				CREATE_TIME as createTime
+				
+			from TB_USER_LOCATION
+		where 1=1
+		   <if test="id != null"> and ID = #{id}</if>
+		   <if test="openId != null"> and OPEN_ID = #{openId}</if>
+		   <if test="lat != null"> and LAT = #{lat}</if>
+		   <if test="lng != null"> and LNG = #{lng}</if>
+		   <if test="bd09Lng != null"> and BD09_LNG = #{bd09Lng}</if>
+		   <if test="bd09Lat != null"> and BD09_LAT = #{bd09Lat}</if>
+		<if test="orderByString != null">
+		    $orderByString$
+		</if>
+	</select>
+	
+	<!-- equal 条件 -->
+	<sql id="kh_equal_param">
+	    <if test="equal.openId != ''">
+		    OPEN_ID =  #{equal.openId} 	
+		</if>
+	</sql>
+	
+	<!-- like 条件 -->
+	<sql id="kh_like_param">
+		<if test="like.openId != ''">
+		    OPEN_ID like '%' || #{like.openId} || '%'  		
+		</if>
+	</sql>
+	
+	<!-- 分页查询 客户信息数据 -->
+	<select id="findUserLocationPageByFilter"
+		parameterType="com.takshine.wxcrm.base.filter.QueryFilter"
+		resultType="com.takshine.wxcrm.domain.UserLocation">
+		     SELECT 
+			    ID as id,
+				OPEN_ID as openId,
+				LAT as lat,
+				LNG as lng,
+				BD09_LNG as bd09Lng,
+				BD09_LAT as bd09Lat,
+				CREATE_TIME as createTime
+				
+		     FROM 
+			      (
+			      SELECT A.*, ROWNUM RN 
+			        FROM (SELECT * FROM TB_USER_LOCATION where 1 = 1
+			           <include refid="kh_equal_param"/>
+			           <include refid="kh_like_param"/>
+			           <if test="orderByString != null">
+						    $orderByString$
+						</if>
+			      ) A 
+			      <![CDATA[ WHERE ROWNUM <= #{endNum} ]]>
+			      )
+			 <![CDATA[ WHERE RN > #{startNum} ]]>
+	</select>
+	
+	<!-- 分页查询 客户信息数据 统计客户信息总数 -->
+	<select id="countUserLocationByFilter"
+		parameterType="com.takshine.wxcrm.base.filter.QueryFilter"
+		resultType="Integer">
+		select count(1)
+			from TB_USER_LOCATION
+		where 1=1
+		 <include refid="kh_equal_param"/>
+		 <include refid="kh_like_param"/>
+	</select>
+	
+	<!-- 插入一条用户位置表记录 -->
+	<insert id="insertUserLocation"
+		parameterType="com.takshine.wxcrm.domain.UserLocation">
+		insert into TB_USER_LOCATION
+		(
+		    ID,
+			OPEN_ID,
+			LAT,
+			LNG,
+			BD09_LNG,
+			BD09_LAT,
+			CREATE_TIME
+			
+		) values (
+		    <if test="id != null">#{id},</if>
+		    <if test="id == null">NULL,</if>
+		    <if test="openId != null">#{openId},</if>
+		    <if test="openId == null">NULL,</if>
+		    <if test="lat != null">#{lat},</if>
+		    <if test="lat == null">NULL,</if>
+		    <if test="lng != null">#{lng},</if>
+		    <if test="lng == null">NULL,</if>
+		    <if test="bd09Lng != null">#{bd09Lng},</if>
+		    <if test="bd09Lng == null">NULL,</if>
+		    <if test="bd09Lat != null">#{bd09Lat},</if>
+		    <if test="bd09Lat == null">NULL,</if>
+		    <if test="createTime != null">#{createTime},</if>
+		    <if test="createTime == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 根据id更新一条用户位置表记录 -->
+	<update id="updateUserLocationById"
+		parameterType="com.takshine.wxcrm.domain.UserLocation">
+		UPDATE TB_USER_LOCATION SET
+		    <if test="id != null">ID = #{id},</if>
+		    <if test="id == null">NULL,</if>
+		    <if test="openId != null">OPEN_ID = #{openId},</if>
+		    <if test="openId == null">NULL,</if>
+		    <if test="lat != null">LAT = #{lat},</if>
+		    <if test="lat == null">NULL,</if>
+		    <if test="lng != null">LNG = #{lng},</if>
+		    <if test="lng == null">NULL,</if>
+		    <if test="bd09Lng != null">BD09_LNG = #{bd09Lng},</if>
+		    <if test="bd09Lng == null">NULL,</if>
+		    <if test="bd09Lat != null">BD09_LAT = #{bd09Lat},</if>
+		    <if test="bd09Lat == null">NULL,</if>
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据id删除一条用户位置表记录 -->
+	<delete id="deleteUserLocationById"
+		parameterType="java.lang.String">
+		delete from TB_USER_LOCATION where ID=#{value}
+	</delete>
+</mapper>
+

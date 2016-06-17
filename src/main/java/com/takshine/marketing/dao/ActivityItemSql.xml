@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 活动 sql处理语句 -->
+<mapper namespace="activityItemSql">
+	<!-- 获取活动列表 -->
+	<select id="findActivityItemList"
+		parameterType="com.takshine.marketing.domain.ActivityItem"
+		resultType="com.takshine.marketing.domain.ActivityItem">
+			select 
+			 id,
+			 item_content as content,
+			 date_format(start_date,'%H-%i') as start_date,
+			 date_format(end_date,'%H-%i') as end_date,
+			 experts
+			 from TB_MK_ACTIVITY_ITEM 
+		  <if test="activity_id != null"> 
+		  	 where activity_id = #{activity_id}
+		  </if>
+		  	order by start_date asc
+	</select>
+	
+	
+	
+	<!-- 修改活动项 -->
+	<insert id="updateActivityItemById"
+		parameterType="com.takshine.marketing.domain.Activity">
+		
+	</insert>
+	
+	<!-- 删除活动项 -->
+	<insert id="deleteActivityItemById"
+		parameterType="com.takshine.marketing.domain.Activity">
+		delete TB_MK_ACTIVITY_ITEM where id=#{id}
+	</insert>
+	
+	<!-- 添加活动项 -->
+	<update id="saveActivityItem"
+		parameterType="com.takshine.marketing.domain.ActivityItem">
+		insert into TB_MK_ACTIVITY_ITEM(id,item_content,start_date,end_date,experts,activity_id,create_time,created_by)
+		values(#{id},#{content},#{start_date},#{end_date},
+		<if test="experts != null"> #{experts}, </if>
+		<if test="experts == null"> null, </if>
+		#{activity_id},now(),
+		<if test="createBy != null"> #{createBy}</if>
+		<if test="createBy == null"> null </if>
+		)
+	</update>
+	
+</mapper>
+

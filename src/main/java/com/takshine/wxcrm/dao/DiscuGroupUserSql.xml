@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 讨论组 sql处理语句 -->
+<mapper namespace="discuGroupUserSql">
+	<!-- 查询讨论组 -->
+	<select id="findDiscuGroupUserListByFilter"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupUser"
+		resultType="com.takshine.wxcrm.domain.DiscuGroupUser">
+		SELECT
+		  id,
+		  dis_id,
+		  user_id,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = user_id) as user_name,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = user_id limit 0,1) as card_name,
+		  user_type,
+		  create_time
+		  
+		FROM TB_DISCUGROUP_USER where 1=1 AND user_type != 'delete'
+		<if test="dis_id != null"> AND dis_id = #{dis_id} </if>
+		<if test="user_type != null"> AND user_type = #{user_type} </if>
+		<if test="user_id != null"> AND user_id = #{user_id} </if>
+		order by create_time desc 
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询讨论组用户以及群主 -->
+	<select id="findAllDiscuGroupUser"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupUser"
+		resultType="com.takshine.wxcrm.domain.DiscuGroupUser">
+		SELECT
+			p.id as dis_id,
+			p.creator as user_id,
+			(SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = p.creator) as user_name,
+		    (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = p.creator limit 0,1) as card_name,
+		    'owner' as user_type
+		FROM
+		  TB_DISCUGROUP p 
+		WHERE p.id = #{dis_id}
+		AND p.enabled_flag = 'enabled' 
+		UNION
+		SELECT
+		  dis_id,
+		  user_id,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = user_id) as user_name,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = user_id limit 0,1) as card_name,
+		  user_type
+		FROM TB_DISCUGROUP_USER where 1=1 AND user_type != 'delete'
+		 AND dis_id = #{dis_id} 
+		 AND user_type = #{user_type} 
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询讨论组 -->
+	<select id="findDiscuGroupUserByParam"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupUser"
+		resultType="com.takshine.wxcrm.domain.DiscuGroupUser">
+		SELECT
+		  id,
+		  dis_id,
+		  user_id,
+		  user_type,
+		  create_time
+		  
+		FROM TB_DISCUGROUP_USER where 1=1 
+		AND user_type = #{user_type} 
+		AND user_id = #{user_id} 
+	</select>
+	
+	<!-- 插入一条 讨论组 -->
+	<insert id="insertDiscuGroupUser"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupUser">
+		insert into TB_DISCUGROUP_USER
+		(
+		      id,
+			  dis_id,
+			  user_id,
+			  user_type,
+			  create_time
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="dis_id != null">#{dis_id},</if>
+		    <if  test="dis_id == null">NULL,</if>
+		    <if  test="user_id != null">#{user_id},</if>
+		    <if  test="user_id == null">NULL,</if>
+		    <if  test="user_type != null">#{user_type},</if>
+		    <if  test="user_type == null">NULL,</if>
+		    <if  test="create_time != null">now()</if>
+		    <if  test="create_time == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条讨论组 -->
+	<update id="updateDiscuGroupUserById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupUser">
+		UPDATE TB_DISCUGROUP_USER SET
+		    <if  test="user_id != null">user_id = #{user_id},</if>
+		    <if  test="user_id == null">NULL,</if>
+		    <if  test="user_type != null">user_type = #{user_type}</if>
+		    <if  test="user_type == null">user_type = NULL</if>
+		 WHERE id=#{id}
+	</update>
+	
+	<!-- 更新一条讨论组 -->
+	<update id="updateDiscuGroupUserType"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupUser">
+		UPDATE TB_DISCUGROUP_USER SET
+		    user_type = #{user_type}
+		 WHERE dis_id=#{dis_id} and user_id = #{user_id}
+	</update>
+	
+	<!-- 删除一个讨论组用户 -->
+	<delete id="deleteDiscuGroupUserByUserId"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupUser">
+		DELETE FROM TB_DISCUGROUP_USER WHERE dis_id=#{dis_id} and user_id = #{user_id}
+	</delete>
+	
+</mapper>
+

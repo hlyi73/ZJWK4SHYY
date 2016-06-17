@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 版本处理语句 -->
+<mapper namespace="versionsContentSql">
+	<!-- 获取版本内容 -->
+	<select id="findVersionsContentListByFilter"
+		parameterType="com.takshine.wxcrm.domain.VersionsContent"
+		resultType="com.takshine.wxcrm.domain.VersionsContent">
+		SELECT 
+			id,
+			serial_number,
+			content,
+			imgurl,
+			CREATE_DATE as createTime
+		FROM TB_VERSIONS_CONTENT 
+		WHERE 1=1 
+		<if test="ver_id != null">
+		 	AND VER_ID = #{ver_id}
+		</if>
+		ORDER BY SERIAL_NUMBER;
+	</select>
+	
+</mapper>
+

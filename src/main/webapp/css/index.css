@@ -1,0 +1,136 @@
+ ul,li{ list-style:none; margin:0px; padding:0px;}
+			.slide{width:100%;height:auto;padding:10px; background-color:#FFFFFF;margin:10px auto;margin-bottom:50px;}
+			.pic{overflow:hidden;width:100%; }
+			.pic li{display:none; width:100%;  position:relative;}
+			.pic li img{width:240px; border:0px;}
+			.pic li span{ display:block; width:220px; height:30px; line-height:30px; font-size:12px; color:#FFFFFF; background-color:#000000; padding:0px 10px; FILTER: alpha(opacity=70); opacity: 0.7; -moz-opacity: 0.7; -webkit-opacity: 0.7; position:absolute; left:0px; bottom:0px; z-index:99; overflow:hidden;}
+			.cur{display:block;}
+			.thumb{width:100%; height:12px;text-align:center;}
+			.mjblog{ width:95px; height:12px; padding-left:5px; font-size:12px; color: #c3c3c3; float:left; font-family: "Times New Roman", Times, serif;}
+			.mjblog a{color: #c3c3c3;}
+			.thnav{ float:right; height:10px;}
+			.thnav li{ width:10px; height:10px; line-height:0px; font-size:0px; float:left; margin-left:8px; background-image:url(http://mj.588cy.com/img/nav_libg.gif); background-repeat:no-repeat; cursor:pointer;}
+			.navli{ background-position:-17px 0px;}
+			.clear{ display:block; height:0px; line-height:0px; font-size:0px;clear:both;}
+
+
+#navs{position:fixed;right:15px;bottom:60px;width:40px;height:40px;line-height:40px;list-style-type:none;margin:0;padding:0;text-align:center;color:#fff;cursor:pointer;}
+#navs>li,#navs:after{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:50%;-webkit-border-radius:50%;background-color:RGB(75, 192, 171);}
+#navs>li{transition:all .6s;-webkit-transition:all .6s;-moz-transition:.6s;}
+#navs:after{content:attr(data-close);z-index:1;border-radius:50%;-webkit-border-radius:50%;}
+#navs.active:after{content:attr(data-open);}
+#navs a{width:40px;height:40px;display:inline-block;border-radius:50%;-webkit-border-radius:50%;text-decoration:none;color:#fff;font-size:0.8em;}
+
+
+#navs2{position:fixed;right:15px;bottom:65px;width:40px;height:40px;line-height:40px;list-style-type:none;margin:0;padding:0;text-align:center;color:#fff;cursor:pointer;}
+#navs2>li,#navs2:after{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:50%;-webkit-border-radius:50%;background-color:RGB(75, 192, 171);}
+#navs2>li{transition:all .6s;-webkit-transition:all .6s;-moz-transition:.6s;}
+#navs2:after{content:attr(data-close);z-index:1;border-radius:50%;-webkit-border-radius:50%;}
+#navs2.active:after{content:attr(data-open);}
+#navs2 a{width:40px;height:40px;display:inline-block;border-radius:50%;-webkit-border-radius:50%;text-decoration:none;color:#fff;font-size:0.8em;}
+
+
+.clear {
+					clear: both;
+				}
+				
+				#page-wrap {
+					width: 100%;
+					background: white;
+				}
+				
+				.button {
+					float: left;
+					text-align:center;
+					padding-bottom:5px;
+					font-family:微软雅黑;
+					width:32%;
+					margin: 2px;
+				}
+				
+				#home-button {
+					opacity: 1.0;
+					border-bottom: 1px solid #AAD1FD;
+				}
+				
+				#about-button {
+					opacity: 0.7;
+					border-bottom: 1px solid #AAD1FD;
+				}
+				
+				#contact-button {
+					opacity: 0.7;
+					border-bottom: 1px solid #AAD1FD;
+				
+				}
+				
+				.halo {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+}
+.halo:before,
+.halo:after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  left: -60px;
+  top: -60px;
+  border-radius: 60px;
+  /*animation-name: Grow;*/  
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  /* Safari and Chrome */
+
+  /*-webkit-animation-name: Grow;*/
+  -webkit-animation-duration: 10s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+.halo:before {
+  box-shadow: 0px 0px 100px 10px #cccccc;
+}
+.halo:after {
+  /*box-shadow: inset 0px 0px 100px 10px #efefef;*/
+}
+@-webkit-keyframes Grow {
+  0% {
+    transform: scale(0.1);
+    -ms-transform: scale(0.1);
+    /* IE 9 */
+  
+    -webkit-transform: scale(0.1);
+    /* Safari and Chrome */
+  
+    opacity: 0;
+  }
+  50% { 
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    -ms-transform: scale(2);
+    /* IE 9 */
+  
+    -webkit-transform: scale(2);
+    /* Safari and Chrome */
+  
+    opacity: 0;
+  }
+ 
+ ._index_nav{
+	position:fixed;
+	right:12px;
+	width:48px;
+	height:48px;
+	border-radius:24px;
+	background-color:#3e6790;
+	text-align:center;
+	line-height:48px;
+	font-weight:bold;
+	color:#fff;	
+	opacity:0.5;
+}

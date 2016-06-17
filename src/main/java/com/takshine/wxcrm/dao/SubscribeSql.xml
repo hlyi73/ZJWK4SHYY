@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 用户订阅 sql处理语句 -->
+<mapper namespace="subscribeSql">
+	
+<!-- 根据id查找用户和手机绑定关系表  -->
+	<select id="findSubscribeListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Subscribe"
+		resultType="String">
+			select group_concat(feedid) as feedid 
+			from (select feedid from TB_SUBSCRIBE
+			  where crmid=#{crmId}
+		  	 <if test="feedid != null"> and feedid = #{feedid} </if>
+		  	 <if test="type != null"> and type = #{type} </if>
+			  order by create_date desc
+			  limit #{currpages},#{pagecounts}) a
+	</select>
+
+		<!-- 根据id查找用户和手机绑定关系表  -->
+	<select id="findSubscribeList"
+		parameterType="com.takshine.wxcrm.domain.Subscribe"
+		resultType="com.takshine.wxcrm.domain.Subscribe">
+		select id,crmid as crmId,feedid,type,openid as openId,name from TB_SUBSCRIBE
+			  where 1=1 
+			   <if test="openId != null"> and openid=#{openId} </if>
+			   <if test="crmId != null"> and crmid=#{crmId} </if>
+		  	 <if test="feedid != null"> and feedid = #{feedid} </if>
+		  	  <if test="type != null"> and type = #{type} </if>
+			  order by create_date desc
+			  limit #{currpages},#{pagecounts}
+	</select>
+	<!-- 插入一条用户和手机绑定关系表记录 -->
+	<insert id="insertSubscribe"
+		parameterType="com.takshine.wxcrm.domain.Subscribe">
+		insert into TB_SUBSCRIBE
+		(
+			   id,
+			   openid,
+		       crmid,
+		       create_date,
+		       feedid,
+		       type,
+		       name
+		) values (
+		 	<if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+			<if test="openId != null"> #{openId}, </if>
+		    <if test="openId == null"> NULL,  </if>
+		    <if test="crmId != null"> #{crmId}, </if>
+		    <if test="crmId == null"> NULL,  </if>
+		    <if test="createTime != null"> now(),</if>
+		    <if test="createTime == null"> now(), </if>
+		    <if test="feedid != null"> #{feedid},</if>
+		    <if test="feedid == null"> NULL, </if>
+		     <if test="type != null"> #{type},</if>
+		    <if test="type == null"> NULL, </if>
+		       <if test="type != null"> #{name}</if>
+		    <if test="type == null"> NULL </if>
+		 )
+	</insert>
+	
+	
+	<!-- 根据ID删除文章记录 -->
+	<delete id="deleteSubscribeById"
+		parameterType="java.lang.String">
+		delete from TB_SUBSCRIBE where id = #{value}
+	</delete>
+		<!-- 统计注册信息总数 -->
+	<select id="countSubscribeByFilter"
+		parameterType="com.takshine.wxcrm.domain.Subscribe"
+		resultType="Integer">
+		select count(1)
+			from TB_SUBSCRIBE
+		where 1=1
+	   <if test="crmId != null"> and crmid=#{crmId} </if>
+		  	 <if test="feedid != null"> and feedid = #{feedid} </if>
+		  	  <if test="type != null"> and type = #{type} </if>
+	</select>
+</mapper>
+

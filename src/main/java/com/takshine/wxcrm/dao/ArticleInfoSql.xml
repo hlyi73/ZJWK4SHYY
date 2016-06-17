@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 注册信息 sql处理语句 -->
+<mapper namespace="articleInfoSql">
+	<!-- 分页查询注册信息 -->
+	<select id="findArticleInfoListByFilter"
+		parameterType="com.takshine.wxcrm.domain.ArticleInfo"
+		resultType="com.takshine.wxcrm.domain.ArticleInfo">
+		SELECT
+			  id as id,
+			  typeId as typeId,
+			  typeName as typeName,
+			  orgId as orgId,
+			  orgName as orgName,
+			  title as title,
+			  descrition as descrition,
+			  image as image,
+			  content as content,
+			  status as status, 
+			  createBy as createBy,
+			  date_format(createTime,'%Y-%m-%d') as createTime,
+			  updateBy as updateBy,
+			  updateTime as updateTime
+		  
+		  FROM TB_ARTICLE_INFO where 1=1
+		  <if test="typeId != null"> and typeId = #{typeId}</if>
+		  <if test="typeName != null"> and typeName = #{typeName}</if>
+		  <if test="orgId != null"> and orgId = #{orgId}</if>
+		  <if test="orgName != null"> and orgName = #{orgName}</if>
+		  <if test="title != null"> and title like #{title} </if>
+		  <if test="descrition != null"> and descrition like '%||#{descrition}||%' </if>
+		  <if test="status != null"> and status = #{status} </if>
+		  <if test="createBy != null"> and createBy = #{createBy} </if>
+		  <if test="startDate != null"> and createTime &gt;= #{startDate} </if>
+		  <if test="endDate != null"> and createTime &lt;= #{endDate} </if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计注册信息总数 -->
+	<select id="countArticleInfoByFilter"
+		parameterType="com.takshine.wxcrm.domain.ArticleInfo"
+		resultType="Integer">
+		select count(1)
+			from TB_ARTICLE_INFO
+		where 1=1
+		  <if test="typeId != null"> and typeId = #{typeId}</if>
+		  <if test="typeName != null"> and typeName = #{typeName}</if>
+		  <if test="orgId != null"> and orgId = #{orgId}</if>
+		  <if test="orgName != null"> and orgName = #{orgName}</if>
+		  <if test="title != null"> and title = #{title}</if>
+		  <if test="descrition != null"> and descrition like '%#{descrition}%' </if>
+		  <if test="status != null"> and status = #{status} </if>
+		  <if test="createBy != null"> and createBy = #{createBy} </if>
+	</select>
+	
+	<!-- 插入一条 注册信息 -->
+	<insert id="insertArticleInfo"
+		parameterType="com.takshine.wxcrm.domain.ArticleInfo">
+		insert into TB_ARTICLE_INFO
+		(
+		       ID,
+			   TYPEID ,
+			   TYPENAME,
+			   ORGID,
+			   ORGNAME ,
+			   TITLE,
+			   DESCRITION,
+			   CONTENT,
+			   IMAGE,
+			   STATUS,
+			   CREATEBY,
+			   CREATETIME,
+			   UPDATEBY,
+			   UPDATETIME
+			  
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="typeId != null">#{typeId},</if>
+		    <if  test="typeId == null">NULL,</if>
+		    <if  test="typeName != null">#{typeName},</if>
+		    <if  test="typeName == null">NULL,</if>
+		    <if  test="orgId != null">#{orgId},</if>
+		    <if  test="orgId == null">NULL,</if>
+		    <if  test="orgName != null">#{orgName},</if>
+		    <if  test="orgName == null">NULL,</if>
+		    <if  test="title != null">#{title},</if>
+		    <if  test="title == null">NULL,</if>
+		    <if  test="descrition != null">#{descrition},</if>
+		    <if  test="descrition == null">NULL,</if>
+		    <if  test="content != null">#{content},</if>
+		    <if  test="content == null">NULL,</if>
+		    <if  test="image != null">#{image},</if>
+		    <if  test="image == null">NULL,</if>
+		    <if  test="status != null">#{status},</if>
+		    <if  test="status == null">NULL,</if>
+		    <if  test="createBy != null">#{createBy},</if>
+		    <if  test="createBy == null">NULL,</if>
+		    <if  test="createTime != null">#{createTime},</if>
+		    <if  test="createTime == null">NULL,</if>
+		    <if  test="updateBy != null">#{updateBy},</if>
+		    <if  test="updateBy == null">NULL,</if>
+		    <if  test="updateTime != null">#{updateTime}</if>
+		    <if  test="updateTime == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条注册信息 -->
+	<update id="updateArticleInfoById"
+		parameterType="com.takshine.wxcrm.domain.ArticleInfo">
+		UPDATE TB_ARTICLE_INFO SET
+		    <if  test="typeId != null">TYPEID = #{typeId},</if>
+		    <if  test="typeName != null">TYPENAME = #{typeName},</if>
+		    <if  test="content != null">CONTENT = #{content},</if>
+		    <if  test="updateBy != null">UPDATEBY = #{updateBy},</if>
+		    <if  test="updateTime != null">UPDATETIME = #{updateTime}</if>
+		   
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据ID删除文章记录 -->
+	<delete id="deleteArticleInfoById"
+		parameterType="java.lang.String">
+		delete from TB_ARTICLE_INFO where ID = #{value}
+	</delete>
+	
+	<!-- 根据ID查询一条文章记录 -->
+	<select id="findArticleInfoById"
+		parameterType="java.lang.String" resultType="com.takshine.wxcrm.domain.ArticleInfo">
+		select 	
+			  id as id,
+			  typeId as typeId,
+			  typeName as typeName,
+			  orgId as orgId,
+			  orgName as orgName,
+			  title as title,
+			  descrition as descrition,
+			  content as content,
+			  image as image,
+			  status as status, 
+			  createBy as createBy,
+			  date_format(createTime,'%Y-%m-%d') as createTime,
+			  updateBy as updateBy,
+			  image as image,
+			  updateTime as updateTime
+	    from TB_ARTICLE_INFO where ID = #{value}
+	</select>
+</mapper>
+

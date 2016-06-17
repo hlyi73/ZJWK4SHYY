@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 消息 sql处理语句 -->
+<mapper namespace="messageSql">
+	<!-- 查询消息 -->
+	<select id="findMessageListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Message"
+		resultType="com.takshine.wxcrm.domain.Message">
+		SELECT
+		  id as id,
+		  crm_id as crmId,
+		  msg_type as msgType,
+		  last_time as lastTime
+		FROM TB_MESSAGE where 1=1
+		<if test="crmId != null">
+		 	AND crm_Id = #{crmId}
+		</if>
+		<if test="msgType != null">
+		 	AND msg_Type = #{msgType}
+		</if>
+		order by last_time desc limit 0,1
+	</select>
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertMessage"
+		parameterType="com.takshine.wxcrm.domain.Message">
+		insert into TB_MESSAGE
+		(
+		      ID,
+			  CRM_ID,
+              MSG_TYPE,
+			  LAST_TIME
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="crmId != null">#{crmId},</if>
+		    <if  test="crmId == null">NULL,</if>
+		    <if  test="msgType != null">#{msgType},</if>
+		    <if  test="msgType == null">NULL,</if>
+		    <if  test="lastTime != null">#{lastTime}</if>
+		    <if  test="lastTime == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条消息 -->
+	<update id="updateMessageById"
+		parameterType="com.takshine.wxcrm.domain.Message">
+		UPDATE TB_MESSAGE SET
+		    <if  test="crmId != null">CRM_ID = #{crmId},</if>
+		    <if  test="crmId == null">NULL,</if>
+		    <if  test="msgType != null">MSG_TYPE = #{msgType},</if>
+		    <if  test="msgType == null">NULL,</if>
+		    <if  test="lastTime != null">LAST_TIME = #{lastTime},</if>
+		    <if  test="lastTime == null">NULL</if>
+		 WHERE ID=#{id}
+	</update>
+	
+</mapper>
+

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 微信用户基本信息 sql处理语句 -->
+<mapper namespace="wxuserInfoSql">
+	
+	<!-- 根据id查找用户和手机绑定关系表  -->
+	<select id="findWxuserInfoById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.wxcrm.domain.WxuserInfo">
+		<![CDATA[
+			select
+			   OPEN_ID as openId,              
+			   PUBLIC_ID as publicId,              
+			   ORG_ID   as orgId,        
+			   SUBSCRIBE as subscribe,        
+			   (select name from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as cardname,
+			   (select head_img_url from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as cardimg,
+			   (select phone from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as mobile,
+			   (select city from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as city,
+			   NICKNAME as nickname,         
+			   SEX as sex,    
+			   COUNTRY as country,    
+			   PROVINCE as province,
+			   LANGUAGE as language,
+			   HEADIMGURL as headimgurl,
+			   SUBSCRIBE_TIME as subscribeTime,
+			   LOGIN_TIME as loginTime,
+			   party_row_id,
+               unionid,
+               headimgstr
+			from TB_WXUSER_INFO twi
+			  where OPEN_ID=#{value}   
+		]]>
+	</select>
+	
+	<!-- 查询出全部的用户和手机绑定关系表记录 -->
+	<select id="findAllWxuserInfoList"
+		resultType="com.takshine.wxcrm.domain.WxuserInfo">
+		select
+			   OPEN_ID as openId,    
+			   PUBLIC_ID as publicId,               
+			   ORG_ID   as orgId,        
+			   SUBSCRIBE as subscribe,        
+			   NICKNAME as nickname,         
+			   SEX as sex,              
+			   CITY as city,      
+			   COUNTRY as country,    
+			   PROVINCE as province,
+			   LANGUAGE as language,
+			   HEADIMGURL as headimgurl,
+			   (select name from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as cardname,
+			   (select head_img_url from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as cardimg,
+			   (select phone from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as mobile,
+			   SUBSCRIBE_TIME as subscribeTime,
+			   LOGIN_TIME as loginTime,
+			   party_row_id,
+               unionid,
+               headimgstr
+			from TB_WXUSER_INFO twi
+		where 1=1
+	    <if test="orderByString != null">
+	       #{orderByString}
+	    </if>
+	</select>
+	
+	<!-- 按照查询条件查询出用户和手机绑定关系表记录 -->
+	<select id="findWxuserInfoListByFilter"
+		parameterType="com.takshine.wxcrm.domain.WxuserInfo"
+		resultType="com.takshine.wxcrm.domain.WxuserInfo">
+		select
+			   OPEN_ID as openId,    
+			   PUBLIC_ID as publicId,                
+			   ORG_ID   as orgId,              
+			   SUBSCRIBE as subscribe,        
+			   NICKNAME as nickname,         
+			   SEX as sex,                
+			   COUNTRY as country,    
+			   PROVINCE as province,
+			   LANGUAGE as language,
+			   HEADIMGURL as headimgurl,
+			   (select name from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as cardname,
+			   (select head_img_url from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as cardimg,
+			   (select phone from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as mobile,
+			   (select city from TB_BUSINESS_CARD where party_row_id = twi.party_row_id limit 0,1) as city,
+			   SUBSCRIBE_TIME as subscribeTime,
+			   LOGIN_TIME as loginTime,
+			   party_row_id,
+               unionid,
+               headimgstr
+			from TB_WXUSER_INFO twi
+		where 1=1
+		  <if test="openId != null"> and OPEN_ID = #{openId}</if>
+		  <if test="publicId != null"> and PUBLIC_ID = #{publicId}</if>
+		  <if test="nickname != null"> and NICKNAME = #{nickname}</if>
+		  <if test="party_row_id != null"> and party_row_id = #{party_row_id}</if>
+		  <if test="unionid != null"> and unionid = #{unionid}</if>
+		  <if test="orderByString != null">
+	         #{orderByString}
+	      </if>
+	</select>
+	
+		<!-- 按照OpenId查询出用户的好友 -->
+	<select id="findFriendListByFilter"
+		parameterType="com.takshine.wxcrm.domain.WxuserInfo"
+		resultType="com.takshine.wxcrm.domain.WxuserInfo">
+	SELECT b.OPEN_ID AS openId,    
+			   b.PUBLIC_ID AS publicId,                
+			  b.ORG_ID   AS orgId,              
+			  b.SUBSCRIBE AS subscribe,        
+			   b.NICKNAME AS nickname,         
+			   b.SEX AS sex,              
+			   b.CITY AS city,      
+			   b.COUNTRY AS country,    
+			   b.PROVINCE AS province,
+			   b.LANGUAGE AS LANGUAGE,
+			   b.HEADIMGURL AS headimgurl,
+			   (select name from TB_BUSINESS_CARD where party_row_id = b.party_row_id limit 0,1) as cardname,
+			   (select head_img_url from TB_BUSINESS_CARD where party_row_id = b.party_row_id limit 0,1) as cardimg,
+			   b.headimgstr,
+			   b.SUBSCRIBE_TIME AS subscribeTime,
+			   b.LOGIN_TIME AS loginTime,
+			   b.party_row_id,
+			   F_GetPY(b.NICKNAME) as firstChar,
+               b.unionid,c.id AS rssId 
+               FROM TB_USER_RELA a  
+               LEFT JOIN TB_WXUSER_INFO b ON a.rela_user_id = b.party_row_id 
+			   LEFT JOIN TB_SUBSCRIBE c ON c.feedid=b.open_id 
+			   WHERE a.user_id=(SELECT party_row_id FROM TB_WXUSER_INFO WHERE open_id=#{openId}) 
+			   and a.type='whitelist' 
+			   <if test="firstChar != null"> and F_GetPY(b.NICKNAME)=#{firstChar} </if>
+			  order by  F_GetPY(b.NICKNAME)
+	</select>
+			<!-- 按照查询出用户的已订阅的好友 -->
+	<select id="findRssFriendListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Subscribe"
+		resultType="com.takshine.wxcrm.domain.WxuserInfo">
+			SELECT b.OPEN_ID AS openId,    
+			   b.PUBLIC_ID AS publicId,                
+			  b.ORG_ID   AS orgId,              
+			  b.SUBSCRIBE AS subscribe,        
+			   b.NICKNAME AS nickname,         
+			   b.SEX AS sex,              
+			   b.CITY AS city,      
+			   b.COUNTRY AS country,    
+			   b.PROVINCE AS province,
+			   b.LANGUAGE AS LANGUAGE,
+			   b.HEADIMGURL AS headimgurl,
+			   (select name from TB_BUSINESS_CARD where party_row_id = b.party_row_id limit 0,1) as cardname,
+			   (select head_img_url from TB_BUSINESS_CARD where party_row_id = b.party_row_id limit 0,1) as cardimg,
+			   b.headimgstr,
+			   b.SUBSCRIBE_TIME AS subscribeTime,
+			   b.LOGIN_TIME AS loginTime,
+			   b.party_row_id,
+               b.unionid,
+               a.id as rssId FROM TB_SUBSCRIBE a LEFT JOIN TB_WXUSER_INFO b ON a.feedid=b.open_id
+				WHERE 1=1 
+				<if test="openId != null"> and a.openid=#{openId} </if>
+			<if test="type != null"> and a.type=#{type} </if>
+			  order by  F_GetPY(b.NICKNAME)
+	</select>
+	
+	<select id="findFriendFirstList"
+		parameterType="java.lang.String"
+		resultType="java.lang.String">
+		SELECT  DISTINCT F_GetPY(b.NICKNAME) AS firstChar 
+		FROM TB_USER_RELA a  
+		LEFT JOIN TB_WXUSER_INFO b ON a.rela_user_id = b.party_row_id  
+		WHERE a.user_id=(SELECT party_row_id FROM TB_WXUSER_INFO WHERE open_id=#{openId}) 
+	</select>
+	
+	<!-- 插入一条用户和手机绑定关系表记录 -->
+	<insert id="insertWxuserInfo"
+		parameterType="com.takshine.wxcrm.domain.WxuserInfo">
+		insert into TB_WXUSER_INFO
+		(
+		       OPEN_ID,  
+		       PUBLIC_ID,       
+			   ORG_ID,        
+			   SUBSCRIBE,        
+			   NICKNAME,         
+			   SEX,              
+			   CITY,      
+			   COUNTRY,    
+			   PROVINCE,
+			   LANGUAGE,
+			   HEADIMGURL,
+			   SUBSCRIBE_TIME,
+			   party_row_id,
+               unionid,
+               headimgstr
+		) values (
+		    <if test="openId != null"> #{openId}, </if>
+		    <if test="openId == null"> NULL,  </if>
+		    <if test="publicId != null"> #{publicId}, </if>
+		    <if test="publicId == null"> NULL,  </if>
+		    <if test="orgId != null"> #{orgId}, </if>
+		    <if test="orgId == null"> NULL,  </if>
+		    <if test="subscribe != null"> #{subscribe}, </if>
+		    <if test="subscribe == null"> NULL,  </if>
+		    <if test="nickname != null"> #{nickname}, </if>
+		    <if test="nickname == null"> NULL,  </if>
+		    <if test="sex != null"> #{sex}, </if>
+		    <if test="sex == null"> NULL,  </if>
+		    <if test="city != null"> #{city}, </if>
+		    <if test="city == null"> NULL,  </if>
+		    <if test="country != null"> #{country}, </if>
+		    <if test="country == null"> NULL,  </if>
+		    <if test="province != null"> #{province}, </if>
+		    <if test="province == null"> NULL,  </if>
+		    <if test="language != null"> #{language}, </if>
+		    <if test="language == null"> NULL,  </if>
+		    <if test="headimgurl != null"> #{headimgurl}, </if>
+		    <if test="headimgurl == null"> NULL,  </if>
+		    <if test="subscribeTime != null"> #{subscribeTime},</if>
+		    <if test="subscribeTime == null"> NULL,</if>
+		    <if test="party_row_id != null"> #{party_row_id},</if>
+		    <if test="party_row_id == null"> NULL,</if>
+		    <if test="unionid != null"> #{unionid},</if>
+		    <if test="unionid == null"> NULL,</if>
+		    <if test="headimgstr != null"> #{headimgstr}</if>
+		    <if test="headimgstr == null"> NULL</if>
+		 )
+	</insert>
+	
+	<!-- 根据id更新一条用户和手机绑定关系表记录 -->
+	<update id="updateWxuserInfoById"
+		parameterType="com.takshine.wxcrm.domain.WxuserInfo">
+		UPDATE TB_WXUSER_INFO SET
+		    <if test="publicId != null">PUBLIC_ID = #{publicId}, </if>
+		    <if test="orgId != null">ORG_ID = #{orgId}, </if>
+		    <if test="subscribe != null">SUBSCRIBE = #{subscribe}, </if>
+		    <if test="nickname != null">NICKNAME =  #{nickname}, </if>
+		    <if test="sex != null">SEX = #{sex}, </if>
+		    <if test="city != null">CITY = #{city}, </if>
+		    <if test="country != null">COUNTRY = #{country}, </if>
+		    <if test="province != null">PROVINCE = #{province}, </if>
+		    <if test="language != null">LANGUAGE = #{language}, </if>
+		    <if test="headimgurl != null">HEADIMGURL = #{headimgurl}, </if>
+		    <if test="headimgstr != null">headimgstr = #{headimgstr}, </if>
+		    <if test="party_row_id != null"> party_row_id = #{party_row_id},</if>
+		    <if test="unionid != null">unionid =  #{unionid},</if>
+		    <if test="subscribeTime != null">SUBSCRIBE_TIME = #{subscribeTime}</if>
+		    <if test="subscribeTime == null">SUBSCRIBE_TIME = NULL </if>
+		 WHERE OPEN_ID= #{openId}
+	</update>
+	
+	<!-- 根据id删除一条用户和手机绑定关系表记录 -->
+	<delete id="deleteWxuserInfoById"
+		parameterType="java.lang.String">
+		delete from TB_WXUSER_INFO where OPEN_ID = #{value}
+	</delete>
+</mapper>
+

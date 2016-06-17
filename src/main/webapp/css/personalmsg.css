@@ -1,0 +1,67 @@
+.w100{
+	width: 100%;font-family: 'Microsoft YaHei'
+}
+.personalmsgcon .ptitle{
+	font-size:12px;margin-top: -5px;
+}
+.personalmsgcon .content{
+	float:left; margin-top:10px;width: 100%;font-size: 15px
+}
+
+.permore{
+	font-size:12px;float: right;
+}
+.personalmsgcon .ptitle .t2{
+	float: right;margin-top: 5px;
+}
+.sendPersonalBtn{
+	margin-right: 10px;background: #EF8C2C;color: #fff;padding: 3px 20px;border-radius: 6px;font-size:14px;
+}
+.sendLiuMsgBtn{
+	background: rgb(93,204,165);color: #fff;padding: 3px 20px;border-radius: 6px;font-size:14px;
+}
+.sglMsg{
+	margin-top: 10px;border-bottom: 1px dashed  #999595;padding-bottom: 10px;
+}
+.sglMsg .d1{
+	font-size: 14px;color: #888686;
+}
+.sglMsg .d2{
+	z-index: 999;text-align: right;margin-top: 0px;margin-bottom: 5px;
+}
+.d2 .reply{
+	border-radius: 2px;padding: 2px;font-size: 14px;margin-right: 10px;background: #67D2F9;color: rgb(254, 254, 255);
+}
+.d2 .del{
+	border-radius: 2px;  padding: 2px;  background: #67D2F9;  color: rgb(254, 254, 255);
+}
+.sglMsg .d3{
+	padding: 2px 5px;padding-left: 10px;border-radius: 5px;font-size: 12px;color: black;background-color: #FAFAFA;
+}
+.cred{
+	color:rgb(93,204,165);
+}
+.cblue{
+	color: #888686;
+}
+.sendcontpl{
+	height: 90px;margin-bottom: 10px;
+}
+.sendcontpl .sendbtn{
+	text-align: center;margin-left: 20px;border-radius: 5px;float: right;color: #3DA8F5;width: 60px;margin-top: 5px;background-color: #E0DFDF;
+}
+.pmt5{
+	margin-top: 5px
+}
+.pmt15{
+	margin-top: 15px
+}
+.pmb50{
+	margin-bottom: 50px
+}
+.pdate{
+	float: right;color: #ADADAD;margin-right: 10px;
+}
+.none{
+	display: none
+}

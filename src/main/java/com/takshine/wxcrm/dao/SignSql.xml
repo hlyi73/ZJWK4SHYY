@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 考勤签到sql处理语句 -->
+<mapper namespace="signSql">
+	
+	<!-- 查询  -->
+	<select id="findSignByFilter"
+		parameterType="com.takshine.wxcrm.domain.Sign"
+		resultType="com.takshine.wxcrm.domain.Sign">
+		select
+			  	id  as id,
+				org_id  as orgId,
+				open_id as openId,
+				crm_id  as crmId,
+				name,
+				sign_time as createTime,
+				date_format(sign_time,'%Y-%m-%d %H:%i:%s') as signTime,
+				sign_type as signType,
+				sign_addr as signAddr,
+				sign_longitude as signLongitude,
+				sign_latitude as signLatitude,	
+				remark,
+				wximgids
+			from TB_SIGNIN
+			where 1=1
+			<if test="id != null">and id = #{id}</if>
+			<if test="orgId != null">and org_id = #{orgId}</if>
+			<if test="openId != null">and open_id = #{openId}</if>
+			<!-- <if test="crmId != null">and crm_id = #{crmId}</if> -->
+			<if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and crm_id in
+		    <foreach collection="crm_id_in" index="index" item="crmid" open="("
+		    separator="," close=")">
+		    	#{crmid}
+		    </foreach>
+		    </if>
+			<if test="signType != null">and sign_type = #{signType}</if>
+			<if test="signTime != null">and (date_format(sign_time,'%Y-%m') = #{signTime} or date_format(sign_time,'%Y-%m-%d') = #{signTime}) </if>
+			<if test="startdate != null">and date_format(sign_time,'%Y-%m-%d') &gt;= #{startdate}</if>
+			<if test="enddate != null">and date_format(sign_time,'%Y-%m-%d') &lt;= #{enddate}</if>
+			order by sign_time desc
+			limit #{currpages},#{pagecounts}
+	</select>
+	
+	
+
+	<!-- 插入 -->
+	<insert id="insertSign"
+		parameterType="com.takshine.wxcrm.domain.Sign">
+		insert into TB_SIGNIN
+		(
+		  	id,
+			org_id,
+			open_id,
+			crm_id,
+			name,
+			sign_time,
+			sign_type,
+			sign_addr,
+			sign_longitude,
+			sign_latitude,
+			remark,
+			wximgids
+		) values (
+		    #{id},
+		    #{orgId},
+		    #{openId},
+		    #{crmId},
+		    #{name},
+		    #{createTime},
+		    #{signType},
+		    #{signAddr},
+		    <if test="signLongitude != null">#{signLongitude},</if>
+		    <if test="signLongitude == null">NULL,</if>
+		    <if test="signLatitude != null">#{signLatitude},</if>
+		    <if test="signLatitude == null">NULL,</if>
+		    <if test="remark != null">#{remark},</if>
+		    <if test="remark == null">NULL,</if>
+		    <if test="wximgids != null">#{wximgids}</if>
+		    <if test="wximgids == null">NULL</if>
+		 )
+	</insert>
+	
+	
+</mapper>
+

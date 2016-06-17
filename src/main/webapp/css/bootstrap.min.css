@@ -1,0 +1,32 @@
+
+*,*:before,*:after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box
+}
+
+p {
+	margin: 0 0 10px
+}
+dl {
+	margin-bottom: 20px
+}
+
+dt,dd {
+	line-height: 1.428571429
+}
+
+dt {
+	font-weight: bold
+}
+
+dd {
+	margin-left: 0
+}
+
+.container {
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: auto
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <mappers>
+        <mapper resource="com/takshine/wxcrm/dao/DcCrmOperatorSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/OperatorMobileSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/UserFuncSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/UserFocusSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/WxuserInfoSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/MessageSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/MessagesSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/MessagesExtSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/OrganizationSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/SysApplyAddSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/ArticleTypeSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/ArticleInfoSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/AccessLogsSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/AccessLogsSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/AccessLogsHisSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/IntegralSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/SocialuserInfoSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/SocialContactSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/SubscribeSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/RssNewsSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/TeamPeasonSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/VersionsSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/VersionsContentSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/InnerUserSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/SignSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/ItinerarySql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/PlatformStatisticsSql.xml"/>
+          <!--   <mapper resource="com/takshine/wxcrm/dao/TagSql.xml"/> -->
+        <mapper resource="com/takshine/wxcrm/dao/BusinessCardSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/PrintSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/PlatformStatisticsSql.xml"/>
+        <!-- 缓存 -->
+        <mapper resource="com/takshine/wxcrm/dao/CacheContactSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/CacheContractSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/CacheCustomerSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/CacheOpptySql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/CacheQuoteSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/CacheExpenseSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/CacheScheduleSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/ModelTagSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/StarModelSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/UserRelaSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/UserPerferencesSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/MenuSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/WxSubscribeHisSql.xml"/>
+        <!-- 每日早报  -->
+        <mapper resource="com/takshine/wxcrm/dao/SystemTaskSql.xml"/>
+        <!-- 工作计划 -->
+        <mapper resource="com/takshine/wxcrm/dao/CommentsSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/WorkReportRelaTaskSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/WorkReportSql.xml"/>
+        <!-- 讨论组 -->
+        <mapper resource="com/takshine/wxcrm/dao/DiscuGroupSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/DiscuGroupUserSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/DiscuGroupNoticeSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/DiscuGroupTopicMsgSql.xml"/>
+        <mapper resource="com/takshine/wxcrm/dao/DiscuGroupExamSql.xml"/>
+        <!-- 资料 -->
+        <mapper resource="com/takshine/wxcrm/dao/ResourceSql.xml"/>
+        <!-- 活动 -->
+        <mapper resource="com/takshine/marketing/dao/ParticipantSql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/ActivitySql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/ActivityItemSql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/LovSql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/ActivityParticipantSql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/ActivityPrintSql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/AttachmentSql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/DirectSendSql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/InviteSql.xml"/>
+        <mapper resource="com/takshine/marketing/dao/Activity_RelaSql.xml"/>
+    </mappers>
+</configuration>

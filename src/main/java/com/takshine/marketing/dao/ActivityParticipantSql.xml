@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 活动 sql处理语句 -->
+<mapper namespace="activityparticipantsql">
+	<!-- 获取活动参与列表 -->
+	<select id="findActivityParticipantList"
+		parameterType="com.takshine.marketing.domain.ActivityParticipant"
+		resultType="com.takshine.marketing.domain.Participant">
+			select 
+			t1.id as id,
+			t1.op_name as opName,
+			t1.op_duty as opDuty,
+			t1.op_depart as opDepart,
+			t1.op_mobile as opMobile,
+			t1.op_phone as opPhone,
+			t1.op_email as opEmail,
+			t1.op_fax as opFax,
+			t1.op_country as opCountry,
+			t1.op_province as opProvince,
+			t1.op_city as opCity,
+			t1.op_address as opAddress,
+			t1.op_status as opStatus,
+			t1.op_signature as opSignature,
+			t1.op_gender as opGender,
+			t1.op_company as opCompany,
+			t1.op_image as opImage, 
+			t1.sync_status	as syncStatus,
+			t1.create_date as createTime,
+			t1.create_date as currentDateDistance,
+			t1.status as status,
+			t.source_id as sourceid,
+			t.source as source  
+			 from TB_MK_ACTIVITY_PARTICIPANT t left join TB_MK_PARTICIPANT t1 on t.participant_id=t1.id
+		  <if test="activityid != null and activityid !=''"> 
+		  	 where t.activity_id = #{activityid}
+		  </if>
+		     order by create_date desc 
+	</select>
+	
+	
+	<!-- 取消报名 -->
+	<delete id="deleteActivityParticipantById"
+		parameterType="com.takshine.marketing.domain.ActivityParticipant">
+		delete TB_MK_ACTIVITY_PARTICIPANT where participant_id=#{participantid} and activity_id=#{activityid}
+	</delete>
+	
+	<!-- 添加报名-->
+	<insert id="saveActivityParticipant"
+		parameterType="com.takshine.marketing.domain.ActivityParticipant">
+		insert into TB_MK_ACTIVITY_PARTICIPANT(id,activity_id,participant_id,source,source_id)
+		values(#{id},#{activityid},#{participantid},#{source},#{sourceid})
+	</insert>
+		<!-- 统计印迹总数 -->
+	<select id="countActivityParticipantByFilter"
+		parameterType="com.takshine.marketing.domain.ActivityParticipant"
+		resultType="Integer">
+			select count(1)
+			 from TB_MK_ACTIVITY_PARTICIPANT where 1=1 
+		  <if test="activityid != null and activityid!=''"> and activity_id = #{activityid} </if>
+		  <if test="sourceid != null and sourceid !=''"> and source_id=#{sourceid} </if>
+			<if test="source != null and source!=''"> and source=#{source}</if>
+	</select>
+	
+	<!-- 审核报名人员 -->
+	<update id="updateActivityFlag"
+		parameterType="java.lang.String">
+		UPDATE TB_MK_ACTIVITY SET
+		    enabled_flag = 'disabled'
+		 WHERE id=#{value}
+	</update>
+	
+	<!-- 查询所有的参与活动列表 -->
+	<select id="findActivityListByParticipantId"
+		parameterType="com.takshine.marketing.domain.ActivityParticipant"
+		resultType="com.takshine.marketing.domain.Activity">
+			select 
+			 t1.id,
+			 t1.title,
+			 t1.content,
+			 date_format(t1.start_date,'%Y-%m-%d') as start_date,
+			 date_format(t1.end_date,'%Y-%m-%d') as end_date,
+			 date_format(t1.act_end_date,'%Y-%m-%d') as act_end_date,
+			 t1.place,
+			 t1.status,
+			 t1.type,
+			 t1.title_img as logo,
+			 t1.create_name as createName,
+			 t1.head_image_url as headImageUrl,
+			 t1.remark,
+			 t1.ispublish,
+			 t1.isregist,
+			 t1.orgId,
+			 t1.crmId,
+			 t1.created_by as create_by,
+			 (select count(*) from TB_MK_ACTIVITY_PRINT where type='VISIT' and activity_id = t1.id) as readnum,
+			 (select count(*) from (select t.source_id,t.activity_id  from TB_MK_ACTIVITY_PRINT t where type='PRAISE' group by t.activity_id,t.source_id) a WHERE a.activity_id = t1.id) as praisenum,
+			 (select count(DISTINCT tm.id) from TB_MESSAGES tm where tm.rela_id=t1.id and tm.rela_module = 'Activity') as commentnum,
+			 (select count(*) from TB_MK_ACTIVITY_PARTICIPANT t where t.activity_id=t1.id) as joinnum
+			 from TB_MK_ACTIVITY t1 , TB_MK_ACTIVITY_PARTICIPANT t2 where t2.activity_id=t1.id and 1=1
+			  and t1.status = 'publish' and t1.ispublish ='open' and t1.enabled_flag != 'disabled'
+			  <if test="sourceid != null and sourceid !=''"> 
+			  	 and t2.source_id =#{sourceid}
+			  </if>
+		     order by create_time desc
+		     limit #{currpages},#{pagecounts}
+	</select>
+</mapper>
+

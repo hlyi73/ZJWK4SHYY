@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 消息 sql处理语句 -->
+<mapper namespace="userExperienceSql">
+	<!-- 分页查询消息 -->
+	<select id="findUserExperienceListByFilter"
+		parameterType="com.takshine.zjrm.model.UserExperience"
+		resultType="com.takshine.zjrm.model.UserExperience">
+		  SELECT
+		    id,
+			user_id,
+			type,
+			company,
+			position,
+			title,
+			start_date,
+			end_date,
+			description
+
+		  FROM RM_USER_EXPERIENCE where 1=1
+		  <if test="user_id != null"> and user_id = #{user_id}</if>
+		  <if test="type != null"> and type = #{type}</if>
+		  <if test="id != null"> and id = #{id}</if>
+		  ORDER BY start_date DESC
+		  limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 统计消息总数 -->
+	<select id="countUserExperienceByFilter"
+		parameterType="com.takshine.zjrm.model.UserExperience"
+		resultType="Integer">
+		select count(1)
+			from RM_USER_EXPERIENCE
+		where 1=1
+		<if test="user_id != null"> and user_id = #{user_id}</if>
+	</select>
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertUserExperience"
+		parameterType="com.takshine.zjrm.model.UserExperience">
+		insert into RM_USER_EXPERIENCE
+		(
+	        id,
+			user_id,
+			type,
+			company,
+			position,
+			title,
+			start_date,
+			end_date,
+			description
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="user_id != null">#{user_id},</if>
+		    <if  test="user_id == null">NULL,</if>
+		    <if  test="type != null">#{type},</if>
+		    <if  test="type == null">NULL,</if>
+		    <if  test="company != null">#{company},</if>
+		    <if  test="company == null">NULL,</if>
+		    <if  test="position != null">#{position},</if>
+		    <if  test="position == null">NULL,</if>
+		    <if  test="title != null">#{title},</if>
+		    <if  test="title == null">NULL,</if>
+		    <if  test="start_date != null">#{start_date},</if>
+		    <if  test="start_date == null">NULL,</if>
+		    <if  test="end_date != null">#{end_date},</if>
+		    <if  test="end_date == null">NULL,</if>
+		    <if  test="description != null">#{description}</if>
+		    <if  test="description ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 根据Id更新用户履历 -->
+	<update id="updateUserExperienceById"
+		parameterType="com.takshine.zjrm.model.UserExperience">
+		UPDATE RM_USER_EXPERIENCE SET
+			<if test="company != null">company =  #{company},</if>
+			<if test="position != null">position =  #{position},</if>
+			<if test="title != null">title =  #{title},</if>
+			<if test="start_date != null">start_date =  #{start_date},</if>
+			<if test="end_date != null">end_date =  #{end_date},</if>
+			<if test="description != null">description =  #{description}</if>
+		 WHERE user_id= #{user_id} AND type=#{type} AND id=#{id}
+	</update>
+	
+	<!-- 根据Id更新用户履历 -->
+	<delete id="deleteUserExperienceById"
+		parameterType="java.lang.String">
+		delete from RM_USER_EXPERIENCE 
+		 WHERE id= #{value}
+	</delete>
+	
+</mapper>
+

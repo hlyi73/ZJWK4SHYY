@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 讨论组 sql处理语句 -->
+<mapper namespace="discuGroupSql">
+	<!-- 查询讨论组 -->
+	<select id="findDiscuGroupListByFilter"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroup"
+		resultType="com.takshine.wxcrm.domain.DiscuGroup">
+		SELECT
+		  id,
+		  name,
+		  enabled_flag,
+		  joinin_flag,
+		  msg_group_flag,
+		  create_time,
+		  creator,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = creator) as creator_name,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = creator limit 0,1) as card_name,
+		  modify_time,
+		  modifier,
+		  img_url,
+		  org_id as orgId,
+		  crm_id as crmId,
+		  (SELECT NAME FROM  `TB_ORGANIZATION` WHERE id = org_id ) AS orgName,
+		  (SELECT card.shortcompany FROM  TB_BUSINESS_CARD card WHERE card.party_row_id = creator  LIMIT 0,1) AS shortOrgName,
+		  weight,
+		  (SELECT COUNT(*)+1 FROM TB_DISCUGROUP_USER u WHERE u.dis_id = id AND u.user_type != 'delete') AS dis_user_count,
+		  (SELECT COUNT(*) FROM TB_DISCUGROUP_TOPIC t  WHERE t.dis_id = id AND t.topic_status = 'audited') AS dis_topic_count,
+		  (select head_img_url from TB_BUSINESS_CARD where party_row_id = creator limit 0,1) as head_img_url,
+		  (select headimgurl from TB_WXUSER_INFO where party_row_id = creator limit 0,1) as wx_img_url
+		  
+		FROM TB_DISCUGROUP where 1=1 AND enabled_flag = 'enabled' 
+		<if test="id != null"> AND id = #{id} </if>
+		<if test="name != null"> AND name like CONCAT('%',#{name},'%') </if>
+		<if test="creator != null"> AND creator = #{creator} </if>
+		order by create_time desc 
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 根据特定条件查询 讨论组 -->
+	<select id="findConditionGroupListByFilter"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroup"
+		resultType="com.takshine.wxcrm.domain.DiscuGroup">
+		SELECT
+		  id,
+		  name,
+		  enabled_flag,
+		  joinin_flag,
+		  msg_group_flag,
+		  create_time,
+		  creator,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = creator) as creator_name,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = creator limit 0,1) as card_name,
+		  modify_time,
+		  modifier,
+		  img_url,
+		  org_id as orgId,
+		  crm_id as crmId,
+		  (SELECT NAME FROM  `TB_ORGANIZATION` WHERE id = org_id ) AS orgName,
+		  (SELECT card.shortcompany FROM  TB_BUSINESS_CARD card WHERE card.party_row_id = p.creator  LIMIT 0,1) AS shortOrgName,
+		  weight,
+		  (SELECT COUNT(*)+1 FROM TB_DISCUGROUP_USER u WHERE u.dis_id = p.id AND u.user_type != 'delete') AS dis_user_count,
+		  (SELECT COUNT(*) FROM TB_DISCUGROUP_TOPIC t  WHERE t.dis_id = p.id AND t.topic_status = 'audited') AS dis_topic_count,
+		  (select head_img_url from TB_BUSINESS_CARD where party_row_id = p.creator limit 0,1) as head_img_url,
+		  (select headimgurl from TB_WXUSER_INFO where party_row_id = p.creator limit 0,1) as wx_img_url
+		  
+		FROM TB_DISCUGROUP p where 1=1 AND enabled_flag = 'enabled' 
+		<if test="name != null"> AND name like CONCAT('%',#{name},'%') </if>
+		order by create_time desc 
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询加入的讨论组 -->
+	<select id="findJoinDiscuGroupList"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroup"
+		resultType="com.takshine.wxcrm.domain.DiscuGroup">
+		SELECT 
+		  * ,
+		  org_id as orgId,
+		  crm_id as crmId,
+		  (SELECT NAME FROM  `TB_ORGANIZATION` WHERE id = org_id ) AS orgName,
+		  (SELECT card.shortcompany FROM  TB_BUSINESS_CARD card WHERE card.party_row_id = p.creator  LIMIT 0,1) AS shortOrgName,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = creator) as creator_name,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = creator limit 0,1) as card_name,
+		  (SELECT COUNT(*)+1 FROM TB_DISCUGROUP_USER u WHERE u.dis_id = p.id AND u.user_type != 'delete') AS dis_user_count,
+		  (SELECT COUNT(*) FROM TB_DISCUGROUP_TOPIC t  WHERE t.dis_id = p.id AND t.topic_status = 'audited') AS dis_topic_count,
+		  (select head_img_url from TB_BUSINESS_CARD where party_row_id = p.creator limit 0,1) as head_img_url,
+		  (select headimgurl from TB_WXUSER_INFO where party_row_id = p.creator limit 0,1) as wx_img_url
+		FROM
+		  TB_DISCUGROUP p 
+		WHERE p.creator = #{creator}
+		AND p.enabled_flag = 'enabled' 
+		<if test="name != null"> AND p.name like CONCAT('%',#{name},'%') </if>
+		<if test="orgId != null and orgId != ''"> AND p.org_id = #{orgId} </if>
+		UNION
+		SELECT 
+		  p.*,
+		  p.org_id as orgId,
+		  p.crm_id as crmId,
+		  (SELECT NAME FROM  `TB_ORGANIZATION` o WHERE o.id = p.org_id ) AS orgName,
+		  (SELECT card.shortcompany FROM  TB_BUSINESS_CARD card WHERE card.party_row_id = p.creator  LIMIT 0,1) AS shortOrgName,
+		   (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = creator) AS creator_name ,
+		   (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = creator limit 0,1) as card_name,
+		   (SELECT COUNT(*)+1 FROM TB_DISCUGROUP_USER u WHERE u.dis_id = p.id AND u.user_type != 'delete') AS dis_user_count,
+		   (SELECT COUNT(*) FROM TB_DISCUGROUP_TOPIC t  WHERE t.dis_id = p.id AND t.topic_status = 'audited') AS dis_topic_count,
+		   (select head_img_url from TB_BUSINESS_CARD where party_row_id = p.creator limit 0,1) as head_img_url,
+		   (select headimgurl from TB_WXUSER_INFO where party_row_id = p.creator limit 0,1) as wx_img_url
+		FROM
+		  TB_DISCUGROUP p,
+		  TB_DISCUGROUP_USER r 
+		WHERE r.dis_id = p.id 
+		  AND p.enabled_flag = 'enabled' 
+		  AND r.user_type != 'delete'
+		  AND r.user_id = #{creator}
+		  <if test="name != null"> AND p.name like CONCAT('%',#{name},'%') </if>
+		  <if test="orgId != null and orgId != ''"> AND p.org_id = #{orgId} </if>
+		ORDER BY create_time DESC 
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询热门的讨论组 -->
+	<select id="findWeightDiscuGroupList"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroup"
+		resultType="com.takshine.wxcrm.domain.DiscuGroup">
+		SELECT 
+		  p.*,
+		  p.org_id as orgId,
+		  p.crm_id as crmId,
+		  (SELECT NAME FROM  `TB_ORGANIZATION` o WHERE o.id = p.org_id ) AS orgName,
+		  (SELECT card.shortcompany FROM  TB_BUSINESS_CARD card WHERE card.party_row_id = p.creator  LIMIT 0,1) AS shortOrgName,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = creator) AS creator_name ,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = creator limit 0,1) as card_name,
+		  (SELECT head_img_url FROM TB_BUSINESS_CARD WHERE party_row_id = creator limit 0,1) as head_img_url,
+		  (select headimgurl from TB_WXUSER_INFO where party_row_id = p.creator limit 0,1) as wx_img_url,
+		  ( (SELECT 
+		    COUNT(*) 
+		  FROM
+		    `TB_DISCUGROUP_USER` u 
+		  WHERE u.`dis_id` = p.id AND u.user_type != 'delete' ) + 1 ) AS dis_user_count,
+		  
+		  (SELECT 
+		    COUNT(*) 
+		  FROM
+		    `TB_DISCUGROUP_TOPIC` t 
+		  WHERE t.`dis_id` = p.id AND t.topic_status = 'audited') AS dis_topic_count,
+		  
+		  (
+		    IFNULL(p.weight, 0) + 
+		    (SELECT 
+		      COUNT(*) 
+		    FROM
+		      `TB_DISCUGROUP_USER` u 
+		    WHERE u.`dis_id` = p.id AND u.user_type != 'delete' ) + 
+		    (SELECT 
+		      COUNT(*) 
+		    FROM
+		      `TB_DISCUGROUP_TOPIC` t 
+		    WHERE t.`dis_id` = p.id) * 3
+		  ) AS weight 
+		FROM
+		  TB_DISCUGROUP p WHERE p.enabled_flag = 'enabled' 
+		ORDER BY weight DESC
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询讨论组用户列表 -->
+	<select id="findDiscuGroupUserList"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupUser"
+		resultType="com.takshine.wxcrm.domain.DiscuGroupUser">
+		SELECT 
+		  p.`id` AS dis_id,
+		  p.`creator` AS user_id,
+		  'owner' AS user_type,
+		  p.create_time,
+		  c.`party_row_id`,
+		  c.`name` as user_name,
+		  c.`company` as user_company,
+		  c.`position` as user_position,
+		  (CASE WHEN c.head_img_url IS NULL OR c.`head_img_url` ='' THEN (SELECT headimgurl FROM TB_WXUSER_INFO WHERE party_row_id=c.`party_row_id`) ELSE c.`head_img_url` END) as head_img_url,
+		  c.`phone` as user_phone,
+		  (SELECT 
+		    r.`id` 
+		  FROM
+		    `TB_USER_RELA` r 
+		  WHERE r.user_id = #{curr_user_id} 
+		    AND r.rela_user_id = p.creator LIMIT 0,1) AS 'user_rela_id' 
+		FROM
+		  `TB_DISCUGROUP` p 
+		  JOIN TB_BUSINESS_CARD c 
+		    ON p.`creator` = c.`party_row_id`
+		    AND p.enabled_flag = 'enabled' 
+		    AND p.id = #{dis_id}  
+		UNION
+		SELECT 
+		  pu.dis_id,
+		  pu.user_id,
+		  pu.user_type,
+		  pu.create_time,
+		  c.`party_row_id`,
+		  c.`name` as user_name,
+		  c.`company` as user_company,
+		  c.`position` as user_position,
+		  (CASE WHEN c.head_img_url IS NULL OR c.`head_img_url` ='' THEN (SELECT headimgurl FROM TB_WXUSER_INFO WHERE party_row_id=c.`party_row_id`) ELSE c.`head_img_url` END) as head_img_url,
+		  c.`phone` as user_phone,
+		  (SELECT 
+		    r.`id` 
+		  FROM
+		    `TB_USER_RELA` r 
+		  WHERE r.user_id = #{curr_user_id} 
+		    AND r.rela_user_id = pu.user_id LIMIT 0,1) AS 'user_rela_id' 
+		FROM
+		  `TB_DISCUGROUP_USER` pu 
+		   JOIN TB_BUSINESS_CARD c 
+		    ON pu.`user_id` = c.`party_row_id`
+		    AND pu.user_type != 'delete' 
+		    AND c.`phone` != '' 
+		    AND pu.dis_id = #{dis_id}  
+		    <if test="user_type != null"> AND pu.user_type = #{user_type} </if>
+		ORDER BY create_time DESC ;
+	</select>
+	
+	<!-- 查询话题 -->
+	<select id="findDiscuGroupTopicById"
+	  parameterType="com.takshine.wxcrm.domain.DiscuGroupTopic"
+	  resultType="com.takshine.wxcrm.domain.DiscuGroupTopic" >
+		<!-- SELECT
+		  tdt.id,
+		  tdt.dis_id,
+		  tdt.topic_id,
+		  tdt.topic_type,
+		  date_format(tdt.create_time,'%Y-%m-%d') as create_time,
+		  tdt.ess_flag,
+		  tdt.creator,
+		  tdt.content,
+		  (SELECT i.nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = tdt.creator limit 0,1) AS creator_name ,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = tdt.creator limit 0,1) AS topic_sendname ,
+		  (SELECT position FROM TB_BUSINESS_CARD WHERE party_row_id = tdt.creator limit 0,1) AS topic_creatortitle ,
+		  (SELECT name from TB_ORGANIZATION where id=td.org_id and id != 'Default Organization') as topic_orgname,
+		  (select head_img_url from TB_BUSINESS_CARD where party_row_id = tdt.creator limit 0,1) as cardimg,
+		  (select headimgurl from TB_WXUSER_INFO where party_row_id = tdt.creator limit 0,1) as headimgurl,
+		  tdt.topic_status
+		FROM TB_DISCUGROUP_TOPIC tdt,TB_DISCUGROUP td where td.id = tdt.dis_id AND td.enabled_flag = 'enabled'
+		<if test="id != null">
+		 	AND tdt.id = #{id}
+		</if>
+		<if test="dis_id != null">
+		 	AND dis_id = #{dis_id}
+		</if>
+		<if test="topic_id != null">
+		 	AND topic_id = #{topic_id}
+		</if>
+		<if test="topic_type != null">
+		 	AND topic_type = #{topic_type}
+		</if>
+		<if test="ess_flag != null">
+		 	AND tdt.ess_flag = #{ess_flag}
+		</if>
+		<if test="creator != null">
+		 	AND tdt.creator = #{creator}
+		</if>
+		<if test="topic_status != null">
+		 	AND topic_status = #{topic_status}
+		</if>
+		order by tdt.create_time desc -->
+		
+		SELECT DISTINCT
+		  tdt.id,
+		  tdt.dis_id,
+		  tdt.topic_id,
+		  tdt.topic_type,
+		  DATE_FORMAT(tdt.`create_time`,'%Y-%m-%d') as create_time,
+		  (CASE WHEN tdtm.create_time IS NULL THEN tdt.`create_time` WHEN tdtm.create_time > tdt.`create_time` THEN tdtm.create_time ELSE tdt.`create_time` END) AS order_create_time,
+		  tdt.ess_flag,
+		  tdt.creator,
+		  tdt.content,
+		  (SELECT i.nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = tdt.creator LIMIT 0,1) AS creator_name ,
+		  (SELECT NAME FROM TB_BUSINESS_CARD WHERE party_row_id = tdt.creator LIMIT 0,1) AS topic_sendname ,
+		  (SELECT POSITION FROM TB_BUSINESS_CARD WHERE party_row_id = tdt.creator LIMIT 0,1) AS topic_creatortitle ,
+		  (SELECT NAME FROM TB_ORGANIZATION WHERE id=td.org_id AND id != 'Default Organization') AS topic_orgname,
+		  (SELECT head_img_url FROM TB_BUSINESS_CARD WHERE party_row_id = tdt.creator LIMIT 0,1) AS cardimg,
+		  (SELECT headimgurl FROM TB_WXUSER_INFO WHERE party_row_id = tdt.creator LIMIT 0,1) AS headimgurl,
+		  tdt.topic_status
+		FROM TB_DISCUGROUP_TOPIC tdt
+		INNER JOIN TB_DISCUGROUP td ON td.id = tdt.dis_id AND td.enabled_flag = 'enabled' 
+		LEFT JOIN (SELECT temp.topic_id,MAX(temp.create_time) AS create_time FROM TB_DISCUGROUP_TOPIC_MSG temp GROUP BY temp.topic_id) tdtm 
+		ON tdt.id = tdtm.topic_id
+		where 1=1
+		<if test="id != null">
+		 	AND tdt.id = #{id}
+		</if>
+		<if test="dis_id != null">
+		 	AND tdt.dis_id = #{dis_id}
+		</if>
+		<if test="topic_id != null">
+		 	AND tdt.topic_id = #{topic_id}
+		</if>
+		<if test="topic_type != null">
+		 	AND tdt.topic_type = #{topic_type}
+		</if>
+		<if test="ess_flag != null">
+		 	AND tdt.ess_flag = #{ess_flag}
+		</if>
+		<if test="creator != null">
+		 	AND tdt.creator = #{creator}
+		</if>
+		<if test="topic_status != null">
+		 	AND tdt.topic_status = #{topic_status}
+		</if>
+		ORDER BY order_create_time DESC
+	    limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询话题 -->
+	<select id="findDiscuGroupTopicByParam"
+	  parameterType="com.takshine.wxcrm.domain.DiscuGroupTopic"
+	  resultType="com.takshine.wxcrm.domain.DiscuGroupTopic" >
+		SELECT
+		  tdt.id,
+		  tdt.dis_id,
+		  tdt.topic_id,
+		  tdt.topic_type,
+		  date_format(tdt.create_time,'%Y-%m-%d') as create_time,
+		  tdt.ess_flag,
+		  tdt.creator,
+		  tdt.content,
+		  (SELECT i.nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = tdt.creator limit 0,1) AS creator_name ,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = tdt.creator limit 0,1) AS topic_sendname ,
+		  (SELECT position FROM TB_BUSINESS_CARD WHERE party_row_id = tdt.creator limit 0,1) AS topic_creatortitle ,
+		  (select head_img_url from TB_BUSINESS_CARD where party_row_id = tdt.creator limit 0,1) as cardimg,
+		  (select headimgurl from TB_WXUSER_INFO where party_row_id = tdt.creator limit 0,1) as headimgurl,
+		  tdt.topic_status
+		FROM TB_DISCUGROUP_TOPIC tdt where 1 = 1 
+		<if test="id != null">
+		 	AND tdt.id = #{id}
+		</if>
+		<if test="dis_id != null">
+		 	AND tdt.dis_id = #{dis_id}
+		</if>
+		<if test="topic_id != null">
+		 	AND tdt.topic_id = #{topic_id}
+		</if>
+		<if test="topic_type != null">
+		 	AND tdt.topic_type = #{topic_type}
+		</if>
+		<if test="ess_flag != null">
+		 	AND tdt.ess_flag = #{ess_flag}
+		</if>
+		<if test="creator != null">
+		 	AND tdt.creator = #{creator}
+		</if>
+		<if test="topic_status != null">
+		 	AND tdt.topic_status = #{topic_status}
+		</if>
+		order by tdt.create_time desc
+	    limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 插入一条 讨论组 -->
+	<insert id="insertDiscuGroup"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroup">
+		insert into TB_DISCUGROUP
+		(
+		      id,
+			  name,
+			  enabled_flag,
+			  joinin_flag,
+			  msg_group_flag,
+			  create_time,
+			  creator,
+			  modify_time,
+			  modifier,
+			  img_url,
+			  org_id,
+			  crm_id,
+			  weight
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag},</if>
+		    <if  test="enabled_flag == null">NULL,</if>
+		    <if  test="joinin_flag != null">#{joinin_flag},</if>
+		    <if  test="joinin_flag == null">NULL</if>
+		    <if  test="msg_group_flag != null">#{msg_group_flag},</if>
+		    <if  test="msg_group_flag == null">NULL</if>
+		    <if  test="create_time != null">now(),</if>
+		    <if  test="create_time == null">NULL,</if>
+		    <if  test="creator != null">#{creator},</if>
+		    <if  test="creator == null">NULL,</if>
+		    <if  test="modify_time != null">now(),</if>
+		    <if  test="modify_time == null">NULL,</if>
+		    <if  test="modifier != null">#{modifier},</if>
+		    <if  test="modifier == null">NULL,</if>
+		    <if  test="img_url != null">#{img_url},</if>
+		    <if  test="img_url == null">NULL,</if>
+		    <if  test="orgId != null">#{orgId},</if>
+		    <if  test="orgId == null">NULL,</if>
+		    <if  test="crmId != null">#{crmId},</if>
+		    <if  test="crmId == null">NULL,</if>
+		    <if  test="weight != null">#{weight}</if>
+		    <if  test="weight == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 新增一个话题 -->
+	<insert id="insertDiscuGroupTopic"
+	  parameterType="com.takshine.wxcrm.domain.DiscuGroupTopic">
+		insert into TB_DISCUGROUP_TOPIC
+		(
+		      id,
+			  dis_id,
+			  topic_id,
+			  topic_type,
+			  create_time,
+			  ess_flag,
+			  creator,
+			  topic_status,
+			  content
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="dis_id != null">#{dis_id},</if>
+		    <if  test="dis_id == null">NULL,</if>
+		    <if  test="topic_id != null">#{topic_id},</if>
+		    <if  test="topic_id == null">NULL,</if>
+		    <if  test="topic_type != null">#{topic_type},</if>
+		    <if  test="topic_type == null">topic_type,</if>
+		    <if  test="create_time != null">#{create_time},</if>
+		    <if  test="create_time == null">now(),</if>
+		    <if  test="ess_flag != null">#{ess_flag},</if>
+		    <if  test="ess_flag == null">NULL,</if>
+		    <if  test="creator != null">#{creator},</if>
+		    <if  test="creator == null">NULL,</if>
+		    <if  test="topic_status != null">#{topic_status},</if>
+		    <if  test="topic_status == null">NULL,</if>
+		    <if  test="content != null">#{content}</if>
+		    <if  test="content == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条讨论组 -->
+	<update id="updateDiscuGroupById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroup">
+		UPDATE TB_DISCUGROUP SET
+		    <if  test="name != null">name = #{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="joinin_flag != null">joinin_flag = #{joinin_flag},</if>
+		    <if  test="joinin_flag == null">NULL,</if>
+		    <if  test="msg_group_flag != null">msg_group_flag = #{msg_group_flag},</if>
+		    <if  test="msg_group_flag == null">NULL,</if>
+		    <if  test="modify_time != null">modify_time = now(),</if>
+		    <if  test="modify_time == null">modify_time = NULL,</if>
+		    <if  test="modifier != null">modifier = #{modifier},</if>
+		    <if  test="modifier == null">modifier = NULL,</if>
+		    <if  test="img_url != null">img_url = #{img_url}</if>
+		    <if  test="img_url == null">img_url = NULL</if>
+		 WHERE id=#{id}
+	</update>
+	
+	<!-- 更新一个话题 -->
+	<update id="updateDiscuGroupTopicById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupTopic">
+		UPDATE TB_DISCUGROUP_TOPIC SET
+			<if  test="ess_flag != null">ess_flag = #{ess_flag}</if>
+			<if  test="topic_status != null">topic_status = #{topic_status}</if>
+		 WHERE id=#{id}
+	</update>
+	
+	<!-- 解散讨论组 -->
+	<update id="updateDiscuGroupStatus"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroup">
+		UPDATE TB_DISCUGROUP SET enabled_flag = #{enabled_flag} WHERE id=#{id}
+	</update>
+	
+	<!-- 删除一个话题 -->
+	<delete id="deleteDiscuGroupTopicById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupTopic">
+		DELETE FROM TB_DISCUGROUP_TOPIC 
+		 WHERE id=#{id}
+	</delete>
+	
+	<!-- 删除一个话题 -->
+	<delete id="deleteDiscuGroupTopicByTopicId"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupTopic">
+		DELETE FROM TB_DISCUGROUP_TOPIC WHERE topic_id=#{topic_id}
+	</delete>
+
+</mapper>
+

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<!-- 活动关联sql处理语句 -->
+<mapper namespace="activity_RelaSql">
+	<!-- 分页查询消息 -->
+	<select id="findActivity_RelaListByFilter"
+		parameterType="com.takshine.marketing.domain.Activity_Rela"
+		resultType="com.takshine.marketing.domain.Activity_Rela">
+		SELECT
+		  id,
+		  rela_id,
+		  rela_type,
+		  rela_name,
+		  activity_id,
+		  create_time,
+		  create_by,
+		  org_id,
+		  rela_user_phone
+		  FROM TB_MK_ACTIVITY_RELA where 1=1 
+		  <if test="rela_id != null"> and rela_id = #{rela_id}</if>
+		  <if test="rela_type != null"> and rela_type = #{rela_type}</if>
+		  <if test="activity_id != null"> and activity_id = #{activity_id}</if>
+		  ORDER BY create_time desc
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 新增 -->
+	<insert id="insertActivity_Rela"
+		parameterType="com.takshine.marketing.domain.Activity_Rela">
+		insert into TB_MK_ACTIVITY_RELA
+		(
+		  id,
+		  rela_id,
+		  rela_type,
+		  rela_name,
+		  activity_id,
+		  create_time,
+		  create_by,
+		  org_id,
+		  rela_user_phone
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="rela_id != null">#{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="rela_type != null">#{rela_type},</if>
+		    <if  test="rela_type == null">NULL,</if>
+		    <if  test="rela_name != null">#{rela_name},</if>
+		    <if  test="rela_name == null">NULL,</if>
+		    <if  test="activity_id != null">#{activity_id},</if>
+		    <if  test="activity_id == null">NULL,</if>
+		    <if  test="create_time != null">now(),</if>
+		    <if  test="create_time == null">now(),</if>
+		    <if  test="create_by != null">#{create_by},</if>
+		    <if  test="create_by ==null">NULL,</if>
+		    <if  test="org_id != null">#{org_id},</if>
+		    <if test="org_id ==null">NULL,</if>
+		    <if  test="rela_user_phone != null">#{rela_user_phone}</if>
+		    <if test="rela_user_phone ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 批量插入 -->
+	<insert id="batchInsertActivity_Rela" parameterType="java.util.List">
+		<![CDATA[
+		    insert into TB_MK_ACTIVITY_RELA
+		    (
+		    	  id,
+				  rela_id,
+				  rela_type,
+				  rela_name,
+				  activity_id,
+				  create_time,
+				  create_by,
+				  org_id,
+				  rela_user_phone
+			)
+		    values 
+		]]>
+    	<foreach collection ="list" item ="item" index ="index" separator =","> 
+	       (#{item.id},#{item.rela_id},#{item.rela_type},#{item.rela_name},#{item.activity_id},now(),#{item.create_by},#{item.org_id},#{item.rela_user_phone}) 
+    	</foreach > 
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="deleteActivity_RelaById"
+		parameterType="com.takshine.marketing.domain.Activity_Rela">
+		delete from TB_MK_ACTIVITY_RELA where id=#{id}
+	</delete>
+	
+	<!-- 删除-->
+	<delete id="deleteActivity_RelaByActivityId"
+		parameterType="com.takshine.marketing.domain.Activity_Rela">
+		delete from TB_MK_ACTIVITY_RELA where activity_id=#{activity_id} and rela_type=#{rela_type}
+	</delete>
+
+	<!-- 删除-->
+	<delete id="deleteActivity_RelaByActivityIdAndRelaId"
+		parameterType="com.takshine.marketing.domain.Activity_Rela">
+		delete from TB_MK_ACTIVITY_RELA where activity_id=#{activity_id} and rela_type=#{rela_type} and rela_id=#{rela_id}
+	</delete>
+
+</mapper>
+

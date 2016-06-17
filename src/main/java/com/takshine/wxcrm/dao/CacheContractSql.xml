@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!--  sql处理语句 -->
+<mapper namespace="cacheContractSql">
+	<!-- 分页查询 -->
+	<select id="findCacheContractListByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContract"
+		resultType="com.takshine.wxcrm.domain.cache.CacheContract">
+		SELECT
+			  rowid,
+			   (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cc.crm_id) AS assigner_name,
+			  crm_id,
+			  open_id,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  name,
+			  date_format(start_date,'%Y-%m-%d') as start_date,
+			  date_format(end_date,'%Y-%m-%d') as end_date,
+			  cost,
+			  recived_amount,
+			  status,
+			  assigner_id,
+			  assigner_name,
+			  enabled_flag
+		  
+		  FROM CACHE_CONTRACT cc where 1=1 and enabled_flag = 'enabled'
+		  <if test="org_id != null"> and org_id = #{org_id}</if>
+		  <if test="crm_id != null"> and crm_id = #{crm_id}</if>
+		  <if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and crm_id in
+		   <foreach collection="crm_id_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid_in != null and rowid_in.size > 0">
+		   and rowid in
+		   <foreach collection="rowid_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid != null"> and rowid = #{rowid}</if>
+		  limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="findCacheContractListByCrmId"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContract"
+		resultType="com.takshine.wxcrm.domain.cache.CacheContract">
+		SELECT 
+		  cc.crm_id,
+		   (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cc.crm_id) AS assigner_name,
+		  open_id,
+		  rowid,
+		  org_id,
+		  create_date,
+		  create_by,
+		  modify_date,
+		  modify_by,
+		  name,
+		  date_format(start_date,'%Y-%m-%d') as start_date,
+		  date_format(end_date,'%Y-%m-%d') as end_date,
+		  cost,
+		  recived_amount,
+		  status,
+		  assigner_id,
+		  assigner_name,
+		  enabled_flag
+		FROM
+		  CACHE_CONTRACT cc,
+		  (SELECT 
+		    crm_id 
+		  FROM
+		    TR_OPERATOR_MOBILE 
+		  WHERE open_id = 
+		    (SELECT 
+		      open_id 
+		    FROM
+		      TR_OPERATOR_MOBILE 
+		    WHERE crm_id = #{crm_id})) op 
+		WHERE 1 = 1 and cc.enabled_flag = 'enabled'
+		  AND cc.crm_id = op.crm_id 
+		  <if test="orderByString  == 'dcdate'">
+	       order by create_date desc
+	      </if>
+	      <if test="orderByString  == 'acdate'">
+	       order by create_date 
+	      </if>
+	      <if test="orderByString  == 'aname'">
+	       order by name
+	      </if>
+		  limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 统计总数 -->
+	<select id="countCacheContractByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContract"
+		resultType="Integer">
+		select count(1)
+			from CACHE_CONTRACT
+		where 1=1
+		 <if test="org_id != null"> and org_id = #{org_id}</if>
+	</select>
+	
+	<!-- 插入一条  -->
+	<insert id="insertCacheContract"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContract">
+		insert into CACHE_CONTRACT
+		(
+			  rowid,
+			  crm_id,
+			  open_id,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  name,
+			  start_date,
+			  end_date,
+			  cost,
+			  recived_amount,
+			  status,
+			  assigner_id,
+			  assigner_name,
+			  enabled_flag
+			  
+		) values (
+		    <if  test="rowid != null">#{rowid},</if>
+		    <if  test="rowid == null">NULL,</if>
+		    <if  test="crm_id != null">#{crm_id},</if>
+		    <if  test="crm_id == null">NULL,</if>
+		    <if  test="open_id != null">#{open_id},</if>
+		    <if  test="open_id == null">NULL,</if>
+		    <if  test="org_id != null">#{org_id},</if>
+		    <if  test="org_id == null">NULL,</if>
+		    <if  test="create_date != null">#{create_date},</if>
+		    <if  test="create_date == null">NULL,</if>
+		    <if  test="create_by != null">#{create_by},</if>
+		    <if  test="create_by == null">NULL,</if>
+		    <if  test="modify_date != null">#{modify_date},</if>
+		    <if  test="modify_date == null">NULL,</if>
+		    <if  test="modify_by != null">#{modify_by},</if>
+		    <if  test="modify_by == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="start_date != null">#{start_date},</if>
+		    <if  test="start_date == null">NULL,</if>
+		    <if  test="end_date != null">#{end_date},</if>
+		    <if  test="end_date == null">NULL,</if>
+		    <if  test="cost != null">#{cost},</if>
+		    <if  test="cost == null">NULL,</if>
+		    <if  test="recived_amount != null">#{recived_amount},</if>
+		    <if  test="recived_amount == null">NULL,</if>
+		    <if  test="status != null">#{status},</if>
+		    <if  test="status == null">NULL,</if>
+		    <if  test="assigner_id != null">#{assigner_id},</if>
+		    <if  test="assigner_id == null">NULL,</if>
+		    <if  test="assigner_name != null">#{assigner_name},</if>
+		    <if  test="assigner_name == null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag}</if>
+		    <if  test="enabled_flag == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条 -->
+	<update id="updateCacheContractById"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContract">
+		UPDATE CACHE_CONTRACT SET
+		    <if  test="modify_date != null">modify_date = #{modify_date},</if>
+		    <if  test="modify_date == null">modify_date = NULL,</if>
+		    <if  test="modify_by != null">modify_by = #{modify_by},</if>
+		    <if  test="modify_by == null">modify_by = NULL,</if>
+		    <if  test="name != null">name = #{name},</if>
+		    <if  test="name == null">name = NULL,</if>
+		    <if  test="start_date != null">start_date = #{start_date},</if>
+		    <if  test="start_date == null">start_date = NULL,</if>
+		    <if  test="end_date != null">end_date = #{end_date},</if>
+		    <if  test="end_date == null">end_date = NULL,</if>
+		    <if  test="cost != null">cost = #{cost},</if>
+		    <if  test="cost == null">cost = NULL,</if>
+		    <if  test="recived_amount != null">recived_amount = #{recived_amount},</if>
+		    <if  test="recived_amount == null">recived_amount = NULL,</if>
+		    <if  test="status != null">status = #{status},</if>
+		    <if  test="status == null">status = NULL,</if>
+		    <if  test="assigner_id != null">assigner_id = #{assigner_id},</if>
+		    <if  test="assigner_id == null">assigner_id = NULL,</if>
+		    <if  test="assigner_name != null">assigner_name = #{assigner_name}</if>
+		    <if  test="assigner_name == null">assigner_name = NULL</if>
+		   
+		 WHERE rowid=#{rowid}
+	</update>
+	
+		<!-- 更新一条 -->
+	<update id="updateEnabledFlag"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheContract">
+		UPDATE CACHE_CONTRACT SET enabled_flag = #{enabled_flag} WHERE rowid=#{rowid}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteCacheContractById"
+		parameterType="java.lang.String">
+		delete from CACHE_CONTRACT where rowid = #{value}
+	</delete>
+	
+</mapper>
+

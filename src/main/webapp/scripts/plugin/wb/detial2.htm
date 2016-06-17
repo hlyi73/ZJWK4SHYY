@@ -1,0 +1,91 @@
+<html lang="zh-cn">
+<head>
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+<script src="../jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<!--框架样式-->
+<link rel="stylesheet" href="css/wb.css">
+<script src="js/wb.js" type="text/javascript"></script>
+<title>- 群友通讯录</title>
+</head>
+<body>
+	<div id="site-nav" class="navbar" style="display: none">
+		<a href="#" onclick="history.back();return false;" class="act-primary"><i
+			class="icon-back"></i></a>
+		<div class="act-secondary" data-toggle="navbar"
+			data-target="nav-collapse">
+			<i class="icon-menu"><b></b></i>
+		</div>
+		群友通讯录
+	</div>
+	<div id="nav-collapse" class="navbar-menu">
+		<ul>
+			<li><a href="/index/my">我的通讯录</a></li>
+			<li><a href="/activity/my">我的聚会</a></li>
+			<li><a href="/card/setting">我的名片</a></li>
+			<li><a href="/recommend/index" data-ajax="false">群推荐中心</a></li>
+			<li><a href="/download/index">下载手机APP</a></li>
+		</ul>
+	</div>
+	<div id="site-download">
+		<div class="wrapper well">
+			<div class="alert text-center">
+				欢迎下载<b>群友通讯录</b>(内测版)
+			</div>
+			<div class="download">
+				<a href="http://qun.hk/up/wcphonebook.apk" id="wc"
+					class="btn btn-block btn-success"><span
+					class="icon icon-arrow-down"></span> 安卓手机安装 </a><a
+					href="https://itunes.apple.com/cn/app/qun-you-tong-xun-lu/id777530796?mt=8"
+					class="btn btn-block btn-default"><span
+					class="icon icon-arrow-down"></span> 苹果手机安装 </a>
+			</div>
+		</div>
+		<p class="wrapper alert alert-warning text-center"
+			style="margin-top: 3em">
+			也可在 <b>91助手</b>, <b>360助手商店</b>, <b>苹果商店</b>, <br>搜索【群友通讯录】下载
+		</p>
+	</div>
+	<div class="gotop" style="display: none;">
+		<i class="icon icon-arrow-up"></i>
+	</div>
+	<div id="complaintForm" data-modal="alert" class="modal">
+		<form method="post" action="/complaint/index" class="modal-container"
+			novalidate="true">
+			<div class="modal-title">举报</div>
+			<div class="form-group">
+				<div class="control-label"></div>
+				<textarea class="form-control" required="" name="message"
+					placeholder="举报此页面的理由（色情，反动，广告，侵权等）" rows="3"></textarea>
+				<div class="help-block empty">请填写具体举报理由</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-block btn-default" type="submit">确认举报</button>
+			</div>
+			<div class="actions">
+				<div class="btn btn-block" data-dismiss="modal">关闭窗口</div>
+			</div>
+		</form>
+	</div>
+	<footer class="site-ft wrapper" data-position="">
+		<p>
+			<i class="icon icon-lock"></i> 数据已进行隐私加密，请放心使用
+		</p>
+		<div class="menu">
+			<a href="/index/follow" style="font-weight: bold;">关注我们</a>| <a
+				href="weixin://contacts/profile/bibi100"
+				onclick="alert('请查找微信号【bibi100】欢迎咨询！')">联系客服</a>| <a
+				href="/index/help">帮助</a>| <a href="#" data-toggle="modal"
+				data-target="complaintForm">举报</a>
+		</div>
+		<div style="color: #AAA; font-size: 12px; margin-top: .3em">
+			<p>Power By 群友通讯录 交流 共享 互利 共赢</p>
+			<p class="footer-userinfo">
+				当前帐号：刘淋<a href="/oauth/logout"
+					onclick="return confirm('是否确认需要重新登录？'); return false;">重新登录</a><a
+					href="#" onclick="window.location.reload(); return false;">刷新</a>
+			</p>
+		</div>
+	</footer>
+</body>
+</html>

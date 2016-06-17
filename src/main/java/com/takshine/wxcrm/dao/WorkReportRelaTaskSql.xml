@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 消息 sql处理语句 -->
+<mapper namespace="workReportRelaTaskSql">
+	<!-- 分页查询消息 -->
+	<select id="findWorkReportRelaTaskListByFilter"
+		parameterType="com.takshine.wxcrm.domain.WorkReportRelaTask"
+		resultType="com.takshine.wxcrm.domain.WorkReportRelaTask">
+		SELECT
+		  id,
+		  rela_id,
+		  rela_type,
+		  workreport_id,
+		  create_time,
+		  creator
+		  FROM TR_WORKREPORT_SCHEDULE where 1=1
+		  <if test="rela_id != null"> and rela_id = #{rela_id}</if>
+		  <if test="workreport_id !=null"> and workreport_id = #{workreport_id}</if>
+		  ORDER BY create_time desc
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计消息总数 -->
+	<select id="countWorkReportRelaTaskByFilter"
+		parameterType="com.takshine.wxcrm.domain.WorkReportRelaTask"
+		resultType="Integer">
+		select count(1)
+			from TR_WORKREPORT_SCHEDULE
+		where 1=1
+		  <if test="rela_id != null"> and rela_id = #{rela_id}</if>
+		  <if test="workreport_id !=null"> and workreport_id = #{workreport_id}</if>
+		  <if test="createTime != null"> and create_time >= #{createTime}</if>
+	</select>
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertWorkReportRelaTask"
+		parameterType="com.takshine.wxcrm.domain.WorkReportRelaTask">
+		insert into TR_WORKREPORT_SCHEDULE
+		(
+		  id,
+		  rela_id,
+		  rela_type,
+		  workreport_id,
+		  create_time,
+		  creator
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="rela_id != null">#{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="rela_type != null">#{rela_type},</if>
+		    <if  test="rela_type == null">NULL,</if>
+		    <if  test="workreport_id != null">#{workreport_id},</if>
+		    <if  test="workreport_id == null">NULL,</if>
+		    <if  test="create_time != null">now(),</if>
+		    <if  test="create_time ==null">now(),</if>
+		    <if  test="creator != null">#{creator}</if>
+		    <if test="creator ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条消息 -->
+	<update id="updateWorkReportRelaTaskById"
+		parameterType="com.takshine.wxcrm.domain.WorkReportRelaTask">
+		UPDATE TR_WORKREPORT_SCHEDULE SET
+		    <if  test="rela_id != null">rela_id = #{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="rela_type != null">rela_type = #{rela_type},</if>
+		    <if  test="rela_type == null">NULL,</if>
+		    <if  test="workreport_id != null">workreport_id = #{workreport_id}</if>
+		    <if  test="workreport_id == null">NULL</if>
+		 WHERE id=#{id}
+	</update>
+	
+</mapper>

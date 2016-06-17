@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 标签 sql处理语句 -->
+<mapper namespace="systemTaskSql">
+	
+	<!-- 每日早报 -->
+	<select id="searchAllSystemCardList" parameterType="com.takshine.wxcrm.domain.NoticeReport" resultType="com.takshine.wxcrm.domain.NoticeReport">
+		select 
+			tbc.name,
+			tbc.party_row_id as partyId,
+			tbc.phone,
+			tbc.email,
+			tbc.open_id as openId,
+			(case when tbc.city is null or tbc.city ='' then (select city from TB_WXUSER_INFO where party_row_id = tbc.party_row_id limit 0,1) else tbc.city end) as city,
+			(select count(*) from TB_MESSAGES where targetuid = party_row_id and read_flag='N') as msgcount,
+			(select count(*) from TB_WORK_REPORT twr,TB_COMMENTS tc where twr.id = tc.rela_id and assigner_id=party_row_id 
+			and date_format(tc.create_time,'%Y-%m-%d') = date_format(date_sub(now(),interval 1 day),'%Y-%m-%d')) as evalcount,
+			(select count(*) from TR_OPERATOR_MOBILE tom,CACHE_SCHEDULE cs where tom.open_id=tbc.open_id and tom.crm_id = cs.crm_id
+			and date_format(cs.start_date,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')) as taskcount,
+			(select count(*) from TB_MK_ACTIVITY_RELA tmar,TB_MK_ACTIVITY tma where tmar.activity_id=tma.id and tmar.rela_type='NoticeActivityType' and tmar.rela_id = tbc.open_id
+			and date_format(tma.start_date,'%Y-%m-%d') &gt;= date_format(now(),'%Y-%m-%d') and date_format(tma.start_date,'%Y-%m-%d') &lt;= date_format(date_sub(now(),interval -1 day),'%Y-%m-%d')) as activitycount,
+			(select count(*) from TR_OPERATOR_MOBILE tom,CACHE_SCHEDULE cs where tom.open_id=tbc.open_id and tom.crm_id = cs.crm_id
+			and (cs.status='Not Started' or cs.status='In Progress' or cs.status='Planned') AND DATE_FORMAT(cs.start_date,'%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d') AND enabled_flag='enabled') as untaskcount,
+			(SELECT COUNT(1)
+			FROM TB_WORK_REPORT twr
+			LEFT OUTER JOIN TB_COMMENTS tc ON (twr.id = tc.rela_id AND tc.eval_type = 'owner')
+			WHERE tc.id IS NULL  AND twr.assigner_id=tbc.party_row_id 
+			AND DATE_FORMAT(twr.start_date,'%Y-%m-%d') &lt;= DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 DAY),'%Y-%m-%d')) AS ownerNoEvalCount
+		from TB_BUSINESS_CARD tbc
+		where tbc.status='0' and tbc.name is not null
+		<if test="partyId != null">and tbc.party_row_id = #{partyId}</if>
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	
+	<!-- 智能发送 -->
+	<select id="searchUserInfoByPartyIds" parameterType="com.takshine.wxcrm.domain.BusinessCard" resultType="com.takshine.wxcrm.domain.BusinessCard">
+		SELECT 
+			twi.`open_id` AS openId,
+			twi.`party_row_id` AS partyId,
+			(CASE WHEN tbc.name IS NULL OR tbc.name = '' THEN twi.nickname ELSE tbc.name END) AS NAME,
+			tbc.`phone`,
+			tbc.`email`
+			FROM TB_WXUSER_INFO twi
+			LEFT JOIN TB_BUSINESS_CARD tbc
+			ON twi.`party_row_id` = tbc.`party_row_id` AND tbc.`status`='0'
+			WHERE twi.`party_row_id` IS NOT NULL
+			<if test="party_rowid_in != null and party_rowid_in.size > 0 "> 
+		    and twi.`party_row_id` in
+			  <foreach collection="party_rowid_in" index="index" item="party_rowid" open="(" separator="," close=")">
+			     #{party_rowid}
+			  </foreach>
+		   </if>
+	</select>
+</mapper>
+

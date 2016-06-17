@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 讨论组审批 sql处理语句 -->
+<mapper namespace="discuGroupExamSql">
+	<!-- 查询讨论组审批公告 -->
+	<select id="findDiscuGroupExamListByFilter"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupExam"
+		resultType="com.takshine.wxcrm.domain.DiscuGroupExam">
+		SELECT
+		  id,
+		  dis_id,
+		  apply_user_id,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = apply_user_id) as apply_user_name,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = apply_user_id limit 0,1) as apply_user_card_name,
+		  (SELECT company FROM TB_BUSINESS_CARD  WHERE party_row_id = apply_user_id limit 0,1) as apply_user_company,
+		  (SELECT position FROM TB_BUSINESS_CARD WHERE party_row_id = apply_user_id limit 0,1) as apply_user_position,
+		  (SELECT phone FROM TB_BUSINESS_CARD WHERE party_row_id = apply_user_id limit 0,1) as apply_user_phone,
+		  apply_time,
+		  rela_id,
+		  (SELECT  t.topic_id FROM TB_DISCUGROUP_TOPIC t where t.id = rela_id) as topic_id,
+		  rela_type,
+		  event_type,
+		  exam_user_id,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = exam_user_id) as exam_user_name,
+		  (SELECT name FROM TB_BUSINESS_CARD WHERE party_row_id = exam_user_id limit 0,1) as exam_user_card_name,
+		  exam_time,
+		  exam_result,
+		  exam_content,
+		  (select head_img_url from TB_BUSINESS_CARD where party_row_id = apply_user_id limit 0,1) as cardimg,
+		  (select headimgurl from TB_WXUSER_INFO where party_row_id = apply_user_id limit 0,1) as headimgurl
+		 
+		FROM TB_DISCUGROUP_EXAM where 1=1
+		<if test="dis_id != null"> AND dis_id = #{dis_id} </if>
+		<if test="rela_id != null"> AND rela_id = #{rela_id} </if>
+		<if test="apply_user_id != null"> AND apply_user_id = #{apply_user_id} </if>
+		<if test="event_type != null"> AND event_type = #{event_type} </if>
+		<if test="exam_user_flag == null"> AND  (exam_user_id = '' OR exam_user_id IS NULL) </if>
+		<if test="exam_user_flag != null"> AND exam_user_id != '' </if>
+		<if test="exam_result_flag == null"> AND (exam_result = '' OR exam_result IS NULL) </if>
+		<if test="exam_result_flag != null"> AND exam_result != '' </if>
+		ORDER BY exam_time
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 插入一条 讨论组审批公告 -->
+	<insert id="insertDiscuGroupExam"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupExam">
+		insert into TB_DISCUGROUP_EXAM
+		(
+			  id,
+			  dis_id,
+			  apply_user_id,
+			  apply_time,
+			  rela_id,
+			  rela_type,
+			  event_type,
+			  exam_user_id,
+			  exam_time,
+			  exam_result,
+			  exam_content
+			  
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="dis_id != null">#{dis_id},</if>
+		    <if  test="dis_id == null">NULL,</if>
+		    <if  test="apply_user_id != null">#{apply_user_id},</if>
+		    <if  test="apply_user_id == null">NULL,</if>
+		    <if  test="apply_time != null">now(),</if>
+		    <if  test="apply_time == null">NULL,</if>
+		    <if  test="rela_id != null">#{rela_id},</if>
+		    <if  test="rela_id == null">NULL,</if>
+		    <if  test="rela_type != null">#{rela_type},</if>
+		    <if  test="rela_type == null">NULL,</if>
+		    <if  test="event_type != null">#{event_type},</if>
+		    <if  test="event_type == null">NULL,</if>
+		    <if  test="exam_user_id != null">#{exam_user_id},</if>
+		    <if  test="exam_user_id == null">NULL,</if>
+		    <if  test="exam_time != null">#{exam_time},</if>
+		    <if  test="exam_time == null">NULL,</if>
+		    <if  test="exam_result != null">#{exam_result},</if>
+		    <if  test="exam_result == null">NULL,</if>
+		    <if  test="exam_content != null">#{exam_content}</if>
+		    <if  test="exam_content == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条讨论组审批公告 -->
+	<update id="updateDiscuGroupExamById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupExam">
+		UPDATE TB_DISCUGROUP_EXAM SET
+		    <if  test="exam_user_id != null">exam_user_id = #{exam_user_id},</if>
+		    <if  test="exam_user_id == null">exam_user_id = NULL,</if>
+		    <if  test="exam_time != null">exam_time = #{exam_time},</if>
+		    <if  test="exam_time == null">exam_time = NULL,</if>
+		    <if  test="exam_result != null">exam_result = #{exam_result},</if>
+		    <if  test="exam_result == null">exam_result = NULL,</if>
+		    <if  test="exam_content != null">exam_content = #{exam_content}</if>
+		    <if  test="exam_content == null">exam_content = NULL</if>
+		 WHERE id=#{id}
+	</update>
+	
+	<!-- 删除一个话题 -->
+	<delete id="deleteDiscuGroupExamById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupExam">
+		DELETE FROM TB_DISCUGROUP_EXAM 
+		 WHERE id=#{id}
+	</delete>
+	
+</mapper>
+

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 模块标签 sql处理语句 -->
+<mapper namespace="printSql">
+	<!-- 分页查询模块标签 -->
+	<select id="findPrintListByFilter" parameterType="com.takshine.wxcrm.model.PrintModel"
+		resultType="com.takshine.wxcrm.model.PrintModel">
+	select id,
+	operative_id as operativeid,
+	operative_type as operativetype,
+	create_time as createTime,
+	object_id as objectid,
+	object_type as objecttype,
+	own_id as ownid
+	from TB_PRINT where 1=1 
+	<if test="operativeid != null"> and operative_id = #{operativeid}</if>
+	<if test="operativetype != null"> and operative_type = #{operativetype}</if>
+	<if test="objectid != null"> and object_id = #{objectid}</if>
+	<if test="objecttype != null"> and object_type = #{objecttype}</if>
+		<if test="ownid != null"> and own_id = #{ownid}</if>
+	</select>
+	<!-- 分页查询模块标签 -->
+	<select id="countPrintByFilter" parameterType="com.takshine.wxcrm.model.PrintModel"
+		resultType="Integer">
+	select count(1)
+	from TB_PRINT where 1=1 
+	<if test="operativeid != null"> and operative_id = #{operativeid}</if>
+	<if test="operativetype != null"> and operative_type = #{operativetype}</if>
+	<if test="objectid != null"> and object_id = #{objectid}</if>
+	<if test="objecttype != null"> and object_type = #{objecttype}</if>
+		<if test="ownid != null"> and own_id = #{ownid}</if>
+	</select>
+<select id="findPrintAboutMy" parameterType="com.takshine.wxcrm.model.PrintModel"
+		resultType="com.takshine.wxcrm.domain.Print">
+   SELECT a.id AS id,
+   a.object_id AS objectid,
+   a.object_type AS objecttype,
+   b.tag_name AS objectname,
+   a.operative_id AS operativeid,
+    a.operative_type AS operativetype,
+    c.nickname AS operativename,
+    a.own_id AS ownid,
+    d.nickname AS ownname,
+    a.create_time AS createTime
+    FROM TB_PRINT  a 
+   LEFT JOIN TB_MODEL_TAG b ON a.object_id=b.id 
+   LEFT JOIN TB_WXUSER_INFO c ON c.party_row_id = a.operative_id
+   LEFT JOIN TB_WXUSER_INFO d ON d.party_row_id=a.own_id 
+   WHERE 1=1 
+	 <if test="objecttype != null"> and object_type = #{objecttype}</if>
+	 <if test="operativeid != null">  AND (a.operative_id=#{operativeid} OR a.own_id=#{operativeid}) </if>  
+   ORDER BY a.create_time DESC
+
+</select>
+
+
+<select id="findMyPrint" parameterType="com.takshine.wxcrm.model.PrintModel"
+		resultType="com.takshine.wxcrm.domain.Print">
+   SELECT a.id AS id,
+   a.object_id AS objectid,
+   a.object_type AS objecttype,
+   a.object_name AS objectname,
+   a.operative_id AS operativeid,
+    a.operative_type AS operativetype,
+    c.nickname AS operativename,
+    a.own_id AS ownid,
+    d.nickname AS ownname,
+    a.create_time AS createTime
+    FROM TB_PRINT  a 
+   LEFT JOIN TB_WXUSER_INFO c ON c.party_row_id = a.operative_id
+   LEFT JOIN TB_WXUSER_INFO d ON d.party_row_id=a.own_id 
+   WHERE 1=1 
+	 <if test="operativeid != null">  AND a.operative_id=#{operativeid} </if> 
+	 <if test="operativetype != null"> and a.operative_type = #{operativetype} </if>
+	 <if test="operativetype == null"> and (a.operative_type ='SHARE' or a.operative_type='CREATE') </if> 
+   ORDER BY a.create_time DESC 
+    <if test="pagecounts != -1">
+	   	limit #{currpages},#{pagecounts}
+	   </if>
+
+</select>
+    <!-- 访客列表 -->
+	<select id="findVisitUserList" parameterType="com.takshine.wxcrm.model.PrintModel"
+			resultType="com.takshine.wxcrm.domain.Print">
+	   SELECT a.id AS id,
+	    a.operative_id AS operativeid,
+	    (case when tbc.name is not null and tbc.name != '' then tbc.name else (SELECT c.nickname FROM TB_WXUSER_INFO c WHERE c.party_row_id = a.operative_id) end) AS operativename,
+	    a.operative_type AS operativetype,
+	    a.create_time AS createTime,
+	    a.object_id AS objectid,
+	    a.object_type AS objecttype,
+	    a.own_id AS ownid,
+	    (SELECT d.nickname FROM TB_WXUSER_INFO d WHERE d.party_row_id = a.own_id)  AS ownname
+	    FROM TB_PRINT  a left join TB_BUSINESS_CARD tbc on a.operative_id = tbc.party_row_id and tbc.status='0'
+	   WHERE 1=1 AND a.own_id = #{ownid} AND a.object_type = #{objecttype}
+	   order by create_time desc
+	   <if test="pagecounts != -1">
+	   	limit #{currpages},#{pagecounts}
+	   </if>
+	</select>
+
+	<insert id="insertPrint" parameterType="com.takshine.wxcrm.domain.Print">
+	insert into TB_PRINT
+		(
+		id,
+		create_time,
+		operative_id,
+		operative_type,
+		object_id,
+		object_type,
+		own_id,
+		object_name
+		) values (
+		#{id},now(),
+		<if test="operativeid != null">#{operativeid},</if>
+		<if test="operativeid == null">NULL,</if>
+		<if test="operativetype != null">#{operativetype},</if>
+		<if test="operativetype == null">NULL,</if>
+		<if test="objectid != null">#{objectid},</if>
+		<if test="objectid == null">NULL,</if>
+		<if test="objecttype != null">#{objecttype},</if>
+		<if test="objecttype == null">NULL,</if>
+		<if test="ownid != null">#{ownid},</if>
+		<if test="ownid == null">NULL,</if>
+		<if test="objectname != null">#{objectname}</if>
+		<if test="objectname == null">NULL</if>
+		)
+	</insert>
+	
+	
+	<!-- 更新一条注册信息 -->
+	<update id="updateTageInfo"
+		parameterType="com.takshine.wxcrm.domain.Tag">
+	UPDATE TB_MODEL_TAG SET tag_name = 
+		<if test="tagName != null">#{tagName}</if>
+		<if test="tagName == null">NULL</if>
+	 WHERE model_id = 
+		<if test="modelId != null">#{modelId}</if>
+		<if test="modelId == null">NULL</if>
+		AND model_type = 
+		<if test="modelType != null">#{modelType},</if>
+		<if test="modelType == null">NULL,</if>
+		 AND open_id = 
+		<if test="openId != null">#{openId},</if>
+		<if test="openId == null">NULL,</if>
+	</update>
+
+	<!-- 删除模块标签记录 -->
+	<delete id="deleteModelTag" parameterType="com.takshine.wxcrm.domain.Tag">
+		delete from TB_MODEL_TAG where
+		<if test="modelId != null">model_id = #{modelId}</if>
+		<if test="modelType != null">AND model_type = #{modelType}</if>
+		<if test="openId != null">AND open_id = #{openId}</if>
+		<if test="tagName != null">AND tag_name = #{tagName}</if>
+	</delete>
+
+</mapper>
+

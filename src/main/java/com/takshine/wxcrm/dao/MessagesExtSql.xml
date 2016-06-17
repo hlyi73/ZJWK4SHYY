@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 消息 sql处理语句 -->
+<mapper namespace="messagesExtSql">
+	<!-- 分页查询消息 -->
+	<select id="findMessagesExtListByFilter"
+		parameterType="com.takshine.wxcrm.domain.MessagesExt"
+		resultType="com.takshine.wxcrm.domain.MessagesExt">
+		SELECT
+		  id as id,
+		  filename as filename,
+		  filetype as filetype,
+		  rela_type as realtype,
+		  rela_id as relaid,
+		  source_filename as source_filename,
+		  create_time as createTime
+		  from TB_MESSAGES_EXT where 1=1
+		  <if test="relaid != null"> and rela_id = #{relaid}</if>
+		  limit #{currpages},#{pagecounts}
+	</select>
+  
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertMessagesExt"
+		parameterType="com.takshine.wxcrm.domain.MessagesExt">
+		insert into TB_MESSAGES_EXT
+		(
+		      ID,
+			  FILENAME,
+              FILETYPE,
+              RELA_TYPE,
+              RELA_ID,
+              SOURCE_FILENAME,
+              CREATE_TIME
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="filename != null">#{filename},</if>
+		    <if  test="filename == null">NULL,</if>
+		    <if  test="filetype != null">#{filetype},</if>
+		    <if  test="filetype == null">NULL,</if>
+		    <if  test="relatype != null">#{relatype},</if>
+		    <if  test="relatype == null">NULL,</if>
+		    <if  test="relaid != null">#{relaid},</if>
+		    <if  test="relaid == null">NULL,</if>
+		    <if  test="source_filename != null">#{source_filename},</if>
+		    <if  test="source_filename == null">NULL,</if>
+		    now()
+		 )
+	</insert>
+	
+	
+	<delete id="deleteMessagesExtById" parameterType="com.takshine.wxcrm.domain.MessagesExt">
+			delete from TB_MESSAGES_EXT where rela_id =#{relaid} 
+	</delete>
+</mapper>
+

@@ -1,0 +1,139 @@
+<html lang="zh-cn">
+<head>
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+<script src="../jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<!--框架样式-->
+<link rel="stylesheet" href="css/wb.css">
+<script src="js/wb.js" type="text/javascript"></script>
+<title>创建宗亲通讯录 - 群友通讯录</title>
+</head>
+<body>
+	<div id="site-nav" class="navbar">
+		<a href="#" onclick="history.back();return false;" class="act-primary"><i
+			class="icon-back"></i></a>
+		<div class="act-secondary" data-toggle="navbar"
+			data-target="nav-collapse">
+			<i class="icon-menu"><b></b></i>
+		</div>
+		创建宗亲通讯录
+	</div>
+	<div id="nav-collapse" class="navbar-menu">
+		<ul>
+			<li><a href="/index/my">我的通讯录</a></li>
+			<li><a href="/activity/my">我的聚会</a></li>
+			<li><a href="/card/setting">我的名片</a></li>
+			<li><a href="/recommend/index" data-ajax="false">群推荐中心</a></li>
+			<li><a href="/download/index">下载手机APP</a></li>
+		</ul>
+	</div>
+	<div class="wrapper">
+		<form id="form-create" data-validate="auto" action="/family/create"
+			method="post" novalidate="true">
+			<div class="form-group">
+				<label class="control-label" for="family_name">家族姓氏</label><input
+					name="family_name" required="" id="family_name" value="刘"
+					pattern="^.{1,4}$" type="text" class="form-control"
+					placeholder="例：陈李张黄何...">
+				<div class="help-block unvalid">家族姓氏不能超过4个汉字</div>
+			</div>
+			<div class="form-group error empty">
+				<label class="control-label" for="city">地区分支</label><input
+					name="city" required="" id="city" value="" type="text"
+					class="form-control" placeholder="例：广东汕头">
+			</div>
+			<div class="form-group error empty">
+				<label class="control-label" for="title">通讯录名称</label><input
+					name="title" required="" id="title" value="" type="text"
+					pattern="^.{0,20}$" class="form-control"
+					placeholder="例：广东汕头李氏宗亲通讯录">
+				<div class="help-block empty">请填写宗亲通讯录名称</div>
+				<div class="help-block unvalid">家谱通讯录名称最多20个字</div>
+			</div>
+			<div class="form-group">
+				<a class="fieldset-active btn btn-block btn-success  active"
+					data-toggle="open" data-once="true" data-target="card-more">点击填写更详细家族信息</a>
+			</div>
+			<div id="card-more" class="fieldset-toggle  open">
+				<div class="form-group">
+					<label class="control-label" for="ancestor">始祖姓名(选填)</label><input
+						name="ancestor" id="ancestor" value="" type="text"
+						class="form-control" placeholder="地区家谱中辈份最高的人">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="hall">堂号(选填)</label><input
+						name="hall" id="hall" value="" type="text" class="form-control"
+						placeholder="亦称“郡号”或总堂号">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="generation">字辈(选填)</label><input
+						name="generation" id="generation" value="" type="text"
+						class="form-control" placeholder="字辈">
+					<div class="typo alert alert-warning">例：匡德惟从世令子，伯师希与孟由宜</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="history">历史起源(选填)</label>
+					<textarea name="history" id="history" rows="3" class="form-control"
+						placeholder="家族历史起源"></textarea>
+					<div class="typo alert alert-warning">
+						例：家族分支于公元254年从中原地区迁徙至目前所在地中国四川省内江市威远县</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="content">说明(选填)</label>
+					<textarea name="content" id="content" rows="3" class="form-control"
+						placeholder="家族起源描述，迁徙历史，家族字辈等"></textarea>
+					<div class="typo alert alert-warning">
+						<p>例：家族起源于中国7500年左右。有甲骨文可考证。我们蔡氏源于兰田与炎帝家族有婚约，有炎帝血统。
+							我现有炎、黄及蔡氏本家族血统。母亲是黄帝血统！ 本人祖传蔡氏血统。网上征蔡氏网友研究本家族史！</p>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<input type="hidden" value="1" name="type">
+				<button type="submit" class="btn btn-block">发起宗亲通讯录</button>
+			</div>
+		</form>
+	</div>
+	<div class="gotop" style="display: block;">
+		<i class="icon icon-arrow-up"></i>
+	</div>
+	<div id="complaintForm" data-modal="alert" class="modal">
+		<form method="post" action="/complaint/index" class="modal-container"
+			novalidate="true">
+			<div class="modal-title">举报</div>
+			<div class="form-group">
+				<div class="control-label"></div>
+				<textarea class="form-control" required="" name="message"
+					placeholder="举报此页面的理由（色情，反动，广告，侵权等）" rows="3"></textarea>
+				<div class="help-block empty">请填写具体举报理由</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-block btn-default" type="submit">确认举报</button>
+			</div>
+			<div class="actions">
+				<div class="btn btn-block" data-dismiss="modal">关闭窗口</div>
+			</div>
+		</form>
+	</div>
+	<footer class="site-ft wrapper" data-position="">
+		<p>
+			<i class="icon icon-lock"></i> 数据已进行隐私加密，请放心使用
+		</p>
+		<div class="menu">
+			<a href="/index/follow" style="font-weight: bold;">关注我们</a>| <a
+				href="weixin://contacts/profile/bibi100"
+				onclick="alert('请查找微信号【bibi100】欢迎咨询！')">联系客服</a>| <a
+				href="/index/help">帮助</a>| <a href="#" data-toggle="modal"
+				data-target="complaintForm">举报</a>
+		</div>
+		<div style="color: #AAA; font-size: 12px; margin-top: .3em">
+			<p>Power By 群友通讯录 交流 共享 互利 共赢</p>
+			<p class="footer-userinfo">
+				当前帐号：刘淋<a href="/oauth/logout"
+					onclick="return confirm('是否确认需要重新登录？'); return false;">重新登录</a><a
+					href="#" onclick="window.location.reload(); return false;">刷新</a>
+			</p>
+		</div>
+	</footer>
+</body>
+</html>

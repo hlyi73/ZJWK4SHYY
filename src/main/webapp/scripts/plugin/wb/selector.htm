@@ -1,0 +1,299 @@
+<html lang="zh-cn">
+<head>
+<script src="../jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<!--框架样式-->
+<link rel="stylesheet" href="css/wb.css">
+<script src="js/wb.js" type="text/javascript"></script>
+</head>
+<body>
+	<div class="alert text-center alert-warning" style="font-size: 14px;">高大上功能在升级中，如有影响，请谅解</div>
+	<div id="site-nav" class="navbar">
+		<a href="#" onclick="history.back();return false;" class="act-primary"><i
+			class="icon-back"></i></a>
+		<div class="act-secondary" data-toggle="navbar"
+			data-target="nav-collapse">
+			<i class="icon-menu"><b></b></i>
+		</div>
+		偷偷t t t
+	</div>
+	<div id="nav-collapse" class="navbar-menu">
+		<ul>
+			<li><a href="/index/my">我的通讯录</a></li>
+			<li><a href="/card/setting">我的名片</a></li>
+			<li><a href="/recommend/index" data-ajax="false">群推荐中心</a></li>
+			<li><a href="/activity/my">我的聚会</a></li>
+			<li><a href="/download/index">下载手机APP</a></li>
+		</ul>
+	</div>
+	<section class="site-add ">
+		<form id="phonebook-select" class="list-group listview"
+			action="/index/save" method="post" novalidate="true">
+			<hgroup class="wrapper">
+				<h1 class="title" style="margin: .5em 0">我的名片</h1>
+				<p>选择您的名片，添加到通讯录</p>
+			</hgroup>
+			<a href="#" class="list-group-item listview-item radio"
+				radio="phonebook_id"><div class="list-group-item-hd">
+					<input type="radio" name="phonebook_id" id="phonebook-199120"
+						value="199120">
+					<div class="input-radio"></div>
+				</div>
+				<div class="list-group-item-bd">
+					<div class="content">
+						<h2 class="title">
+							刘淋<small>(13716460437)</small>
+						</h2>
+						<p>takshineIT攻城师</p>
+					</div>
+				</div>
+				<div class="list-group-item-fd">
+					<span class="badge">私密</span>
+				</div></a><a href="#" class="list-group-item listview-item radio checked"
+				radio="phonebook_id"><div class="list-group-item-hd">
+					<input type="radio" name="phonebook_id" id="phonebook-217656"
+						value="217656" checked="">
+					<div class="input-radio"></div>
+				</div>
+				<div class="list-group-item-bd">
+					<div class="content">
+						<h2 class="title">
+							刘淋<small>(13716460437)</small>
+						</h2>
+						<p>takshinetakshine</p>
+					</div>
+				</div>
+				<div class="list-group-item-fd">
+					<span class="badge">私密</span>
+				</div></a><a href="#" class="list-group-item listview-item radio"
+				radio="phonebook_id"><div class="list-group-item-hd">
+					<input type="radio" name="phonebook_id" id="phonebook-new"
+						value="-1">
+					<div class="input-radio"></div>
+				</div>
+				<div class="list-group-item-bd">使用新名片</div></a>
+			<div id="phonebook-btn" class="wrapper">
+				<input type="hidden" name="code" value="c4847ae45fcb"><input
+					class="btn btn-block" type="submit" value="加入该群">
+			</div>
+		</form>
+		<form class="wrapper" id="phonebook-form" action="/index/save"
+			method="post" style="display: none;" novalidate="true">
+			<hgroup class="text-center alert alert-warning">
+				<h3>创建新的名片</h3>
+				<p>（仅需填写一次，可重复使用）</p>
+			</hgroup>
+			<div class="form-group">
+				<label class="control-label" for="realname">姓名（必填）</label><input
+					name="realname" required="" id="realname" value="刘淋" type="text"
+					class="form-control" pattern="^[^0-9A-Za-z]{2,7}$" placeholder="姓名">
+				<div class="help-block empty">请填写姓名</div>
+				<div class="help-block unvalid">请填写真实中文姓名</div>
+			</div>
+			<div class="form-group">
+				<style type="text/css">
+				input {
+					-webkit-appearance: textfield;
+					appearance: textfield;
+				}
+				</style>
+				<label class="control-label" for="phone">手机（必填）</label><input
+					name="phone" required="" id="phone" value="13716460437"
+					pattern="^((1[3458][0-9]{9})|(\+[0-9\-]{6,}))$" type="tel"
+					class="form-control" placeholder="手机">
+				<div class="help-block empty">请填写手机</div>
+				<div class="help-block unvalid">
+					请填写11位正确手机号<br>国外手机号请在号码前加国际区号(如+86)
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label" for="privacy"></label>
+				<div class="form-control select">
+					<div class="select-box">交换名片可见(私密安全)</div>
+					<select name="privacy" id="privacy"><option value="0">对群友可见(商务推荐)</option>
+						<option value="1" selected="">交换名片可见(私密安全)</option></select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label" for="department">公司（必填）</label><input
+					name="department" required="" id="department" value="takshine"
+					type="text" class="form-control" placeholder="公司">
+				<div class="help-block empty">请填写公司</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label" for="position">职位（必填）</label><input
+					name="position" required="" id="position" value="IT攻城师" type="text"
+					class="form-control" placeholder="职位">
+				<div class="help-block empty">请填写职位</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label" for="email">邮箱（必填）</label><input
+					name="email" id="email" required="" value="zhenoo124@126.com"
+					type="text" class="form-control" placeholder="邮箱地址">
+				<div class="help-block empty">请填写邮箱地址</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label" for="wechat"> 微信号 </label><input
+					name="wechat" id="wechat" value="" type="text" class="form-control"
+					placeholder="微信号">
+			</div>
+			<div class="form-group">
+				<label class="control-label" for="address">地址</label><input
+					name="address" id="address" value="北京市北京市" type="text"
+					class="form-control" placeholder="地址" auto-address="true"><input
+					name="latitude" id="latitude" value="0.00000000" type="hidden"
+					class="form-control"><input name="longitude" id="longitude"
+					value="0.00000000" type="hidden" class="form-control">
+			</div>
+			<div class="form-group">
+				<a class="fieldset-active btn btn-block btn-success "
+					data-toggle="open" data-once="true" data-target="card-more">展现更多自我，填写以下信息</a>
+			</div>
+			<div id="card-more" class="fieldset-toggle ">
+				<div class="form-group">
+					<label class="control-label" for="birthday">生日（格式:1980-01-01）</label><input
+						name="birthday" id="birthday" value="" type="text"
+						class="form-control" placeholder="生日" readonly="">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="weibo">新浪微博</label><input
+						name="weibo" id="weibo" value="" type="text" class="form-control"
+						placeholder="@">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="intro">个人介绍</label>
+					<textarea name="intro" style="min-height: 3em" id="intro" rows="4"
+						class="form-control" placeholder="自我介绍，擅长、经验、履历、关心的人或事等"></textarea>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="supply">供应信息</label>
+					<textarea name="supply" style="min-height: 3em" id="supply"
+						rows="4" class="form-control" placeholder="供应信息"></textarea>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="supply"> 需求信息 </label>
+					<textarea name="needs" style="min-height: 3em" id="needs" rows="4"
+						class="form-control" placeholder="需求信息"></textarea>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="hometown"> 籍贯 </label><input
+						name="hometown" id="hometown" value="" type="text"
+						class="form-control" placeholder="">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="interest"> 兴趣 </label><input
+						name="interest" id="interest" value="" type="text"
+						class="form-control" placeholder="如学习、研究、文学艺术、知识">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="school"> 学校 </label><input
+						name="school" id="school" value="" type="text"
+						class="form-control" placeholder="毕业母校">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="homepage"> 个人主页 </label><input
+						name="homepage" id="homepage" value="" type="text"
+						class="form-control" placeholder="www.homepage.com">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="company_site"> 公司网站 </label><input
+						name="company_site" id="company_site" value="" type="text"
+						class="form-control" placeholder="www.company.com">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="qq"> QQ </label><input name="qq"
+						id="qq" value="" type="text" class="form-control"
+						placeholder="QQ号码">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="tencent"> 腾讯微博 </label><input
+						name="tencent" id="tencent" value="" type="text"
+						class="form-control" placeholder="@">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="renren"> 人人 </label><input
+						name="renren" id="renren" value="" type="text"
+						class="form-control" placeholder="人人网昵称">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="zhihu"> 知乎 </label><input
+						name="zhihu" id="zhihu" value="" type="text" class="form-control"
+						placeholder="www.zhihu.com/people/yourname">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="qzone"> QQ空间 </label><input
+						name="qzone" id="qzone" value="" type="text" class="form-control"
+						placeholder="user.qzone.qq.com/8888">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="diandian"> 点点 </label><input
+						name="diandian" id="diandian" value="" type="text"
+						class="form-control" placeholder="abc.diandian.com">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="facebook"> FACEBOOK </label><input
+						name="facebook" id="facebook" value="" type="text"
+						class="form-control" placeholder="FACEBOOK昵称">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="twitter"> Twitter </label><input
+						name="twitter" id="twitter" value="" type="text"
+						class="form-control" placeholder="Twitter昵称">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="intentionen"> 希望接受的名片 </label><input
+						name="intentionen" id="intentionen" value="" type="text"
+						class="form-control" placeholder="例:投资,地产等(选填)">
+				</div>
+			</div>
+			<div>
+				<input type="hidden" id="customCopy" name="custom" value=""><input
+					type="hidden" name="code" value="c4847ae45fcb"><input
+					class="btn btn-block" type="submit" value="添加到通讯录">
+			</div>
+		</form>
+	</section>
+	<script type="text/javascript" src="/Public/js/add-min.js?v=0305"></script>
+	<div class="gotop" style="display: none;">
+		<i class="icon icon-arrow-up"></i>
+	</div>
+	<div id="complaintForm" data-modal="alert" class="modal">
+		<form method="post" action="/complaint/index" class="modal-container"
+			novalidate="true">
+			<div class="modal-title">举报</div>
+			<div class="form-group">
+				<div class="control-label"></div>
+				<textarea class="form-control" required="" name="message"
+					placeholder="举报此页面的理由（色情，反动，广告，侵权等）" rows="3"></textarea>
+				<div class="help-block empty">请填写具体举报理由</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-block btn-default" type="submit">确认举报</button>
+			</div>
+			<div class="actions">
+				<div class="btn btn-block" data-dismiss="modal">关闭窗口</div>
+			</div>
+		</form>
+	</div>
+
+	<footer class="site-ft wrapper" data-position="">
+		<p>
+			<i class="icon icon-lock"></i> 数据已进行隐私加密，请放心使用
+		</p>
+		<div class="menu">
+			<a href="/index/follow" style="font-weight: bold;">关注我们</a>| <a
+				href="weixin://contacts/profile/bibi100"
+				onclick="alert('请查找微信号【bibi100】欢迎咨询！')">联系客服</a>| <a
+				href="/index/help">帮助</a>| <a href="#" data-toggle="modal"
+				data-target="complaintForm">举报</a>
+		</div>
+		<div style="color: #AAA; font-size: 12px; margin-top: .3em">
+			<p>Power By 群友通讯录 交流 共享 互利 共赢</p>
+			<p class="footer-userinfo">
+				当前帐号：刘淋<a href="/oauth/logout"
+					onclick="return confirm('是否确认需要重新登录？'); return false;">重新登录</a><a
+					href="#" onclick="window.location.reload(); return false;">刷新</a>
+			</p>
+		</div>
+	</footer>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 模块标签 sql处理语句 -->
+<mapper namespace="starModelSql">
+	<!-- 根据crmId 和 parentId 查询单条记录 -->
+	<select id="findStarModelById" 
+	    parameterType="com.takshine.wxcrm.domain.Star"
+		resultType="com.takshine.wxcrm.domain.Star">
+		SELECT
+		  id ,
+		  parent_id as parentId,
+		  parent_type as parentType,
+		  crm_id as crmId,
+		  open_id as openId
+		FROM TB_MODEL_STAR WHERE
+		<if test="crmId != null"> crm_id = #{crmId}  </if>
+		<if test="parentType != null">AND parent_type = #{parentType}</if>
+	</select>
+
+	<!-- <select id="findStarListModelByFilter" parameterType="com.takshine.wxcrm.domain.Star"
+		resultType="com.takshine.wxcrm.domain.Star">>
+		SELECT * FROM CACHE_CUSTOMER A , TB_MODEL_STAR B WHERE A.crm_id = B.crm_id
+		AND A.id = B.parent_id;
+	</select> -->
+
+	<!-- 插入一条 模块标签 -->
+	<insert id="insertModelStar" parameterType="com.takshine.wxcrm.domain.Star">
+		insert into TB_MODEL_STAR
+		(
+		id,
+		parent_id,
+		parent_type,
+		open_id,
+		crm_id
+		)
+		values (
+		<if test="id != null">#{id},</if>
+		<if test="id == null">NULL,</if>
+		<if test="parentId != null">#{parentId},</if>
+		<if test="parentId == null">NULL,</if>
+		<if test="parentType != null">#{parentType},</if>
+		<if test="parentType == null">NULL,</if>
+		<if test="openId != null">#{openId},</if>
+		<if test="openId == null">NULL,</if>
+		<if test="crmId != null">#{crmId}</if>
+		<if test="crmId == null">NULL</if>
+		)
+	</insert>
+
+	<!-- 删除模块标签记录 -->
+	<delete id="deleteStarModel" parameterType="java.lang.String">
+		delete from
+		TB_MODEL_STAR WHERE
+		<if test="parentId != null">parent_id = #{parentId}</if>
+		<if test="crmId != null">AND crm_id = #{crmId}</if>
+		<if test="parentType != null">AND parent_type = #{parentType}</if>
+	</delete>
+
+</mapper>
+

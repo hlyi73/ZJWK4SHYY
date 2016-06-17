@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- LOV sql处理语句 -->
+<mapper namespace="lovSql">
+	<!-- 获取LOV列表 -->
+	<select id="findLovList"
+		parameterType="com.takshine.marketing.domain.Lov"
+		resultType="com.takshine.marketing.domain.Lov">
+			select 
+				lov_name as name,
+				lov_key as `key`,
+				lov_value as `value` 
+			 from TB_MK_LOV order by lov_name,lov_order
+	</select>
+	
+	
+</mapper>
+

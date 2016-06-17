@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 团队成员 sql处理语句 -->
+<mapper namespace="teamPeasonSql">
+	<!-- 分页查询消息 -->
+	<select id="findTeamPeasonListByFilter"
+		parameterType="com.takshine.wxcrm.domain.TeamPeason"
+		resultType="com.takshine.wxcrm.domain.TeamPeason">
+		SELECT
+			  tp.id as id,
+			  tp.rela_id as relaId,
+			  tp.rela_model as relaModel,
+			  tp.rela_name as relaName,
+			  tp.open_id as openId,
+			  tp.public_id as publicId,
+			  tp.nick_name as nickName,
+			  tp.create_time as createTime,
+			  tp.create_by as createBy,
+			  tp.create_name as createName,
+			  tw.party_row_id as party_row_id,
+			  (
+			  	case when rela_model='Contacts' then (select org_id from CACHE_CONTACT where rowid=tp.rela_id) 
+			  	when rela_model='Contract' then (select org_id from CACHE_CONTRACT where rowid=tp.rela_id) 
+			  	when rela_model='Accounts' then (select org_id from CACHE_CUSTOMER where rowid=tp.rela_id) 
+			  	when rela_model='Opportunities' then (select org_id from CACHE_OPPTY where rowid=tp.rela_id) 
+			  	when rela_model='Tasks' then (select org_id from CACHE_SCHEDULE where rowid=tp.rela_id) 
+			  	when rela_model='Quote' then (select org_id from CACHE_QUOTE where rowid=tp.rela_id) else '' end
+			  ) as orgId
+		  FROM TB_TEAM_PEASON tp,TB_WXUSER_INFO tw where tp.open_id = tw.open_id
+		  <if test="relaId != null"> and tp.rela_id = #{relaId}</if>
+		  <if test="openId != null"> and tp.open_id = #{openId}</if>
+		  <if test="relaModel != null"> and tp.rela_model = #{relaModel}</if>
+		  ORDER BY tp.create_time desc
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 查询所有关注用户 -->
+	<select id="findCheckedAtten"
+		parameterType="com.takshine.wxcrm.domain.TeamPeason"
+		resultType="String">
+		SELECT 
+		  open_id AS openId 
+		FROM
+		  TB_TEAM_PEASON 
+		WHERE 1 = 1 AND public_id = #{publicId} and rela_id = #{relaId}
+	</select>
+	
+	<!-- 插入一条 消息 -->
+	<insert id="insertTeamPeason"
+		parameterType="com.takshine.wxcrm.domain.TeamPeason">
+		insert into TB_TEAM_PEASON
+		(
+		     ID,
+             RELA_ID,
+             RELA_MODEL,
+			  RELA_NAME,
+             OPEN_ID,
+             PUBLIC_ID,
+             NICK_NAME,
+             CREATE_BY,
+             CREATE_NAME,
+             CREATE_TIME
+             
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="relaId != null">#{relaId},</if>
+		    <if  test="relaId == null">NULL,</if>
+		    <if  test="relaModel != null">#{relaModel},</if>
+		    <if  test="relaModel == null">NULL,</if>
+		    <if  test="relaName != null">#{relaName},</if>
+		    <if  test="relaName == null">NULL,</if>
+		    <if  test="openId != null">#{openId},</if>
+		    <if  test="openId == null">NULL,</if>
+		    <if  test="publicId != null">#{publicId},</if>
+		    <if  test="publicId == null">NULL,</if>
+		    <if  test="nickName != null">#{nickName},</if>
+		    <if  test="nickName == null">NULL,</if>
+		    <if  test="createBy != null">#{createBy},</if>
+		    <if  test="createBy == null">NULL,</if>
+		    <if  test="createName != null">#{createName},</if>
+		    <if  test="createName == null">NULL,</if>
+		    <if  test="createTime != null">now()</if>
+		    <if  test="createTime == null">now()</if>
+		 )
+	</insert>
+	
+	<delete id="deleteTeamPeason"
+		parameterType="com.takshine.wxcrm.domain.TeamPeason">
+		delete from TB_TEAM_PEASON where rela_id = #{relaId} and open_id = #{openId}
+	</delete>
+	
+</mapper>
+

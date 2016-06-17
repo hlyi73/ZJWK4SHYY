@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 微信用户基本信息 sql处理语句 -->
+<mapper namespace="socialUserInfoSql">
+	
+	<!-- 根据id查找用户和手机绑定关系表  -->
+	<select id="findSocialUserInfoById"
+		parameterType="com.takshine.wxcrm.domain.SocialUserInfo"
+		resultType="com.takshine.wxcrm.domain.SocialUserInfo">
+		<![CDATA[
+			select
+			   UID as uid,
+			   OPEN_ID as openId,              
+			   ORG_ID   as orgId,      
+			   NICKNAME as nickname,         
+			   SEX as sex,              
+			   CITY as city,      
+			   COUNTRY as country,    
+			   PROVINCE as province,
+			   LANGUAGE as language,
+			   HEADIMGURL as headimgurl,
+			   friends_count as friends_count,
+			   followers_count as followers_count,
+			   contact_id as contactid,
+			   access_token,
+			   expires_in 
+			from TB_SOCIALUSER_INFO
+			  where UID=#{uid} and SOCIAL_TYPE = #{social_type}   
+		]]>
+	</select>
+
+	<!-- 按照查询条件查询出用户和手机绑定关系表记录 -->
+	<select id="findSocialUserInfoListByFilter"
+		parameterType="com.takshine.wxcrm.domain.SocialUserInfo"
+		resultType="com.takshine.wxcrm.domain.SocialUserInfo">
+		select
+			   UID as uid,
+			   OPEN_ID as openId,              
+			   ORG_ID   as orgId,       
+			   NICKNAME as nickname,         
+			   SEX as sex,              
+			   CITY as city,      
+			   COUNTRY as country,    
+			   PROVINCE as province,
+			   LANGUAGE as language,
+			   HEADIMGURL as headimgurl,
+			   friends_count as friends_count,
+			   followers_count as followers_count,
+			   contact_id as contactid,
+			   access_token,
+			   expires_in 
+			from TB_SOCIALUSER_INFO
+		where 1=1
+		  <if test="openId != null"> and OPEN_ID = #{openId}</if>
+		  <if test="social_type != null"> and social_type = #{social_type}</if>
+		  <if test="uid != null"> and UID = #{uid}</if>
+		  <if test="orderByString != null">
+	         #{orderByString}
+	      </if>
+	</select>
+	
+	<!-- 插入一条用户和手机绑定关系表记录 -->
+	<insert id="insertSocialUserInfo"
+		parameterType="com.takshine.wxcrm.domain.SocialUserInfo">
+		insert into TB_SOCIALUSER_INFO
+		(
+			   UID,
+		       OPEN_ID,         
+			   ORG_ID,      
+			   NICKNAME,         
+			   SEX,              
+			   CITY,      
+			   COUNTRY,    
+			   PROVINCE,
+			   LANGUAGE,
+			   HEADIMGURL,
+		       followers_count,
+		       friends_count,
+		       social_type,
+		       access_token,
+		       contact_id,
+		       expires_in
+		) values (
+			<if test="uid != null"> #{uid}, </if>
+		    <if test="uid == null"> NULL,  </if>
+		    <if test="openId != null"> #{openId}, </if>
+		    <if test="openId == null"> NULL,  </if>
+		    <if test="orgId != null"> #{orgId}, </if>
+		    <if test="orgId == null"> NULL,  </if>
+		    <if test="nickname != null"> #{nickname}, </if>
+		    <if test="nickname == null"> NULL,  </if>
+		    <if test="sex != null"> #{sex}, </if>
+		    <if test="sex == null"> NULL,  </if>
+		    <if test="city != null"> #{city}, </if>
+		    <if test="city == null"> NULL,  </if>
+		    <if test="country != null"> #{country}, </if>
+		    <if test="country == null"> NULL,  </if>
+		    <if test="province != null"> #{province}, </if>
+		    <if test="province == null"> NULL,  </if>
+		    <if test="language != null"> #{language}, </if>
+		    <if test="language == null"> NULL,  </if>
+		    <if test="headimgurl != null"> #{headimgurl}, </if>
+		    <if test="headimgurl == null"> NULL,  </if>
+		    <if test="followers_count != null"> #{followers_count}, </if>
+		    <if test="followers_count == null"> NULL,  </if>
+		    <if test="friends_count != null"> #{friends_count}, </if>
+		    <if test="friends_count == null"> NULL,  </if>
+		    <if test="social_type != null"> #{social_type}, </if>
+		    <if test="social_type == null"> NULL,  </if>
+		    <if test="access_token != null"> #{access_token}, </if>
+		    <if test="access_token == null"> NULL,  </if>
+		    <if test="contactid != null"> #{contactid}, </if>
+		    <if test="contactid == null"> NULL,  </if>
+		    <if test="expires_in != null"> #{expires_in} </if>
+		    <if test="expires_in == null"> NULL  </if>
+		 )
+	</insert>
+	
+	<!-- 根据id更新一条用户和手机绑定关系表记录 -->
+	<update id="updateSocialUserInfoById"
+		parameterType="com.takshine.wxcrm.domain.SocialUserInfo">
+		UPDATE TB_SOCIALUSER_INFO SET
+			<if test="openId != null">OPEN_ID = #{openId}, </if>
+		    <if test="orgId != null">ORG_ID = #{orgId}, </if>
+		    <if test="nickname != null">NICKNAME =  #{nickname}, </if>
+		    <if test="sex != null">SEX = #{sex}, </if>
+		    <if test="city != null">CITY = #{city}, </if>
+		    <if test="country != null">COUNTRY = #{country}, </if>
+		    <if test="province != null">PROVINCE = #{province}, </if>
+		    <if test="language != null">LANGUAGE = #{language}, </if>
+		    <if test="headimgurl != null">HEADIMGURL = #{headimgurl}, </if>
+		    <if test="contactid != null">contact_id = #{contactid}, </if>
+		    <if test="followers_count != null">followers_count = #{followers_count}, </if>
+		    <if test="access_token != null">access_token = #{access_token}, </if>
+		    <if test="expires_in != null">expires_in = #{expires_in}, </if>
+		    <if test="friends_count != null">friends_count = #{friends_count}, </if>
+		    <if test="friends_count == null">friends_count = NULL  </if>
+			
+		 WHERE uid= #{uid} and social_type=#{social_type}
+	</update>
+	
+	<!-- 根据id删除一条用户和手机绑定关系表记录 -->
+	<delete id="deleteSocialUserInfoById"
+		parameterType="java.lang.String">
+		delete from TB_SOCIALUSER_INFO where UID = #{uid}
+	</delete>
+</mapper>
+

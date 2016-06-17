@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 用户和手机绑定关系手机绑定关系 sql处理语句 -->
+<mapper namespace="operatorMobileSql">
+	
+	<!-- 根据id查找用户和手机绑定关系表  -->
+	<select id="findOperatorMobileById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.wxcrm.domain.OperatorMobile">
+		<![CDATA[
+		select
+			  	ID as id, 
+			  	OP_ID as opId, 
+				PUBLIC_ID as publicId, 
+				OPEN_ID as openId,
+			    CRM_ID as crmId,
+			    ORG_ID as orgId
+			    
+			from TR_OPERATOR_MOBILE
+			where ID=#{value}   ]]>
+	</select>
+	
+	<!-- 查询出全部的用户和手机绑定关系表记录 -->
+	<select id="findAllOperatorMobileList"
+		resultType="com.takshine.wxcrm.domain.OperatorMobile">
+		select
+			  	ID as id, 
+			  	OP_ID as opId, 
+				PUBLIC_ID as publicId, 
+				OPEN_ID as openId,
+			    CRM_ID as crmId,
+			    ORG_ID as orgId
+			     
+			from TR_OPERATOR_MOBILE
+		where 1=1
+	    <if test="orderByString != null">
+	       #{orderByString}
+	    </if>
+	</select>
+	
+	<!-- 按照查询条件查询出用户和手机绑定关系表记录 -->
+	<select id="findOperatorMobileListByFilter"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile"
+		resultType="com.takshine.wxcrm.domain.OperatorMobile">
+		select
+			  	ID as id, 
+			  	OP_ID as opId, 
+				PUBLIC_ID as publicId, 
+				OPEN_ID as openId,
+			    CRM_ID as crmId,
+			    ORG_ID as orgId
+			from TR_OPERATOR_MOBILE
+		where 1=1 
+		  <if test="id != null"> and ID = #{id}</if>
+		  <if test="publicId != null"> and PUBLIC_ID = #{publicId}</if>
+		  <if test="openId != null"> and OPEN_ID = #{openId}</if>
+		  <if test="crmId != null"> and CRM_ID = #{crmId}</if>
+		  <if test="orgId != null"> and ORG_ID = #{orgId}</if>
+		  <if test="orgIdNot != null"> and ORG_ID != #{orgIdNot}</if>
+		  <if test="orderByString != null">
+	         #{orderByString}
+	      </if>
+	</select>
+	
+	<!-- 按照查询条件查询出用户和手机绑定关系表记录 -->
+	<select id="findOrgListByOpenId"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile"
+		resultType="com.takshine.wxcrm.domain.OperatorMobile">
+		select
+		    ORG_ID as orgId,
+		    tor.name orgName
+			from TR_OPERATOR_MOBILE tom,TB_ORGANIZATION tor
+		where tom.org_id = tor.id and tor.enabled_flag = 'enabled'
+		  <if test="openId != null"> and OPEN_ID = #{openId}</if>
+		  <if test="orgIdNot != null"> and tor.id != #{orgIdNot}</if>
+	</select>
+	
+	<!-- 按照查询条件查询出用户和手机绑定关系表记录 -->
+	<select id="finCrmIdListByOpenId"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile"
+		resultType="java.lang.String">
+		select
+			   CRM_ID as crmId
+			from TR_OPERATOR_MOBILE
+		where 1=1 
+		  <if test="id != null"> and ID = #{id}</if>
+		  <if test="publicId != null"> and PUBLIC_ID = #{publicId}</if>
+		  <if test="openId != null"> and OPEN_ID = #{openId}</if>
+		  <if test="crmId != null"> and CRM_ID = #{crmId}</if>
+		  <if test="orgIdNot != null"> and ORG_ID != #{orgIdNot}</if>
+		  <if test="orgId != null"> and ORG_ID = #{orgId}</if>
+	</select>
+	
+	<!-- 按照查询条件查询出用户和手机绑定关系表记录 -->
+	<select id="finCrmIdAndOrgListByOpenId"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile"
+		resultType="com.takshine.wxcrm.domain.Organization">
+		select
+			   tom.CRM_ID as crmId,
+         tr.id as orgId,
+         tr.crmurl as crmurl
+			from TR_OPERATOR_MOBILE tom,
+      		TB_ORGANIZATION tr
+		where tom.org_id=tr.id and tr.enabled_flag = 'enabled'
+		  <if test="publicId != null"> and PUBLIC_ID = #{publicId}</if>
+		  <if test="openId != null"> and OPEN_ID = #{openId}</if>
+		  <if test="orgIdNot != null"> and ORG_ID != #{orgIdNot}</if>
+	</select>
+	
+	<!-- 插入一条用户和手机绑定关系表记录 -->
+	<insert id="insertOperatorMobile"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile">
+		insert into TR_OPERATOR_MOBILE
+		(
+		    ID, 
+		  	OP_ID, 
+			PUBLIC_ID, 
+			OPEN_ID,
+		    CRM_ID,
+		    ORG_ID
+		    
+		) values (
+		    <if test="id != null"> #{id}, </if>
+		    <if test="id == null"> NULL,  </if>
+		    <if test="opId != null"> #{opId}, </if>
+		    <if test="opId == null"> NULL,  </if>
+		    <if test="publicId != null"> #{publicId}, </if>
+		    <if test="publicId == null"> NULL,  </if>
+		    <if test="openId != null"> #{openId}, </if>
+		    <if test="openId == null"> NULL,  </if>
+		    <if test="crmId != null"> #{crmId}, </if>
+		    <if test="crmId == null"> NULL, </if>
+		    <if test="orgId != null"> #{orgId} </if>
+		    <if test="orgId == null"> NULL </if>
+		 )
+	</insert>
+	
+	<!-- 更新 用户和手机绑定关系 CRMID记录 -->
+	<update id="updateOperatorMobileById"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile">
+		UPDATE TR_OPERATOR_MOBILE SET
+			<if test="crmId != null">CRM_ID = #{crmId},</if>
+			<if test="crmUrl != null">CRM_URL = #{crmUrl},</if>
+			<if test="opId != null">OP_ID = #{opId}, </if>
+			<if test="openId != null">OPEN_ID = #{openId},</if>
+			<if test="publicId != null">PUBLIC_ID = #{publicId}</if>
+		 WHERE ID= #{id}
+	</update>
+	
+	<!-- 根据id删除用户和手机绑定关系表记录 -->
+	<delete id="deleteOperatorMobileById"
+		parameterType="java.lang.String">
+		delete from TR_OPERATOR_MOBILE where ID = #{value}
+	</delete>
+	
+	<!-- 根据crmId删除用户和手机绑定关系表记录 -->
+	<delete id="deleteOperatorMobileByCrmId"
+		parameterType="java.lang.String">
+		delete from TR_OPERATOR_MOBILE where CRM_ID = #{value}
+	</delete>
+	
+	<delete id="cancelBinding"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile">
+		delete from TR_OPERATOR_MOBILE where public_id = #{publicId} and open_id = #{openId} and org_id=#{orgId}
+	</delete>
+	
+	
+	<!-- 按照查询条件查询出用户绑定的系统列表 -->
+	<select id="findBindingOrgListByOpenId"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile"
+		resultType="com.takshine.wxcrm.domain.OperatorMobile">
+		select tr.id as orgId,tr.name as orgName, tr.enabled_flag from TB_ORGANIZATION tr,TR_OPERATOR_MOBILE tom
+		where tr.id = tom.org_id and tr.id != 'Default Organization' and enabled_flag = 'enabled'
+		<if test="openId != null"> and OPEN_ID = #{openId}</if>
+	</select>
+	
+	
+	<!-- 按照查询条件查询出用户未绑定的系统列表 -->
+	<select id="findNoBindingOrgListByOpenId"
+		parameterType="com.takshine.wxcrm.domain.OperatorMobile"
+		resultType="com.takshine.wxcrm.domain.OperatorMobile">
+		select tr.id as orgId,tr.name as orgName from TB_ORGANIZATION tr 
+		where not exists(select org_id from TR_OPERATOR_MOBILE where open_id=#{openId} and org_id = tr.id) and tr.enabled_flag = 'enabled' and tr.id != 'Default Organization'
+	</select>
+	
+</mapper>
+

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 菜单 sql处理语句 -->
+<mapper namespace="menuSql">
+	<!-- 分页查询菜单 -->
+	<select id="findMenuListByFilter"
+		parameterType="com.takshine.wxcrm.domain.Menu"
+		resultType="com.takshine.wxcrm.domain.Menu">
+		SELECT
+		      id,
+			  menu_id,
+			  menu_name,
+			  menu_image,
+			  menu_link,
+			  menu_type,
+			  menu_level,
+			  menu_sort,
+			  menu_parentid,
+			  enabled_flag
+		  FROM TB_MENU where 1=1
+		  <if test="id != null"> and id = #{id}</if>
+		  <if test="menu_name != null"> and menu_name = #{menu_name}</if>
+		  <if test="menu_image != null"> and menu_image = #{menu_image}</if>
+		  <if test="menu_link != null"> and menu_link = #{menu_link}</if>
+		  <if test="menu_type != null"> and menu_type = #{menu_type}</if>
+		  <if test="menu_level != null"> and menu_level = #{menu_level}</if>
+		  <if test="menu_sort != null"> and menu_sort = #{menu_sort}</if>
+		  <if test="menu_parentid != null"> and menu_parentid = #{menu_parentid}</if>
+		  <if test="enabled_flag != null"> and enabled_flag = #{enabled_flag}</if>
+		  ORDER BY menu_level, menu_sort
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 插入一条 菜单 -->
+	<insert id="insertMenu"
+		parameterType="com.takshine.wxcrm.domain.Menu">
+		insert into TB_MENU
+		(
+		      id,
+			  menu_id,
+			  menu_name,
+			  menu_image,
+			  menu_link,
+			  menu_type,
+			  menu_level,
+			  menu_sort,
+			  menu_parentid,
+			  enabled_flag
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="menu_id != null">#{menu_id},</if>
+		    <if  test="menu_id == null">NULL,</if>
+		    <if  test="menu_name != null">#{menu_name},</if>
+		    <if  test="menu_name == null">NULL,</if>
+		    <if  test="menu_image != null">#{menu_image},</if>
+		    <if  test="menu_image == null">NULL,</if>
+		    <if  test="menu_link != null">#{menu_link},</if>
+		    <if  test="menu_link == null">NULL,</if>
+		    <if  test="menu_type != null">#{menu_type},</if>
+		    <if  test="menu_type == null">NULL,</if>
+		    <if  test="menu_level != null">#{menu_level},</if>
+		    <if  test="menu_level == null">NULL,</if>
+		    <if  test="menu_sort != null">#{menu_sort},</if>
+		    <if  test="menu_sort ==null">NULL,</if>
+		    <if  test="menu_parentid != null">#{menu_parentid},</if>
+		    <if  test="menu_parentid ==null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag}</if>
+		    <if  test="enabled_flag ==null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条菜单 -->
+	<update id="updateMenuById"
+		parameterType="com.takshine.wxcrm.domain.Menu">
+		UPDATE TB_MENU SET
+		    <if  test="menu_id != null">menu_id = #{menu_id},</if>
+		    <if  test="menu_id == null">NULL,</if>
+		    <if  test="menu_name != null">menu_name = #{menu_name},</if>
+		    <if  test="menu_name == null">NULL,</if>
+		    <if  test="menu_image != null">menu_image = #{menu_image},</if>
+		    <if  test="menu_image == null">NULL,</if>
+		    <if  test="menu_link != null">menu_link = #{menu_link},</if>
+		    <if  test="menu_link == null">NULL,</if>
+		    <if  test="menu_type != null">menu_type = #{menu_type},</if>
+		    <if  test="menu_type == null">NULL,</if>
+		    <if  test="menu_level != null">menu_level = #{menu_level},</if>
+		    <if  test="menu_level == null">NULL,</if>
+		    <if  test="menu_sort != null">menu_sort = #{menu_sort},</if>
+		    <if  test="menu_sort == null">NULL,</if>
+		    <if  test="menu_parentid != null">menu_parentid = #{menu_parentid},</if>
+		    <if  test="menu_parentid == null">NULL,</if>
+		    <if  test="enabled_flag != null">enabled_flag = #{enabled_flag}</if>
+		    <if  test="enabled_flag == null">NULL</if>
+		 WHERE ID=#{id}
+	</update>
+	
+	<!-- 更新菜单标志为已读 -->
+	<delete id="deleteMenuById"
+		parameterType="java.lang.String">
+		delete from TB_MENU where id=#{value}
+	</delete>
+</mapper>
+

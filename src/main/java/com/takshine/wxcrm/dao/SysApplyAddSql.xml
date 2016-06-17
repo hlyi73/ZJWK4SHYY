@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 注册信息 sql处理语句 -->
+<mapper namespace="sysApplyAddSql">
+	<!-- 分页查询注册信息 -->
+	<select id="findSysApplyAddListByFilter"
+		parameterType="com.takshine.wxcrm.message.sugar.SysApplyAdd"
+		resultType="com.takshine.wxcrm.message.sugar.SysApplyAdd">
+		SELECT
+			id,
+			open_id,
+			name,
+			org_id,
+			org_name,
+			description as desc,
+			industry,
+			address,
+			crm_url,
+			create_time
+		  FROM TB_SYS_APPLY where 1=1
+		  limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 统计注册信息总数 -->
+	<select id="countSysApplyAddByFilter"
+		parameterType="com.takshine.wxcrm.message.sugar.SysApplyAdd"
+		resultType="Integer">
+		select count(1)
+			from TB_SYS_APPLY
+		where 1=1
+	</select>
+	
+	<!-- 插入一条 注册信息 -->
+	<insert id="insertSysApplyAdd"
+		parameterType="com.takshine.wxcrm.message.sugar.SysApplyAdd">
+		insert into TB_SYS_APPLY
+		(
+		    id,
+			open_id,
+			name,
+			contact_name,
+			contact_mobile,
+			org_id,
+			org_name,
+			description,
+			industry,
+			address,
+			crm_url,
+			create_time
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="open_id != null">#{open_id},</if>
+		    <if  test="open_id == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="conname != null">#{conname},</if>
+		    <if  test="conname == null">NULL,</if>
+		    <if  test="mobile != null">#{mobile},</if>
+		    <if  test="mobile == null">NULL,</if>
+		    <if  test="org_id != null">#{org_id},</if>
+		    <if  test="org_id == null">NULL,</if>
+		    <if  test="org_name != null">#{org_name},</if>
+		    <if  test="org_name == null">NULL,</if>
+		    <if  test="desc != null">#{desc},</if>
+		    <if  test="desc == null">NULL,</if>
+		    <if  test="industry != null">#{industry},</if>
+		    <if  test="industry == null">NULL,</if>
+		    <if  test="address != null">#{address},</if>
+		    <if  test="address == null">NULL,</if>
+		    <if  test="crm_url != null">#{crm_url},</if>
+		    <if  test="crm_url == null">NULL,</if>
+		    now()
+		 )
+	</insert>
+	
+	<!-- 更新一条注册信息 -->
+	<update id="updateSysApplyAddById"
+		parameterType="com.takshine.wxcrm.message.sugar.SysApplyAdd">
+		UPDATE TB_SYS_APPLY SET
+		    <if  test="name != null">name = #{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="org_name != null">org_name = #{org_name},</if>
+		    <if  test="org_name == null">NULL,</if>
+		    <if  test="org_id != null">org_id = #{org_id},</if>
+		    <if  test="org_id == null">NULL,</if>
+		    <if  test="industry != null">industry = #{industry},</if>
+		    <if  test="industry == null">NULL,</if>
+		    <if  test="address != null">address = #{address},</if>
+		    <if  test="address == null">NULL,</if>
+		    <if  test="crm_url != null">crm_url = #{crm_url}</if>
+		    <if  test="crm_url == null">NULL</if>
+		 WHERE ID=#{id}
+	</update>
+	
+	
+	<!-- 查询用户申请数量 -->
+	<select id="searchOrganizationByOpenId"
+		parameterType="com.takshine.wxcrm.message.sugar.SysApplyAdd"
+		resultType="com.takshine.wxcrm.message.sugar.SysApplyAdd">
+		select tso.id as org_id,tso.name as org_name,tso.enabled_flag as enabledflag from TB_SYS_APPLY tsa,TB_ORGANIZATION tso
+		where tsa.org_id  = tso.id and tsa.open_id = #{open_id}
+	</select>
+</mapper>
+

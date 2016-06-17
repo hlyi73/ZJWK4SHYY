@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!--  sql处理语句 -->
+<mapper namespace="cacheCustomerSql">
+	<!-- 分页查询 -->
+	<select id="findCacheCustomerListByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheCustomer"
+		resultType="com.takshine.wxcrm.domain.cache.CacheCustomer">
+		SELECT
+			  cr.crm_id,
+			  (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cr.crm_id and r.op_name is not null limit 1) AS assigner,
+			  cr.open_id,
+			  rowid,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  name,
+			  accnttype,
+			  telephone,
+			  soure,
+			  industy,
+			  address,
+			  contact_id,
+			  amount,
+			  oppty_amount,
+			  enabled_flag
+		  
+		  FROM CACHE_CUSTOMER cr LEFT JOIN TB_MODEL_STAR tmt ON cr.rowid = tmt.parent_id AND tmt.parent_type='Accounts'  where 1=1 and enabled_flag = 'enabled'
+		  <if test="org_id != null"> and org_id = #{org_id}</if>
+		  <if test="crm_id != null"> and crm_id = #{crm_id}</if>
+		  <if test="starflag  == 'yes'">
+	        AND EXISTS ( SELECT parent_id FROM TB_MODEL_STAR star WHERE star.parent_id = cr.rowid)
+	      </if>
+		  <if test="tagName != null and tagName != ''">
+	         AND EXISTS (  SELECT model_id FROM TB_MODEL_TAG tag WHERE tag.tag_name LIKE CONCAT('%',#{tagName},'%') AND tag.model_id = cr.rowid)
+	      </if>
+		  <if test="crm_id_in != null and crm_id_in.size > 0 "> 
+		    and cr.crm_id in
+		   <foreach collection="crm_id_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid_in != null and rowid_in.size > 0">
+		   and cr.rowid in
+		   <foreach collection="rowid_in" index="index" item="tag" open="("
+		    separator="," close=")">
+		   #{tag}
+		  </foreach>
+		   </if>
+		  <if test="rowid != null"> and rowid = #{rowid}</if>
+		  order by tmt.id desc,cr.create_date desc
+		  limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="findCacheCustomerListByCrmId"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheCustomer"
+		resultType="com.takshine.wxcrm.domain.cache.CacheCustomer">
+		SELECT 
+		  cc.crm_id,
+		   (SELECT  r.op_name FROM  TB_DCCRM_OPERATOR r WHERE r.crm_id =  cc.crm_id limit 1) AS assigner,
+		  cc.open_id,
+		  rowid,
+		  org_id,
+		  create_date,
+		  create_by,
+		  modify_date,
+		  modify_by,
+		  name,
+		  accnttype,
+		  telephone,
+		  soure,
+		  industy,
+		  address,
+		  contact_id,
+		  amount,
+		  oppty_amount,
+		  enabled_flag 
+		FROM
+		  CACHE_CUSTOMER cc inner join 
+		  (SELECT 
+		    crm_id 
+		  FROM
+		    TR_OPERATOR_MOBILE 
+		  WHERE open_id = 
+		    (SELECT 
+		      open_id 
+		    FROM
+		      TR_OPERATOR_MOBILE 
+		    WHERE crm_id = #{crm_id})) op
+		   LEFT JOIN TB_MODEL_STAR tmt ON cc.rowid = tmt.parent_id AND tmt.parent_type='Accounts' 
+		WHERE 1 = 1 
+		  AND cc.crm_id = op.crm_id and cc.enabled_flag = 'enabled'
+		  <if test="name != null and name != ''"> and cc.name like CONCAT('%',#{name},'%') </if>
+		  <if test="accnttype != null and accnttype != ''"> and cc.accnttype = #{accnttype} </if>
+		  <if test="industy != null and industy != ''"> and cc.industy = #{industy} </if>
+		  <if test="starflag  == 'yes'">
+	        AND EXISTS ( SELECT parent_id FROM TB_MODEL_STAR star WHERE star.parent_id = cc.rowid)
+	      </if>
+		  <if test="tagName != null and tagName != ''">
+	         AND EXISTS (  SELECT model_id FROM TB_MODEL_TAG tag WHERE tag.tag_name LIKE CONCAT('%',#{tagName},'%') AND tag.model_id = cc.rowid)
+	      </if>
+	      <if test="org_id != null and org_id != ''">
+	         AND cc.org_id = #{org_id}
+	      </if>
+		  <if test="orderByString  == 'acontribution'">
+	       order by tmt.id desc, amount desc
+	      </if>
+		  <if test="orderByString  == 'afuturevalue'">
+	       order by tmt.id desc,oppty_amount desc
+	      </if>
+		  <if test="orderByString  == 'atotalvalue'">
+	       order by tmt.id desc,sum(oppty_amount+amount) desc
+	      </if>
+	      <if test="orderByString  == '' or orderByString == null ">
+	       order by tmt.id desc,cc.create_date desc
+	      </if>
+	      limit #{currpage},#{pagecount}
+	</select>
+	
+	<!-- 统计总数 -->
+	<select id="countCacheCustomerByFilter"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheCustomer"
+		resultType="Integer">
+		select count(1)
+			from CACHE_CUSTOMER
+		where 1=1
+		 <if test="org_id != null"> and org_id = #{org_id}</if>
+	</select>
+	
+	<!-- 插入一条  -->
+	<insert id="insertCacheCustomer"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheCustomer">
+		insert into CACHE_CUSTOMER
+		(
+			  crm_id,
+			  open_id,
+			  rowid,
+			  org_id,
+			  create_date,
+			  create_by,
+			  modify_date,
+			  modify_by,
+			  name,
+			  accnttype,
+			  telephone,
+			  soure,
+			  industy,
+			  address,
+			  contact_id,
+			  amount,
+			  oppty_amount,
+			  enabled_flag
+			  
+		) values (
+		    <if  test="crm_id != null">#{crm_id},</if>
+		    <if  test="crm_id == null">NULL,</if>
+		    <if  test="open_id != null">#{open_id},</if>
+		    <if  test="open_id == null">NULL,</if>
+		    <if  test="rowid != null">#{rowid},</if>
+		    <if  test="rowid == null">NULL,</if>
+		    <if  test="org_id != null">#{org_id},</if>
+		    <if  test="org_id == null">NULL,</if>
+		    <if  test="create_date != null">#{create_date},</if>
+		    <if  test="create_date == null">NULL,</if>
+		    <if  test="create_by != null">#{create_by},</if>
+		    <if  test="create_by == null">NULL,</if>
+		    <if  test="modify_date != null">#{modify_date},</if>
+		    <if  test="modify_date == null">NULL,</if>
+		    <if  test="modify_by != null">#{modify_by},</if>
+		    <if  test="modify_by == null">NULL,</if>
+		    <if  test="name != null">#{name},</if>
+		    <if  test="name == null">NULL,</if>
+		    <if  test="accnttype != null">#{accnttype},</if>
+		    <if  test="accnttype == null">NULL,</if>
+		    <if  test="telephone != null">#{telephone},</if>
+		    <if  test="telephone == null">NULL,</if>
+		    <if  test="soure != null">#{soure},</if>
+		    <if  test="soure == null">NULL,</if>
+		    <if  test="industy != null">#{industy},</if>
+		    <if  test="industy == null">NULL,</if>
+		    <if  test="address != null">#{address},</if>
+		    <if  test="address == null">NULL,</if>
+		    <if  test="contact_id != null">#{contact_id},</if>
+		    <if  test="contact_id == null">NULL,</if>
+		    <if  test="amount != null">#{amount},</if>
+		    <if  test="amount == null">NULL,</if>
+		    <if  test="oppty_amount != null">#{oppty_amount},</if>
+		    <if  test="oppty_amount == null">NULL,</if>
+		    <if  test="enabled_flag != null">#{enabled_flag}</if>
+		    <if  test="enabled_flag == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条 -->
+	<update id="updateCacheCustomerById"
+		parameterType="com.takshine.wxcrm.domain.cache.CacheCustomer">
+		UPDATE CACHE_CUSTOMER SET
+		    <if  test="modify_date != null">modify_date = #{modify_date},</if>
+		    <if  test="modify_date == null">modify_date = NULL,</if>
+		    <if  test="modify_by != null">modify_by = #{modify_by},</if>
+		    <if  test="modify_by == null">modify_by = NULL,</if>
+		    <if  test="name != null">name = #{name},</if>
+		    <if  test="name == null">name = NULL,</if>
+		    <if  test="accnttype != null">accnttype = #{accnttype},</if>
+		    <if  test="accnttype == null">accnttype = NULL,</if>
+		    <if  test="telephone != null">telephone = #{telephone},</if>
+		    <if  test="telephone == null">telephone = NULL,</if>
+		    <if  test="soure != null">soure = #{soure},</if>
+		    <if  test="soure == null">soure = NULL,</if>
+		    <if  test="industy != null">industy = #{industy},</if>
+		    <if  test="industy == null">industy = NULL,</if>
+		    <if  test="address != null">address = #{address},</if>
+		    <if  test="address == null">address = NULL,</if>
+		    <if  test="contact_id != null">contact_id = #{contact_id},</if>
+		    <if  test="contact_id == null">contact_id = NULL,</if>
+		    <if  test="amount != null">amount = #{amount},</if>
+		    <if  test="amount == null">amount = NULL,</if>
+		    <if  test="oppty_amount != null">oppty_amount = #{oppty_amount}</if>
+		    <if  test="oppty_amount == null">oppty_amount = NULL</if>
+		   
+		 WHERE rowid=#{rowid}
+	</update>
+	
+	<!-- 根据ID删除访问记录 -->
+	<delete id="deleteCacheCustomerById"
+		parameterType="java.lang.String">
+		UPDATE CACHE_CUSTOMER SET enabled_flag = 'disabled' where rowid = #{value}
+	</delete>
+	
+</mapper>
+

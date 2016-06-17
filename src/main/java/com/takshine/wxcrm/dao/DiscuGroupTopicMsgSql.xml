@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 讨论组话题消息 sql处理语句 -->
+<mapper namespace="discuGroupTopicMsgSql">
+	<!-- 查询讨论组话题消息 -->
+	<select id="findDiscuGroupTopicMsgListByFilter"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupTopicMsg"
+		resultType="com.takshine.wxcrm.domain.DiscuGroupTopicMsg">
+		SELECT
+		  tdtm.id,
+		  tdtm.dis_id,
+		  tdtm.topic_id,
+		  tdtm.send_user_id,
+		  (CASE WHEN tbc.name IS NULL OR tbc.name ='' THEN twi.nickname ELSE tbc.name END) as send_user_name,
+		  tdtm.target_user_id,
+		  (SELECT nickname FROM TB_WXUSER_INFO i WHERE i.party_row_id = target_user_id) as target_user_name,
+		  (SELECT tbc2.name FROM TB_BUSINESS_CARD tbc2 WHERE tbc2.party_row_id = target_user_id) as target_user_cardname,
+		  tdtm.msg_type,
+		  tdtm.content,
+		  tdtm.create_time,
+		  tdtm.send_u_img_url,
+		  tdtm.target_u_img_url
+		  
+		FROM TB_DISCUGROUP_TOPIC_MSG tdtm
+		LEFT JOIN TB_BUSINESS_CARD tbc ON tbc.party_row_id = tdtm.send_user_id AND tbc.status='0'
+		LEFT JOIN TB_WXUSER_INFO twi ON tdtm.send_user_id = twi.party_row_id
+		where 1=1
+		<if test="id != null"> AND id = #{id} </if>
+		<if test="dis_id != null"> AND dis_id = #{dis_id} </if>
+		<if test="topic_id != null"> AND topic_id = #{topic_id} </if>
+		order by create_time desc 
+		limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 插入一条 讨论组话题消息 -->
+	<insert id="insertDiscuGroupTopicMsg"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupTopicMsg">
+		insert into TB_DISCUGROUP_TOPIC_MSG
+		(
+		      id,
+			  dis_id,
+			  topic_id,
+			  send_user_id,
+			  target_user_id,
+			  msg_type,
+			  content,
+			  create_time,
+			  send_u_img_url,
+			  target_u_img_url
+			  
+		) values (
+		    <if  test="id != null">#{id},</if>
+		    <if  test="id == null">NULL,</if>
+		    <if  test="dis_id != null">#{dis_id},</if>
+		    <if  test="dis_id == null">NULL,</if>
+		    <if  test="topic_id != null">#{topic_id},</if>
+		    <if  test="topic_id == null">NULL,</if>
+		    <if  test="send_user_id != null">#{send_user_id},</if>
+		    <if  test="send_user_id == null">NULL</if>
+		    <if  test="target_user_id != null">#{target_user_id},</if>
+		    <if  test="target_user_id == null">NULL</if>
+		    <if  test="msg_type != null">#{msg_type},</if>
+		    <if  test="msg_type == null">NULL</if>
+		    <if  test="content != null">#{content},</if>
+		    <if  test="content == null">NULL,</if>
+		    <if  test="create_time != null">now(),</if>
+		    <if  test="create_time == null">NULL,</if>
+		    <if  test="send_u_img_url != null">#{send_u_img_url},</if>
+		    <if  test="send_u_img_url == null">NULL,</if>
+		    <if  test="target_u_img_url != null">#{target_u_img_url}</if>
+		    <if  test="target_u_img_url == null">NULL</if>
+		 )
+	</insert>
+	
+	<!-- 更新一条讨论组话题消息 -->
+	<update id="updateDiscuGroupTopicMsgById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupTopicMsg">
+		UPDATE TB_DISCUGROUP_TOPIC_MSG SET
+		    <if  test="send_u_img_url != null">rela_id = #{send_u_img_url},</if>
+		    <if  test="send_u_img_url == null">NULL,</if>
+		    <if  test="target_u_img_url != null">target_u_img_url = #{target_u_img_url}</if>
+		    <if  test="target_u_img_url == null">NULL</if>
+		 WHERE id=#{id}
+	</update>
+	
+	<!-- 删除一个话题 -->
+	<delete id="deleteDiscuGroupTopicMsgById"
+		parameterType="com.takshine.wxcrm.domain.DiscuGroupTopicMsg">
+		DELETE FROM TB_DISCUGROUP_TOPIC_MSG 
+		 WHERE id=#{id}
+	</delete>
+	
+</mapper>
+

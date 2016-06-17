@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 德成CRM用户  sql处理语句 -->
+<mapper namespace="DcCrmOperatorSql">
+	
+	<!-- 根据id查找德成CRM用户  -->
+	<select id="findDcCrmOperatorById"
+		parameterType="java.lang.String"
+		resultType="com.takshine.wxcrm.domain.DcCrmOperator">
+		<![CDATA[
+		select
+			  	op_id  as opId,
+				org_id  as orgId,
+				crm_id  as crmId,
+				op_name  as opName,
+				op_duty  as opDuty,
+				op_depart  as opDepart,
+				op_company  as opCompany,
+				op_mobile  as opMobile,
+				op_phone  as opPhone,
+				op_email  as opEmail,
+				op_fax  as opFax,
+				op_country  as opCountry,
+				op_province  as opProvince,
+				op_city  as opCity,
+				op_address  as opAddress,
+				op_status as opStatus,
+				op_signature as opSignature,
+				op_image as opImage,
+				op_Gender as opGender,
+				op_weixin as opWeixin
+				
+			from TB_DCCRM_OPERATOR
+			where ID=#{value}   ]]>
+	</select>
+	
+	<!-- 查询出全部的德成CRM用户记录 -->
+	<select id="findAllDcCrmOperatorList"
+		resultType="com.takshine.wxcrm.domain.DcCrmOperator">
+		select
+			  	op_id  as opId,
+				org_id  as orgId,
+				crm_id  as crmId,
+				op_name  as opName,
+				op_duty  as opDuty,
+				op_depart  as opDepart,
+				op_company  as opCompany,
+				op_mobile  as opMobile,
+				op_phone  as opPhone,
+				op_email  as opEmail,
+				op_fax  as opFax,
+				op_country  as opCountry,
+				op_province  as opProvince,
+				op_city  as opCity,
+				op_address  as opAddress,
+				op_status as opStatus,
+				op_signature as opSignature,
+				op_image as opImage,
+				op_Gender as opGender,
+				op_weixin as opWeixin
+			from TB_DCCRM_OPERATOR
+		where 1=1
+	    <if test="orderByString != null">
+	       #{orderByString}
+	    </if>
+	</select>
+	
+	<!-- 按照查询条件查询出德成CRM用户记录 -->
+	<select id="findDcCrmOperatorListByFilter"
+		parameterType="com.takshine.wxcrm.domain.DcCrmOperator"
+		resultType="com.takshine.wxcrm.domain.DcCrmOperator">
+		select
+			  	op_id  as opId,
+				org_id  as orgId,
+				crm_id  as crmId,
+				op_name  as opName,
+				op_duty  as opDuty,
+				op_depart  as opDepart,
+				op_company  as opCompany,
+				op_mobile  as opMobile,
+				op_phone  as opPhone,
+				op_email  as opEmail,
+				op_fax  as opFax,
+				op_country  as opCountry,
+				op_province  as opProvince,
+				op_city  as opCity,
+				op_address  as opAddress,
+				op_status as opStatus,
+				op_signature as opSignature,
+				op_image as opImage,
+				op_Gender as opGender,
+				op_weixin as opWeixin
+			from TB_DCCRM_OPERATOR
+		where 1=1
+		  <if test="opId != null"> and op_id = #{opId}</if>
+		  <if test="orgId != null"> and org_id = #{orgId}</if>
+		  <if test="crmId != null"> and crm_id = #{crmId}</if>
+		  <if test="opMobile != null"> and op_mobile = #{opMobile}</if>
+		  <if test="orderByString != null">
+	         #{orderByString}
+	      </if>
+	</select>
+	
+	<!-- 根据partyid 查询 德成用户(查询默认的组织) -->
+	<select id="findDcCrmOperatorByPartyId" 
+			resultType="com.takshine.wxcrm.domain.DcCrmOperator"  parameterType="java.lang.String">
+		SELECT 
+		  dc.op_id AS opId,
+		  dc.org_id AS orgId,
+		  dc.crm_id AS crmId,
+		  dc.op_name AS opName,
+		  dc.op_duty AS opDuty,
+		  dc.op_depart AS opDepart,
+		  dc.op_company AS opCompany,
+		  dc.op_mobile AS opMobile,
+		  dc.op_phone AS opPhone,
+		  dc.op_email AS opEmail,
+		  dc.op_fax AS opFax,
+		  dc.op_country AS opCountry,
+		  dc.op_province AS opProvince,
+		  dc.op_city AS opCity,
+		  dc.op_address AS opAddress,
+		  dc.op_status AS opStatus,
+		  dc.op_signature AS opSignature,
+		  dc.op_image AS opImage,
+		  dc.op_Gender AS opGender, 
+		  dc.op_weixin as opWeixin,
+		  wx.open_id as openId 
+		FROM
+		  TB_WXUSER_INFO wx,
+		  TR_OPERATOR_MOBILE op,
+		  TB_DCCRM_OPERATOR dc 
+		WHERE wx.open_id = op.open_id 
+		  AND op.crm_id = dc.crm_id 
+		  AND op.org_id = 'Default Organization' 
+	    AND wx.party_row_id = #{value}
+	</select>
+
+	<!-- 插入一条德成CRM用户记录 -->
+	<insert id="insertDcCrmOperator"
+		parameterType="com.takshine.wxcrm.domain.DcCrmOperator">
+		insert into TB_DCCRM_OPERATOR
+		(
+		  	op_id,
+			org_id,
+			crm_id,
+			op_name,
+			op_duty,
+			op_depart,
+			op_company,
+			op_mobile,
+			op_phone,
+			op_email,
+			op_fax,
+			op_country,
+			op_province,
+			op_city,
+			op_address,
+			op_image,
+			op_status,
+		    op_weixin
+		) values (
+		    <if test="opId != null"> #{opId}, </if>
+		    <if test="opId == null"> NULL,  </if>
+		    <if test="orgId != null"> #{orgId}, </if>
+		    <if test="orgId == null"> NULL,  </if>
+		    <if test="crmId != null"> #{crmId}, </if>
+		    <if test="crmId == null"> NULL,  </if>
+		    <if test="opName != null"> #{opName}, </if>
+		    <if test="opName == null"> NULL,  </if>
+		    <if test="opDuty != null"> #{opDuty}, </if>
+		    <if test="opDuty == null"> NULL,  </if>
+		    <if test="opDepart != null"> #{opDepart}, </if>
+		    <if test="opDepart == null"> NULL,  </if>
+		    <if test="opCompany != null"> #{opCompany}, </if>
+		    <if test="opCompany == null"> NULL,  </if>
+		    <if test="opMobile != null"> #{opMobile}, </if>
+		    <if test="opMobile == null"> NULL,  </if>
+		    <if test="opPhone != null"> #{opPhone}, </if>
+		    <if test="opPhone == null"> NULL,  </if>
+		    <if test="opEmail != null"> #{opEmail}, </if>
+		    <if test="opEmail == null"> NULL,  </if>
+		    <if test="opFax != null"> #{opFax}, </if>
+		    <if test="opFax == null"> NULL,  </if>
+		    <if test="opCountry != null"> #{opCountry}, </if>
+		    <if test="opCountry == null"> NULL,  </if>
+		    <if test="opProvince != null"> #{opProvince}, </if>
+		    <if test="opProvince == null"> NULL,  </if>
+		    <if test="opCity != null"> #{opCity}, </if>
+		    <if test="opCity == null"> NULL,  </if>
+		    <if test="opAddress != null"> #{opAddress}, </if>
+		    <if test="opAddress == null"> NULL,  </if>
+		    <if test="opImage != null"> #{opImage}, </if>
+		    <if test="opImage == null"> NULL,  </if>
+		    <if test="opStatus != null"> #{opStatus}, </if>
+		    <if test="opStatus == null"> NULL, </if>
+		    <if test="opWeixin != null"> #{opWeixin} </if>
+		    <if test="opWeixin == null"> NULL </if>
+		 )
+	</insert>
+	
+	<!-- 根据id更新一条德成CRM用户记录 -->
+	<update id="updateDcCrmOperatorById"
+		parameterType="com.takshine.wxcrm.domain.DcCrmOperator">
+		UPDATE TB_DCCRM_OPERATOR SET
+			<if test="opName != null">op_name =  #{opName},</if>
+			<if test="opDuty != null">op_duty =  #{opDuty},</if>
+			<if test="opCompany != null">op_company =  #{opCompany},</if>
+			<if test="opMobile != null">op_mobile =  #{opMobile},</if>
+			<if test="opEmail != null">op_email =  #{opEmail},</if>
+			<if test="opDepart != null">op_depart =  #{opDepart},</if>
+			<if test="opAddress != null">op_address =  #{opAddress},</if>
+			<if test="opSignature != null">op_signature =  #{opSignature},</if>
+			<if test="opImage != null">op_image =  #{opImage},</if>
+			<if test="opGender != null">op_gender =  #{opGender},</if>
+			<if test="opWeixin != null">op_weixin =  #{opWeixin}</if>
+			<if test="opWeixin == null">op_weixin =  NULL</if>
+		 WHERE OP_ID= #{opId}
+	</update>
+	
+	<!-- 根据crmId更新一条德成CRM用户记录 -->
+	<update id="updateDcCrmOperatorBycrmId"
+		parameterType="com.takshine.wxcrm.domain.DcCrmOperator">
+		UPDATE TB_DCCRM_OPERATOR SET
+			<if test="opName != null">op_name =  #{opName},</if>
+			<if test="opDuty != null">op_duty =  #{opDuty},</if>
+			<if test="opMobile != null">op_mobile =  #{opMobile},</if>
+			<if test="opEmail != null">op_email =  #{opEmail},</if>
+			<if test="opDepart != null">op_depart =  #{opDepart},</if>
+			<if test="opCompany != null">op_company =  #{opCompany},</if>
+			<if test="opAddress != null">op_address =  #{opAddress},</if>
+			<if test="opSignature != null">op_signature =  #{opSignature},</if>
+			<if test="opImage != null">op_image =  #{opImage},</if>
+			<if test="opGender != null">op_gender =  #{opGender},</if>
+			<if test="opWeixin != null">op_weixin =  #{opWeixin}</if>
+			<if test="opWeixin == null">op_weixin =  NULL</if>
+		 WHERE CRM_ID= #{crmId}
+	</update>
+	
+	<!-- 根据id删除一条德成CRM用户记录 -->
+	<delete id="deleteDcCrmOperatorById"
+		parameterType="java.lang.String">
+		delete from TB_DCCRM_OPERATOR where OP_ID = #{value}
+	</delete>
+	
+	
+	<!-- 根据openId 和 orgId 查找用户名 -->
+	<select id="findUserNameByOpenId"
+		parameterType="com.takshine.wxcrm.domain.DcCrmOperator"
+		resultType="com.takshine.wxcrm.domain.DcCrmOperator">
+		SELECT 
+		  tdo.op_name AS opName,
+		  tom.crm_id AS crmId 
+		FROM
+		  TR_OPERATOR_MOBILE tom,
+		  TB_DCCRM_OPERATOR tdo 
+		WHERE tom.crm_id = tdo.crm_id 
+		  AND tom.open_id = #{openId} and tdo.org_id=#{orgId} 
+	</select>
+</mapper>
+

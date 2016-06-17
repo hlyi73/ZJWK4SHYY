@@ -1,0 +1,132 @@
+.range-date{
+	display:block;
+	height:60px
+}
+
+.ui-date-slider {
+position: relative;
+zoom: 1;
+}
+
+.ui-slider {
+height: 3px;
+background: #eee;
+width: 270px;
+border-top: 1px solid #BBB;
+border-left: 1px solid #BBB;
+border-bottom: 1px solid #fff;
+border-radius: 2px;
+position: absolute;
+z-index: 1;
+top: 35px;
+left: 25px;
+}
+
+.ui-date-slider-scales {
+overflow: hidden;
+position: relative;
+zoom: 1;
+}
+
+.ui-date-slider-scale {
+width: 35px;
+float: left;
+height: 60px;
+text-align: center;
+position: relative;
+z-index:888;
+}
+
+.ui-date-slider-month {
+color: #aaa;
+font-size: 10px;
+position: absolute;
+bottom: 3px;
+left: 15px;
+width: 30px;
+}
+
+.ui-date-slider-line {
+height: 4px;
+border-left: 1px solid #aaa;
+width: 0;
+position: absolute;
+top: 32px;
+left: 25px;
+overflow: hidden;
+}
+
+.ui-slider-handle-date {
+position: absolute;
+color: #fff;
+background-color: #96D1F9;
+font-size: 10px;
+line-height: 1;
+padding: 2px 3px;
+border-radius: 2px;
+border: 1px solid #62A3E8;
+}
+
+.ui-date-slider-year {
+color: #aaa;
+font-size: 10px;
+position: absolute;
+top: 6px;
+left: 15px;
+width: 20px;
+}
+
+.ui-date-slider-line-long {
+height: 14px;
+top: 22px;
+}
+
+.ui-slider-range {
+background-color: #8BC7F0;
+border: 1px solid #7DA9DC;
+height: 3px;
+position: absolute;
+z-index: 1;
+top: -1px;
+zoom: 1;
+overflow: hidden;
+}
+
+.ui-slider-handle {
+position: absolute;
+height: 15px;
+width: 10px;
+background: url(https://i.alipayobjects.com/e/201211/1dh1jloUCL.png) no-repeat;
+cursor: pointer;
+z-index: 2;
+top: -6px;
+margin-left: -5px;
+}
+
+.mini-button {
+display: block;
+width: 100px;
+height: 45px;
+background: #3499da;
+color: #fff;
+text-align: center;
+color: #FFF !important;
+font-size: 14px;
+cursor: pointer;
+line-height: 40px;
+border: none;
+border-radius: 2px;
+}
+
+.screenbg {
+height: 52px;
+background: #FFF;
+width: 100%;
+position: fixed;
+bottom: 0;
+left: 0;
+z-index: 0;
+opacity: 0.95;
+border-top:  1px solid #c7c9d2;
+z-index:9999;
+}

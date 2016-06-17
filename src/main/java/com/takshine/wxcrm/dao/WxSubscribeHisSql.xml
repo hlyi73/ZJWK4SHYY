@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<!-- 微信订阅sql处理语句 -->
+<mapper namespace="wxSubscribeHisSql">
+	<!-- 查询  -->
+	<select id="findWxSubscribeHisListByFilter"
+		parameterType="com.takshine.wxcrm.domain.WxSubscribeHis"
+		resultType="com.takshine.wxcrm.domain.WxSubscribeHis">
+		select
+			  	  id,
+				  open_id,
+				  nick_name,
+				  sub_type,
+				  create_time
+			from TB_WXSUBSCRIBE_HIS
+			where 1=1
+			<if test="id != null">and id = #{id}</if>
+			<if test="open_id != null">and open_id = #{open_id}</if>
+			<if test="sub_type != null">and sub_type = #{sub_type}</if>
+			limit #{currpages},#{pagecounts}
+	</select>
+	
+	<!-- 插入 -->
+	<insert id="insertWxSubscribeHis"
+		parameterType="com.takshine.wxcrm.domain.WxSubscribeHis">
+		insert into TB_WXSUBSCRIBE_HIS
+		(
+		  	  id,
+			  open_id,
+			  nick_name,
+			  sub_type,
+			  create_time
+		) values (
+		    <if test="id != null">#{id},</if>
+		    <if test="id == null">NULL,</if>
+		    <if test="open_id != null">#{open_id},</if>
+		    <if test="open_id == null">NULL,</if>
+		    <if test="nick_name != null">#{nick_name},</if>
+		    <if test="nick_name == null">NULL,</if>
+		    <if test="sub_type != null">#{sub_type},</if>
+		    <if test="sub_type == null">NULL,</if>
+		    <if test="create_time != null">now()</if>
+		    <if test="create_time == null">now()</if>
+		 )
+	</insert>
+	
+	<!-- 根据ID删除文章记录 -->
+	<delete id="deleteWxSubscribeHisById"
+		parameterType="com.takshine.wxcrm.domain.WxSubscribeHis">
+		delete from TB_WXSUBSCRIBE_HIS where id = #{id}
+	</delete>
+</mapper>
