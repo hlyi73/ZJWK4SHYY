@@ -415,11 +415,13 @@
  						return;
  					}else{
  						var i = 0;
+ 						var count=0;
  						$(d).each(function(i){
  							var shareusername = "";
- 							if(d[i].desc=="1"){
+ 							if(d[i].desc=="1" || d[i].desc==""){
+ 								count++;
 	 							//	shareusername = this.assigner;
-	 							i++;
+	 							//i++;
 	 							var val = '';
 	 							if(d[i].relaname && d[i].relaname.length>8){
 	 								d[i].relaname = d[i].relaname.substr(8)+"...";
@@ -437,12 +439,12 @@
 	 							val += '</div>';
 	 							$(".todaytask").append(val);
  							}
- 							if( i == 0){
- 								$(".todaytask").append('<div class="" style="text-align:center;padding: 0.8em 0;font-size:14px;color:#999;">今天没有任务！</div>');
- 							}
  						});
  						
- 						$("#div_more_task").css("display","");
+						if( count == 0){
+								$(".todaytask").append('<div class="" style="text-align:center;padding: 0.8em 0;font-size:14px;color:#999;">今天没有任务！</div>');
+						}
+						$("#div_more_task").css("display","");
  					}
  				}
  		});
