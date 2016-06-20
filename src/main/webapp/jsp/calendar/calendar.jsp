@@ -292,14 +292,14 @@ function sortTodayList(list){
 function getDelayDays(start,end){
 	if(checkDate(StringToDate(end))){
 		var begin = formatDateStr(StringToDate(start));
-		var nday = DateDiff(begin,clickDate);
+		var nday = DateDiff(begin,todayDate);
 		return isNaN(nday) ? 0 : nday;
 	}
 	var end = formatDateStr(StringToDate(end));
 	if("1900-01-31"==end){
 		end = start;
 	}
-	var nday = DateDiff(end,clickDate);
+	var nday = DateDiff(end,todayDate);
 	return isNaN(nday) ? 0 : nday;
 }
 function sortDelayList(list){
