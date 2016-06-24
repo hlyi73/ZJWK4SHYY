@@ -2,6 +2,7 @@ package com.takshine.wxcrm.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,14 +50,12 @@ import com.takshine.wxcrm.domain.BusinessCard;
 import com.takshine.wxcrm.domain.Campaigns;
 import com.takshine.wxcrm.domain.Customer;
 import com.takshine.wxcrm.domain.Messages;
-import com.takshine.wxcrm.domain.Opportunity;
 import com.takshine.wxcrm.domain.Tag;
 import com.takshine.wxcrm.domain.WxuserInfo;
 import com.takshine.wxcrm.message.error.CrmError;
 import com.takshine.wxcrm.message.sugar.CustomerAdd;
 import com.takshine.wxcrm.message.sugar.CustomerResp;
 import com.takshine.wxcrm.message.sugar.OpptyAuditsAdd;
-import com.takshine.wxcrm.message.sugar.OpptyResp;
 import com.takshine.wxcrm.message.sugar.ShareAdd;
 import com.takshine.wxcrm.message.sugar.UserAdd;
 import com.takshine.wxcrm.message.sugar.UserReq;
@@ -94,6 +93,9 @@ public class CustomerController {
 			throws Exception {
 		String str = "";
 		// search param
+		String text = request.getParameter("text");
+		text =  URLDecoder.decode(text,"UTF-8");
+		text = new String(text.getBytes(),"GBK");
 		String crmId = UserUtil.getCurrUser(request).getCrmId();
 		String viewtype = request.getParameter("viewtype");
 		String currpage = request.getParameter("currpage");
@@ -114,6 +116,7 @@ public class CustomerController {
 			sche.setCurrpage(currpage);
 			sche.setPagecount(pagecount);
 			sche.setFirstchar(firstchar);
+			sche.setName(text);
 			sche.setOrgId(orgId);
 			sche.setOpenId(UserUtil.getCurrUser(request).getOpenId());
 			// 查询返回结果

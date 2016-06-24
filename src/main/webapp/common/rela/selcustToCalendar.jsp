@@ -14,7 +14,7 @@ $(function(){
 	});
 	
 	$("input[name=search]").keyup(function(){
-		searchCustomer();
+		//searchCustomer();
 	});
 	
 	$(".clearcust").click(function(){
@@ -36,9 +36,10 @@ $(function(){
 		$(".customer_list").html('');
 		myallview="myallview";
 		currpage = 1;
-		loadCustomer();
+		//loadCustomer();
 		$("input[name=search]").val('');
 		//searchCustomer();
+		$(".nodata").removeClass("none").addClass("none");
 	});
 	//查询我的客户
 	$(".fc-button-my").click(function(){
@@ -52,6 +53,13 @@ $(function(){
 		//searchCustomer();
 	});
 	
+	//查询我的客户
+	$(".ButtonSearchCustomer").click(function(){
+		currpage = 1;
+		$(".customer_list").html('');
+		loadCustomer();
+	});
+
 	//加载更多客户数据
 	$(".more_data").find("div").unbind("click").click(function(){
 		currpage = currpage+1;
@@ -98,14 +106,18 @@ function selectcustomer(){
 
 //异步加载客户
 function loadCustomer(){
+	var searchContent = $("input[name=search]").val();
+	searchContent = encodeURI(searchContent,"UTF-8");
+
 	$(".loadingcustdata").removeClass("none");
 	$(".nodata").removeClass("none").addClass("none");
 	$.ajax({
 	    type: 'get',
 	      url: '<%=custpath%>/customer/list' || '',
 	      //async: false,
-	      data: {orgId:'<%=orgId%>',viewtype: myallview,currpage:currpage,pagecount:'20'} || {},
+	      data: {orgId:'<%=orgId%>',viewtype: myallview,text:searchContent,currpage:currpage,pagecount:'20'} || {},
 	      dataType: 'text',
+	      contentType:"pplication/x-www-form-urlencoded; charset=utf-8",
 	      success: function(data){
 	    	  $(".loadingcustdata").removeClass("none").addClass("none");
 		       if(!data){
@@ -231,14 +243,15 @@ function searchCustomer(){
 	    </div>
 		<div style="height:44px;">
 			<img src="<%=custpath %>/image/searchbtn.png" style="position: absolute;opacity: 0.3;width:30px;margin-left: 5px;margin-top:10px;">
-			<input type="text" value="" placeholder="按名字搜索" name="search" style="border-radius: 10px;font-size: 14px;padding-left:40px;border: 1px solid #ddd;line-height: 30px;"> 
+			<input type="text" value="" placeholder="按名字搜索" name="search" style="border-radius: 10px;font-size: 14px;padding-left:40px;border: 1px solid #ddd;line-height: 30px;width:250px;">
+		    <input type="button" class="fc-button ButtonSearchCustomer" style="width: 80px;padding: 2px 10px 2px 10px;height: 30px;border-radius: 10px;" value="搜索">
 		</div>
 	</div>
 	<br/>
 	<div style="width:100%;" class="customer_list statusDom">
-		<div class="loadingcustdata" style="margin-top:50px;width:100%;text-align:center;color:#999;"><img src="<%=custpath %>/image/loading.gif"></div>
+		<div class="loadingcustdata none" style="margin-top:50px;width:100%;text-align:center;color:#999;"><img src="<%=custpath %>/image/loading.gif"></div>
 	</div>
-	<div class="none nodata" style="position:fixed;width:100%;text-align:center;top: 150px;">没有找到匹配的数据！</div>
+	<div class="none nodata" style="position:fixed;width:100%;text-align:center;top: 250px;">没有找到匹配的数据！</div>
 	<!-- 增加分页控制按钮 -->
 	<div class="more_data none">
 		<div>更多</div>
